@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Users/Medoune/Desktop/kaaydiangu/app/dashboard/admin -name *.tsx -o -name *.ts)",
+      "Bash(npx neonctl@latest init)",
+      "Bash(taskkill /f /im node.exe)",
+      "Bash(rm -rf .next/lock)"
+    ]
+  }
+}
