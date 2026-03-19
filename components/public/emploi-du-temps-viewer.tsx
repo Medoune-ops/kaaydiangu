@@ -55,12 +55,11 @@ export function EmploiDuTempsViewer({ classeId }: { classeId: string }) {
     );
   }
 
-  // Ne rien afficher si pas de creneaux
   const hasCreneaux = creneaux.length > 0;
 
   if (loading) {
     return (
-      <div className="py-8 text-center text-neutral-600 text-sm">
+      <div className="py-8 text-center text-neutral-400 text-sm">
         Chargement de l&apos;emploi du temps...
       </div>
     );
@@ -68,23 +67,23 @@ export function EmploiDuTempsViewer({ classeId }: { classeId: string }) {
 
   if (!hasCreneaux) {
     return (
-      <p className="py-4 text-center text-neutral-600 text-sm">
+      <p className="py-4 text-center text-neutral-400 text-sm">
         Emploi du temps non encore disponible.
       </p>
     );
   }
 
   return (
-    <div className="bg-white/[0.03] rounded-2xl border border-white/[0.06] overflow-hidden">
+    <div className="gradient-border overflow-hidden">
       <div className="p-5 overflow-x-auto">
         <table className="w-full border-collapse min-w-[700px] text-sm">
           <thead>
             <tr>
-              <th className="w-16 p-2.5 font-semibold text-neutral-500 border border-white/[0.06] bg-white/[0.02]">
+              <th className="w-16 p-3 font-semibold text-neutral-500 border border-neutral-200 bg-neutral-50">
                 Heure
               </th>
               {JOURS.map((j) => (
-                <th key={j} className="p-2.5 font-semibold text-neutral-300 border border-white/[0.06] bg-white/[0.02]">
+                <th key={j} className="p-3 font-semibold text-neutral-600 border border-neutral-200 bg-neutral-50">
                   {JOURS_FR[j]}
                 </th>
               ))}
@@ -96,7 +95,7 @@ export function EmploiDuTempsViewer({ classeId }: { classeId: string }) {
               if (!hasAny) return null;
               return (
                 <tr key={slot.debut}>
-                  <td className="p-2.5 text-center font-mono text-neutral-500 border border-white/[0.06] bg-white/[0.02]">
+                  <td className="p-3 text-center font-mono text-neutral-500 border border-neutral-200 bg-neutral-50">
                     {slot.debut}
                   </td>
                   {JOURS.map((jour) => {
@@ -104,18 +103,18 @@ export function EmploiDuTempsViewer({ classeId }: { classeId: string }) {
                     return (
                       <td
                         key={jour}
-                        className={`border border-white/[0.06] p-2.5 align-top ${c ? "bg-emerald-500/[0.06]" : ""}`}
+                        className={`border border-neutral-200 p-3 align-top ${c ? "bg-cyan-50" : ""}`}
                       >
                         {c && (
                           <div>
-                            <p className="font-semibold text-emerald-400">{c.matiere.nom}</p>
+                            <p className="font-semibold text-cyan-600">{c.matiere.nom}</p>
                             {c.matiere.professeur && (
-                              <p className="text-emerald-500/70 text-xs mt-0.5">
+                              <p className="text-cyan-600/60 text-xs mt-0.5">
                                 {c.matiere.professeur.prenom[0]}. {c.matiere.professeur.nom}
                               </p>
                             )}
                             {c.salle && (
-                              <p className="text-neutral-600 text-xs">Salle {c.salle}</p>
+                              <p className="text-neutral-400 text-xs">Salle {c.salle}</p>
                             )}
                           </div>
                         )}

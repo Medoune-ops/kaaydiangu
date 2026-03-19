@@ -10,7 +10,7 @@ interface RevisionsSearchProps {
   currentClasse?: string;
 }
 
-const inputCls = "w-full h-11 bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 text-white placeholder:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/50 transition-all";
+const inputCls = "w-full h-12 bg-neutral-50 border border-neutral-200 rounded-xl px-4 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all text-[15px]";
 
 export function RevisionsSearch({
   classes,
@@ -39,12 +39,10 @@ export function RevisionsSearch({
   };
 
   return (
-    <div className="bg-white/[0.03] rounded-2xl border border-white/[0.06] p-7">
+    <div className="gradient-border p-8">
       <div className="flex flex-col md:flex-row gap-5">
         <div className="flex-1">
-          <label className="block text-sm font-medium text-neutral-300 mb-2">
-            Matiere
-          </label>
+          <label className="block text-sm font-semibold text-neutral-600 mb-2">Matiere</label>
           <input
             placeholder="Rechercher une matiere..."
             value={matiere}
@@ -61,14 +59,8 @@ export function RevisionsSearch({
         </div>
 
         <div className="flex-1">
-          <label className="block text-sm font-medium text-neutral-300 mb-2">
-            Classe
-          </label>
-          <select
-            value={classeId}
-            onChange={(e) => setClasseId(e.target.value)}
-            className={inputCls}
-          >
+          <label className="block text-sm font-semibold text-neutral-600 mb-2">Classe</label>
+          <select value={classeId} onChange={(e) => setClasseId(e.target.value)} className={inputCls}>
             <option value="">Toutes les classes</option>
             {classes.map((c) => (
               <option key={c.id} value={c.id}>
@@ -81,16 +73,18 @@ export function RevisionsSearch({
         <div className="flex items-end gap-3">
           <button
             onClick={handleSearch}
-            className="h-11 px-6 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/20"
+            className="group relative h-12 px-6 rounded-xl text-white font-semibold overflow-hidden btn-primary"
           >
-            Rechercher
+            <span className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-teal-500" />
+            <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <span className="relative">Rechercher</span>
           </button>
           {(matiere || classeId) && (
             <button
               onClick={handleReset}
-              className="h-11 px-5 font-medium text-neutral-300 border border-white/[0.1] rounded-xl hover:bg-white/[0.04] transition-colors"
+              className="h-12 px-5 font-medium text-neutral-600 border border-neutral-200 rounded-xl hover:bg-neutral-50 btn-secondary"
             >
-              Reinitialiser
+              Reset
             </button>
           )}
         </div>

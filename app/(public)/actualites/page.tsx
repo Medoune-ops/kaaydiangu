@@ -1,3 +1,5 @@
+import { ScrollAnimateProvider } from "@/components/public/scroll-animate";
+
 const articles = [
   {
     id: 1,
@@ -43,57 +45,58 @@ const articles = [
   },
 ];
 
-const CATEGORY_COLORS: Record<string, string> = {
-  Rentree: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
-  Resultats: "bg-amber-500/15 text-amber-400 border-amber-500/20",
-  Evenement: "bg-violet-500/15 text-violet-400 border-violet-500/20",
-  Numerique: "bg-cyan-500/15 text-cyan-400 border-cyan-500/20",
-  Sport: "bg-orange-500/15 text-orange-400 border-orange-500/20",
-  Pedagogie: "bg-blue-500/15 text-blue-400 border-blue-500/20",
+const CAT_STYLE: Record<string, string> = {
+  Rentree: "bg-cyan-50 text-cyan-700 border-cyan-200",
+  Resultats: "bg-amber-50 text-amber-700 border-amber-200",
+  Evenement: "bg-teal-50 text-teal-700 border-teal-200",
+  Numerique: "bg-cyan-50 text-cyan-700 border-cyan-200",
+  Sport: "bg-orange-50 text-orange-700 border-orange-200",
+  Pedagogie: "bg-cyan-50 text-cyan-700 border-cyan-200",
 };
 
 export default function ActualitesPage() {
   return (
-    <>
-      <section className="relative bg-[#050505] py-24 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-emerald-500/[0.06] rounded-full blur-[100px]" />
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center relative">
-          <span className="text-emerald-400 font-semibold text-sm tracking-wider uppercase">Fil d&apos;info</span>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mt-3" style={{ fontFamily: "var(--font-heading)" }}>
+    <ScrollAnimateProvider>
+      <section className="relative bg-white py-28 overflow-hidden">
+        <div className="absolute inset-0 grid-bg animate-grid-fade" />
+        <div className="absolute top-[30%] left-[30%] w-[400px] h-[400px] bg-teal-400/[0.06] blur-[100px] rounded-full" />
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center relative z-10">
+          <div className="animate-slide-up inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 mb-6">
+            <span className="text-sm font-semibold text-cyan-700 tracking-wide">Fil d&apos;info</span>
+          </div>
+          <h1 className="animate-slide-up-delay-1 text-4xl md:text-6xl font-extrabold text-neutral-900 tracking-tight glow-text" style={{ fontFamily: "var(--font-heading)" }}>
             Actualites
           </h1>
-          <p className="mt-5 text-neutral-400 max-w-2xl mx-auto text-lg">
-            Restez informe de toute l&apos;actualite de Kaaydiangu.
+          <p className="animate-slide-up-delay-2 mt-6 text-neutral-500 max-w-2xl mx-auto text-lg">
+            Restez informe de toute l&apos;actualite de notre ecole.
           </p>
         </div>
       </section>
 
-      <section className="py-24 bg-[#050505]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <section className="py-28 bg-neutral-50/50 relative section-lazy">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {articles.map((article) => (
-              <div key={article.id} className="group bg-white/[0.03] rounded-2xl border border-white/[0.06] hover:border-emerald-500/20 transition-all duration-300 overflow-hidden">
-                <div className="p-7 space-y-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-lg font-bold text-white leading-snug" style={{ fontFamily: "var(--font-heading)" }}>{article.titre}</h3>
-                    <span className={`shrink-0 text-xs font-semibold border rounded-lg px-2.5 py-1 ${CATEGORY_COLORS[article.categorie] || "bg-white/5 text-neutral-400 border-white/10"}`}>
-                      {article.categorie}
-                    </span>
-                  </div>
-                  <p className="text-neutral-400 leading-relaxed">{article.extrait}</p>
-                  <p className="text-sm text-neutral-600">
+            {articles.map((article, i) => (
+              <div key={article.id} className={`gradient-border p-8 group hover:-translate-y-1 scroll-animate scroll-animate-delay-${(i % 3) + 1}`}>
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <span className={`text-xs font-semibold border rounded-lg px-2.5 py-1 transition-all duration-250 ${CAT_STYLE[article.categorie] || "bg-neutral-50 text-neutral-500 border-neutral-200"}`}>
+                    {article.categorie}
+                  </span>
+                  <span className="text-sm text-neutral-400">
                     {new Date(article.date).toLocaleDateString("fr-FR", {
                       day: "numeric",
-                      month: "long",
+                      month: "short",
                       year: "numeric",
                     })}
-                  </p>
+                  </span>
                 </div>
+                <h3 className="text-lg font-bold text-neutral-900 leading-snug mb-3" style={{ fontFamily: "var(--font-heading)" }}>{article.titre}</h3>
+                <p className="text-neutral-500 leading-relaxed text-[15px]">{article.extrait}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
-    </>
+    </ScrollAnimateProvider>
   );
 }

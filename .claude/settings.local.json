@@ -10,7 +10,8 @@
       "Bash(echo \"Done text-[12px] -> text-sm\")",
       "Bash(echo \"Done text-[13px] -> text-sm\")",
       "Bash(echo \"Done text-[15px] -> text-base\")",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(npx next:*)"
     ],
     "additionalDirectories": [
       "c:\\Users\\Medoune\\Desktop\\kaaydiangu\\.next"
