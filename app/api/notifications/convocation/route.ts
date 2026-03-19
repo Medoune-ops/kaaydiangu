@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // Email + WhatsApp
+  // Email notifications
   const results = await notifierConvocation(
     eleve.classe.ecole.nom,
     {
@@ -81,6 +81,5 @@ export async function POST(req: NextRequest) {
     ok: true,
     email_eleve: results.email_eleve?.success || false,
     email_parent: results.email_parent?.success || false,
-    whatsapp_parent: results.whatsapp_parent?.success || false,
   });
 }

@@ -50,9 +50,6 @@ export async function POST(req: NextRequest) {
   let notificationsEnvoyees = 0;
   let emailsEnvoyes = 0;
   let emailsEchoues = 0;
-  let whatsappEnvoyes = 0;
-  let whatsappEchoues = 0;
-
   for (const eleve of eleves) {
     const moisList = eleve.paiements.map(
       (p) => `${MOIS_NOMS[p.mois]} ${p.annee}`
@@ -70,7 +67,7 @@ export async function POST(req: NextRequest) {
     });
     notificationsEnvoyees++;
 
-    // 2. Email + WhatsApp au parent
+    // 2. Email au parent
     const results = await notifierRappelPaiement(ecoleNom, {
       prenom: eleve.prenom,
       nom: eleve.nom,
@@ -82,8 +79,6 @@ export async function POST(req: NextRequest) {
 
     if (results.email?.success) emailsEnvoyes++;
     else if (results.email && !results.email.success && eleve.email_parent) emailsEchoues++;
-    if (results.whatsapp?.success) whatsappEnvoyes++;
-    else if (results.whatsapp && !results.whatsapp.success && eleve.telephone_parent) whatsappEchoues++;
   }
 
   await prisma.auditLog.create({
@@ -95,8 +90,6 @@ export async function POST(req: NextRequest) {
         notifications: notificationsEnvoyees,
         emails_envoyes: emailsEnvoyes,
         emails_echoues: emailsEchoues,
-        whatsapp_envoyes: whatsappEnvoyes,
-        whatsapp_echoues: whatsappEchoues,
       })),
     },
   });
@@ -105,8 +98,6 @@ export async function POST(req: NextRequest) {
     notifications: notificationsEnvoyees,
     emails_envoyes: emailsEnvoyes,
     emails_echoues: emailsEchoues,
-    whatsapp_envoyes: whatsappEnvoyes,
-    whatsapp_echoues: whatsappEchoues,
     total: eleves.length,
   });
 }
