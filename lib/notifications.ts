@@ -1,20 +1,8 @@
-import { Resend } from "resend";
-import twilio from "twilio";
+import { resend } from "./resend";
 
-// ─── CLIENTS ───
+// ─── CONFIG ───
 
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
-
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "noreply@monecole.sn";
-
-const twilioClient =
-  process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN
-    ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
-    : null;
-
-const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || "whatsapp:+14155238886";
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
 
 // ─── TYPES ───
 
@@ -30,7 +18,7 @@ export async function sendEmailNotification(
   sujet: string,
   contenu: string
 ): Promise<NotifResult> {
-  if (!resend) {
+  if (!process.env.RESEND_API_KEY) {
     return { success: false, error: "RESEND_API_KEY non configurée" };
   }
   if (!destinataire) {
@@ -47,35 +35,6 @@ export async function sendEmailNotification(
     return { success: true };
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Erreur email" };
-  }
-}
-
-// ─── WHATSAPP ───
-
-export async function sendWhatsAppMessage(
-  numero: string,
-  message: string
-): Promise<NotifResult> {
-  if (!twilioClient) {
-    return { success: false, error: "TWILIO non configuré" };
-  }
-  if (!numero) {
-    return { success: false, error: "Pas de numéro de téléphone" };
-  }
-
-  // Nettoyer le numéro (garder uniquement chiffres et +)
-  const clean = numero.replace(/[^\d+]/g, "");
-  const formatted = clean.startsWith("+") ? clean : `+221${clean}`;
-
-  try {
-    await twilioClient.messages.create({
-      from: TWILIO_WHATSAPP_FROM,
-      to: `whatsapp:${formatted}`,
-      body: message,
-    });
-    return { success: true };
-  } catch (err) {
-    return { success: false, error: err instanceof Error ? err.message : "Erreur WhatsApp" };
   }
 }
 
@@ -109,7 +68,7 @@ interface EleveInfo {
 }
 
 /**
- * Rappel de paiement — vers le parent (email + WhatsApp)
+ * Rappel de paiement — vers le parent (email)
  */
 export async function notifierRappelPaiement(
   ecoleNom: string,
@@ -117,7 +76,7 @@ export async function notifierRappelPaiement(
   moisImpayes: string[]
 ) {
   const moisListe = moisImpayes.join(", ");
-  const results: { email?: NotifResult; whatsapp?: NotifResult } = {};
+  const results: { email?: NotifResult } = {};
 
   if (eleve.email_parent) {
     results.email = await sendEmailNotification(
@@ -134,13 +93,6 @@ export async function notifierRappelPaiement(
         <p>Nous vous prions de bien vouloir régulariser cette situation dans les meilleurs délais.</p>
         <p>Cordialement,<br>Le service comptabilité</p>`
       )
-    );
-  }
-
-  if (eleve.telephone_parent) {
-    results.whatsapp = await sendWhatsAppMessage(
-      eleve.telephone_parent,
-      `[${ecoleNom}] Rappel de paiement\n\nÉlève : ${eleve.prenom} ${eleve.nom} (${eleve.matricule})\nClasse : ${eleve.classe}\nMois impayé(s) : ${moisListe}\n\nMerci de régulariser votre situation auprès du secrétariat.`
     );
   }
 
@@ -182,7 +134,7 @@ export async function notifierNouvelleNote(
 }
 
 /**
- * Bulletin disponible — vers l'élève et le parent (email + WhatsApp)
+ * Bulletin disponible — vers l'élève et le parent (email)
  */
 export async function notifierBulletinDisponible(
   ecoleNom: string,
@@ -190,7 +142,7 @@ export async function notifierBulletinDisponible(
   eleveEmail: string | null,
   sequence: number
 ) {
-  const results: { email_eleve?: NotifResult; email_parent?: NotifResult; whatsapp_parent?: NotifResult } = {};
+  const results: { email_eleve?: NotifResult; email_parent?: NotifResult } = {};
 
   // Email à l'élève
   if (eleveEmail) {
@@ -225,19 +177,11 @@ export async function notifierBulletinDisponible(
     );
   }
 
-  // WhatsApp au parent
-  if (eleve.telephone_parent) {
-    results.whatsapp_parent = await sendWhatsAppMessage(
-      eleve.telephone_parent,
-      `[${ecoleNom}] Bulletin disponible\n\nLe bulletin de ${eleve.prenom} ${eleve.nom} (${eleve.classe}) pour la séquence ${sequence} est disponible.\n\nConsultez-le auprès du secrétariat.`
-    );
-  }
-
   return results;
 }
 
 /**
- * Convocation — vers l'élève (email + WhatsApp parent)
+ * Convocation — vers l'élève et le parent (email)
  */
 export async function notifierConvocation(
   ecoleNom: string,
@@ -246,7 +190,7 @@ export async function notifierConvocation(
   motif: string,
   dateConvocation: string
 ) {
-  const results: { email_eleve?: NotifResult; email_parent?: NotifResult; whatsapp_parent?: NotifResult } = {};
+  const results: { email_eleve?: NotifResult; email_parent?: NotifResult } = {};
 
   // Email à l'élève
   if (eleveEmail) {
@@ -282,14 +226,6 @@ export async function notifierConvocation(
         </div>
         <p>Votre présence est vivement souhaitée.</p>`
       )
-    );
-  }
-
-  // WhatsApp au parent
-  if (eleve.telephone_parent) {
-    results.whatsapp_parent = await sendWhatsAppMessage(
-      eleve.telephone_parent,
-      `[${ecoleNom}] Convocation\n\nÉlève : ${eleve.prenom} ${eleve.nom}\nMotif : ${motif}\nDate : ${dateConvocation}\n\nVotre présence est souhaitée.`
     );
   }
 

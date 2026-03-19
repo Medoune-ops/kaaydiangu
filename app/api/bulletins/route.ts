@@ -168,7 +168,7 @@ export async function GET(req: NextRequest) {
     },
   }).catch(() => {});
 
-  // Email + WhatsApp (async, non-bloquant)
+  // Email notifications (async, non-bloquant)
   import("@/lib/notifications").then(({ notifierBulletinDisponible }) => {
     const eleveUser = eleve.user as { id: string; email?: string };
     notifierBulletinDisponible(
