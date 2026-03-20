@@ -4,10 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 // GET — lister les classes de l'école
 export async function GET() {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-  }
+  try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
 
   const classes = await prisma.classe.findMany({
     where: { ecole_id: session.user.ecoleId },
@@ -33,18 +34,26 @@ export async function GET() {
     orderBy: [{ niveau: "asc" }, { nom: "asc" }],
   });
 
-  return NextResponse.json(classes);
+    return NextResponse.json(classes);
+  } catch (error) {
+    console.error("[CLASSES_GET] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }
 
 // POST — créer une classe
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session || session.user.role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
-  const body = await req.json();
-  const { nom, niveau, filiere, montant_scolarite } = body;
+    const body = await req.json();
+    const { nom, niveau, filiere, montant_scolarite } = body;
 
   if (!nom || !niveau) {
     return NextResponse.json({ error: "Nom et niveau requis" }, { status: 400 });
@@ -74,18 +83,26 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return NextResponse.json(classe);
+    return NextResponse.json(classe);
+  } catch (error) {
+    console.error("[CLASSES_POST] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }
 
 // PATCH — modifier une classe
 export async function PATCH(req: NextRequest) {
-  const session = await auth();
-  if (!session || session.user.role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
-  const body = await req.json();
-  const { id, nom, niveau, filiere, montant_scolarite } = body;
+    const body = await req.json();
+    const { id, nom, niveau, filiere, montant_scolarite } = body;
 
   if (!id) {
     return NextResponse.json({ error: "id requis" }, { status: 400 });
@@ -118,15 +135,23 @@ export async function PATCH(req: NextRequest) {
     },
   });
 
-  return NextResponse.json(classe);
+    return NextResponse.json(classe);
+  } catch (error) {
+    console.error("[CLASSES_PATCH] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }
 
 // DELETE — supprimer une classe (seulement si vide)
 export async function DELETE(req: NextRequest) {
-  const session = await auth();
-  if (!session || session.user.role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
   const { searchParams } = req.nextUrl;
   const id = searchParams.get("id");
@@ -167,5 +192,12 @@ export async function DELETE(req: NextRequest) {
     },
   });
 
-  return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("[CLASSES_DELETE] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }

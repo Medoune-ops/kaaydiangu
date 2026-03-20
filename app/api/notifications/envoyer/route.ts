@@ -4,10 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 // POST — envoyer un message de la direction à des destinataires
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session || !["SUPER_ADMIN", "CENSEUR"].includes(session.user.role)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || !["SUPER_ADMIN", "CENSEUR"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
   const body = await req.json();
   const { titre, message, cible } = body as {
@@ -67,5 +68,12 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return NextResponse.json({ envoyes: destinataires.length });
+    return NextResponse.json({ envoyes: destinataires.length });
+  } catch (error) {
+    console.error("[NOTIFICATIONS_ENVOYER_POST] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }

@@ -1,71 +1,102 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { userSchema } from "@/lib/validations";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET — lister les utilisateurs du personnel (hors ELEVE)
-export async function GET() {
-  const session = await auth();
-  if (!session || session.user.role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+export async function GET(req: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
+
+    const where = {
+    ecole_id: session.user.ecoleId,
+    role: { not: "ELEVE" as const },
+  };
+
+  const selectOpts = {
+    id: true,
+    nom: true,
+    prenom: true,
+    email: true,
+    role: true,
+    actif: true,
+    createdAt: true,
+    matieres: {
+      select: {
+        id: true,
+        nom: true,
+        classe: { select: { id: true, nom: true } },
+      },
+    },
+  };
+
+  const { searchParams } = req.nextUrl;
+  const page = searchParams.get("page");
+  const limit = parseInt(searchParams.get("limit") || "20");
+
+  if (page) {
+    const pageNum = parseInt(page);
+    const skip = (pageNum - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        select: selectOpts,
+        orderBy: [{ role: "asc" }, { nom: "asc" }],
+        skip,
+        take: limit,
+      }),
+      prisma.user.count({ where }),
+    ]);
+
+    return NextResponse.json({
+      data,
+      pagination: {
+        page: pageNum,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   }
 
   const users = await prisma.user.findMany({
-    where: {
-      ecole_id: session.user.ecoleId,
-      role: { not: "ELEVE" },
-    },
-    select: {
-      id: true,
-      nom: true,
-      prenom: true,
-      email: true,
-      role: true,
-      actif: true,
-      createdAt: true,
-      matieres: {
-        select: {
-          id: true,
-          nom: true,
-          classe: { select: { id: true, nom: true } },
-        },
-      },
-    },
+    where,
+    select: selectOpts,
     orderBy: [{ role: "asc" }, { nom: "asc" }],
   });
 
-  return NextResponse.json(users);
+    return NextResponse.json(users);
+  } catch (error) {
+    console.error("[ADMIN_USERS_GET] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }
 
 // POST — créer un compte personnel
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session || session.user.role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
-  const body = await req.json();
-  const { nom, prenom, email, role } = body as {
-    nom: string;
-    prenom: string;
-    email: string;
-    role: string;
-  };
-
-  if (!nom || !prenom || !email || !role) {
+    const body = await req.json();
+    const parsed = userSchema.safeParse(body);
+  if (!parsed.success) {
     return NextResponse.json(
-      { error: "Nom, prénom, email et rôle requis" },
+      { error: "Données invalides", details: parsed.error.flatten().fieldErrors },
       { status: 400 }
     );
   }
-
-  const rolesAutorises = ["COMPTABLE", "CENSEUR", "PROFESSEUR"];
-  if (!rolesAutorises.includes(role)) {
-    return NextResponse.json(
-      { error: "Rôle invalide (COMPTABLE, CENSEUR ou PROFESSEUR)" },
-      { status: 400 }
-    );
-  }
+  const { nom, prenom, email, role } = parsed.data;
 
   // Vérifier unicité email
   const existing = await prisma.user.findUnique({ where: { email } });
@@ -85,7 +116,7 @@ export async function POST(req: NextRequest) {
       prenom,
       email,
       mot_de_passe: hashedPassword,
-      role: role as "COMPTABLE" | "CENSEUR" | "PROFESSEUR",
+      role,
       ecole_id: session.user.ecoleId,
     },
   });
@@ -108,17 +139,25 @@ export async function POST(req: NextRequest) {
     role: user.role,
     mot_de_passe_provisoire: motDePasseProvisoire,
   });
+  } catch (error) {
+    console.error("[ADMIN_USERS_POST] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }
 
 // PATCH — modifier un utilisateur (rôle, actif, reset mdp, assignation matières)
 export async function PATCH(req: NextRequest) {
-  const session = await auth();
-  if (!session || session.user.role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
-  const body = await req.json();
-  const { user_id, action: actionType } = body as {
+    const body = await req.json();
+    const { user_id, action: actionType } = body as {
     user_id: string;
     action: string;
   };
@@ -260,5 +299,12 @@ export async function PATCH(req: NextRequest) {
 
     default:
       return NextResponse.json({ error: "Action inconnue" }, { status: 400 });
+    }
+  } catch (error) {
+    console.error("[ADMIN_USERS_PATCH] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
   }
 }

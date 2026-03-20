@@ -5,15 +5,16 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-  }
+  try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
 
-  const eleve = await prisma.eleve.findFirst({
-    where: { user_id: session.user.id },
-    select: { id: true, classe_id: true },
-  });
+    const eleve = await prisma.eleve.findFirst({
+      where: { user_id: session.user.id },
+      select: { id: true, classe_id: true },
+    });
 
   if (!eleve) {
     return NextResponse.json({ error: "Profil élève introuvable" }, { status: 404 });
@@ -53,5 +54,12 @@ export async function GET() {
     orderBy: { date: "desc" },
   });
 
-  return NextResponse.json({ eleveId: eleve.id, sequences, paiements, cours });
+    return NextResponse.json({ eleveId: eleve.id, sequences, paiements, cours });
+  } catch (error) {
+    console.error("[ELEVE_DOCUMENTS_GET] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }

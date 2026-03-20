@@ -18,30 +18,30 @@ const ALLOWED_TYPES = [
 ];
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session || !["SUPER_ADMIN", "PROFESSEUR"].includes(session.user.role)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
-
-  const formData = await req.formData();
-  const file = formData.get("file") as File | null;
-
-  if (!file) {
-    return NextResponse.json({ error: "Aucun fichier envoyé" }, { status: 400 });
-  }
-
-  if (!ALLOWED_TYPES.includes(file.type)) {
-    return NextResponse.json(
-      { error: "Type de fichier non autorisé. Formats acceptés : PDF, Word, JPEG, PNG, WebP" },
-      { status: 400 }
-    );
-  }
-
-  if (file.size > 10 * 1024 * 1024) {
-    return NextResponse.json({ error: "Taille maximale : 10 Mo" }, { status: 400 });
-  }
-
   try {
+    const session = await auth();
+    if (!session || !["SUPER_ADMIN", "PROFESSEUR"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
+
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
+
+    if (!file) {
+      return NextResponse.json({ error: "Aucun fichier envoyé" }, { status: 400 });
+    }
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return NextResponse.json(
+        { error: "Type de fichier non autorisé. Formats acceptés : PDF, Word, JPEG, PNG, WebP" },
+        { status: 400 }
+      );
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: "Taille maximale : 10 Mo" }, { status: 500 });
+    }
+
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
@@ -61,9 +61,10 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ url: result.secure_url });
-  } catch {
+  } catch (error) {
+    console.error("[UPLOAD_COURS_POST] Erreur:", error);
     return NextResponse.json(
-      { error: "Erreur lors de l'upload" },
+      { error: "Erreur serveur interne" },
       { status: 500 }
     );
   }

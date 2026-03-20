@@ -10,10 +10,11 @@ const MOIS_NOMS = [
 
 // POST — envoyer un rappel de paiement à un ou plusieurs élèves
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session || !["SUPER_ADMIN", "COMPTABLE"].includes(session.user.role)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || !["SUPER_ADMIN", "COMPTABLE"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
   const body = await req.json();
   const { eleve_ids } = body as { eleve_ids: string[] };
@@ -100,4 +101,11 @@ export async function POST(req: NextRequest) {
     emails_echoues: emailsEchoues,
     total: eleves.length,
   });
+  } catch (error) {
+    console.error("[IMPAYES_RAPPEL_POST] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }

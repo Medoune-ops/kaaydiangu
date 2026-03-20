@@ -21,10 +21,11 @@ function fCFA(n: number) {
 }
 
 export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session || !["SUPER_ADMIN", "COMPTABLE"].includes(session.user.role)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || !["SUPER_ADMIN", "COMPTABLE"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
   const { searchParams } = req.nextUrl;
   const mois = searchParams.get("mois") ? parseInt(searchParams.get("mois")!) : null;
@@ -241,10 +242,17 @@ export async function GET(req: NextRequest) {
   const pdfBuffer = Buffer.from(doc.output("arraybuffer"));
   const filename = `bilan_${mois ? `${MOIS_NOMS[mois]}_${annee}` : annee}.pdf`;
 
-  return new NextResponse(new Uint8Array(pdfBuffer), {
-    headers: {
-      "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${filename}"`,
-    },
-  });
+    return new NextResponse(new Uint8Array(pdfBuffer), {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="${filename}"`,
+      },
+    });
+  } catch (error) {
+    console.error("[COMPTABILITE_BILAN_PDF_GET] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }

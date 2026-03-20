@@ -4,10 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 // GET — infos complètes de l'école
 export async function GET() {
-  const session = await auth();
-  if (!session || session.user.role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
   const ecole = await prisma.ecole.findUnique({
     where: { id: session.user.ecoleId },
@@ -17,17 +18,25 @@ export async function GET() {
     return NextResponse.json({ error: "École introuvable" }, { status: 404 });
   }
 
-  return NextResponse.json(ecole);
+    return NextResponse.json(ecole);
+  } catch (error) {
+    console.error("[ECOLE_GET] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }
 
 // PATCH — mise à jour des infos de l'école
 export async function PATCH(req: NextRequest) {
-  const session = await auth();
-  if (!session || session.user.role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
-  const body = await req.json();
+    const body = await req.json();
   const allowedFields = [
     "nom",
     "logo",
@@ -65,5 +74,12 @@ export async function PATCH(req: NextRequest) {
     },
   });
 
-  return NextResponse.json(ecole);
+    return NextResponse.json(ecole);
+  } catch (error) {
+    console.error("[ECOLE_PATCH] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }
