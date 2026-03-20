@@ -24,7 +24,11 @@ interface NoteInput {
   appreciation: string;
 }
 
-export function SaisieNotes() {
+interface SaisieNotesProps {
+  matieresApiUrl?: string;
+}
+
+export function SaisieNotes({ matieresApiUrl = "/api/professeur/matieres" }: SaisieNotesProps) {
   const [matieres, setMatieres] = useState<Matiere[]>([]);
   const [matiereId, setMatiereId] = useState("");
   const [type, setType] = useState<"CONTROLE" | "DEVOIR" | "EXAMEN">("CONTROLE");
@@ -36,14 +40,14 @@ export function SaisieNotes() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  // Charger les matieres du prof
+  // Charger les matieres selon le role (prof ou censeur)
   useEffect(() => {
-    fetch("/api/professeur/matieres")
+    fetch(matieresApiUrl)
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data)) setMatieres(data);
       });
-  }, []);
+  }, [matieresApiUrl]);
 
   const selectedMatiere = matieres.find((m) => m.id === matiereId);
 
