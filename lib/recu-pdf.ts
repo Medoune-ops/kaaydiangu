@@ -38,6 +38,10 @@ const MODE_LABELS: Record<string, string> = {
   VIREMENT: "Virement bancaire",
 };
 
+function formatMontant(montant: number): string {
+  return montant.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
 export function genererRecuPDF(data: RecuData): Buffer {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a5" });
   const pw = doc.internal.pageSize.getWidth(); // 148mm
@@ -165,13 +169,13 @@ export function genererRecuPDF(data: RecuData): Buffer {
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
-  doc.text("MONTANT PAYE", 20, my + 6);
+  doc.text("MONTANT PAYE", 16, my + 6);
 
-  doc.setFontSize(16);
+  doc.setFontSize(18);
   doc.text(
-    `${data.paiement.montant.toLocaleString("fr-FR")} FCFA`,
-    pw - 20,
-    my + 11,
+    `${formatMontant(data.paiement.montant)} FCFA`,
+    pw - 16,
+    my + 12,
     { align: "right" }
   );
 
