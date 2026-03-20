@@ -14,15 +14,19 @@ export async function GET(req: NextRequest) {
     return NextResponse.json([]);
   }
 
+  const words = q.split(/\s+/).filter(Boolean);
+
   const eleves = await prisma.eleve.findMany({
     where: {
       classe: { ecole_id: session.user.ecoleId },
       actif: true,
-      OR: [
-        { matricule: { contains: q, mode: "insensitive" } },
-        { nom: { contains: q, mode: "insensitive" } },
-        { prenom: { contains: q, mode: "insensitive" } },
-      ],
+      AND: words.map((word) => ({
+        OR: [
+          { matricule: { contains: word, mode: "insensitive" } },
+          { nom: { contains: word, mode: "insensitive" } },
+          { prenom: { contains: word, mode: "insensitive" } },
+        ],
+      })),
     },
     select: {
       id: true,

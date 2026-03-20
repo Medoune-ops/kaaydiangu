@@ -74,7 +74,7 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
               <path d="M6 12v5c3 3 9 3 12 0v-5" />
             </svg>
           </div>
-          <span className="text-xl font-bold text-white tracking-tight">Kaaydiangu</span>
+          <span className="text-xl font-bold text-white tracking-tight">Mon Ecole</span>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
       <nav className="flex-1 px-3 space-y-0.5">
         <p className="px-3 mb-3 text-xs font-semibold text-neutral-500 uppercase tracking-widest">Menu</p>
         {items.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || (item.href !== "/dashboard/admin" && item.href !== "/dashboard/censeur" && item.href !== "/dashboard/comptable" && item.href !== "/dashboard/professeur" && item.href !== "/dashboard/eleve" && pathname.startsWith(item.href + "/"));
           return (
             <Link
               key={item.href}

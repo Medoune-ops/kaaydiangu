@@ -141,7 +141,7 @@ export function EleveForm({ classes }: EleveFormProps) {
             <h3 className="font-semibold text-base text-neutral-900">Identite de l&apos;eleve</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="nom" className="block text-sm font-medium text-neutral-900 mb-1">Nom *</label>
+                <label htmlFor="nom" className="block text-sm font-medium text-neutral-900 mb-1">Nom <span className="text-red-500">*</span></label>
                 <input
                   id="nom"
                   name="nom"
@@ -152,7 +152,7 @@ export function EleveForm({ classes }: EleveFormProps) {
                 />
               </div>
               <div>
-                <label htmlFor="prenom" className="block text-sm font-medium text-neutral-900 mb-1">Prenom *</label>
+                <label htmlFor="prenom" className="block text-sm font-medium text-neutral-900 mb-1">Prenom <span className="text-red-500">*</span></label>
                 <input
                   id="prenom"
                   name="prenom"
@@ -252,7 +252,7 @@ export function EleveForm({ classes }: EleveFormProps) {
           <div className="space-y-4">
             <h3 className="font-semibold text-base text-neutral-900">Affectation</h3>
             <div>
-              <label htmlFor="classe_id" className="block text-sm font-medium text-neutral-900 mb-1">Classe *</label>
+              <label htmlFor="classe_id" className="block text-sm font-medium text-neutral-900 mb-1">Classe <span className="text-red-500">*</span></label>
               <select
                 id="classe_id"
                 name="classe_id"
@@ -279,8 +279,11 @@ export function EleveForm({ classes }: EleveFormProps) {
             <button
               type="submit"
               disabled={loading}
-              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 transition-colors disabled:opacity-50"
+              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 transition-colors disabled:opacity-50 inline-flex items-center gap-2"
             >
+              {loading && (
+                <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />
+              )}
               {loading ? "Inscription en cours..." : "Inscrire l'eleve"}
             </button>
             <button

@@ -109,9 +109,20 @@ export function SaisieNotes() {
       }));
 
     if (notesToSave.length === 0) {
-      setMessage({ type: "error", text: "Aucune note saisie" });
+      setMessage({ type: "error", text: "Aucune note saisie." });
       return;
     }
+
+    // Validation des notes hors limites
+    const notesInvalides = notesToSave.filter((n) => n.valeur < 0 || n.valeur > 20);
+    if (notesInvalides.length > 0) {
+      setMessage({ type: "error", text: "Certaines notes sont hors limites (0-20). Veuillez les corriger." });
+      return;
+    }
+
+    // Confirmation avant enregistrement
+    const confirmMsg = `Vous allez enregistrer ${notesToSave.length} note(s) pour ${selectedMatiere?.nom} (${type}, Sequence ${sequence}). Confirmer ?`;
+    if (!confirm(confirmMsg)) return;
 
     setSaving(true);
     setMessage(null);
@@ -169,7 +180,7 @@ export function SaisieNotes() {
         <div className="px-6 py-5">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Matiere</label>
+              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Matiere <span className="text-red-500">*</span></label>
               <select
                 value={matiereId}
                 onChange={(e) => setMatiereId(e.target.value)}
@@ -185,7 +196,7 @@ export function SaisieNotes() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Type</label>
+              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Type <span className="text-red-500">*</span></label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as typeof type)}
@@ -198,7 +209,7 @@ export function SaisieNotes() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Sequence</label>
+              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Sequence <span className="text-red-500">*</span></label>
               <select
                 value={sequence}
                 onChange={(e) => setSequence(Number(e.target.value))}
@@ -252,8 +263,11 @@ export function SaisieNotes() {
                 <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
               </div>
             ) : eleves.length === 0 ? (
-              <div className="text-center py-12 text-sm text-neutral-500">
-                Aucun eleve dans cette classe.
+              <div className="text-center py-12">
+                <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <p className="text-sm text-neutral-500">Aucun eleve dans cette classe.</p>
               </div>
             ) : (
               <>
@@ -277,16 +291,25 @@ export function SaisieNotes() {
                             {eleve.nom} {eleve.prenom}
                           </td>
                           <td className="px-4 py-2">
-                            <input
-                              type="number"
-                              min={0}
-                              max={20}
-                              step={0.25}
-                              placeholder="—"
-                              value={notesInput[eleve.id]?.valeur ?? ""}
-                              onChange={(e) => handleNoteChange(eleve.id, e.target.value)}
-                              className="w-24 h-9 mx-auto block bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-center text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                            />
+                            <div className="relative">
+                              <input
+                                type="number"
+                                min={0}
+                                max={20}
+                                step={0.25}
+                                placeholder="--"
+                                value={notesInput[eleve.id]?.valeur ?? ""}
+                                onChange={(e) => handleNoteChange(eleve.id, e.target.value)}
+                                className={`w-24 h-9 mx-auto block bg-neutral-50 border rounded-lg px-3 text-sm text-center text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 ${
+                                  notesInput[eleve.id]?.valeur !== "" && (Number(notesInput[eleve.id]?.valeur) < 0 || Number(notesInput[eleve.id]?.valeur) > 20)
+                                    ? "border-red-400 bg-red-50"
+                                    : "border-neutral-200"
+                                }`}
+                              />
+                              {notesInput[eleve.id]?.valeur !== "" && (Number(notesInput[eleve.id]?.valeur) < 0 || Number(notesInput[eleve.id]?.valeur) > 20) && (
+                                <p className="text-xs text-red-500 text-center mt-0.5">0-20</p>
+                              )}
+                            </div>
                           </td>
                           <td className="px-4 py-2 text-center">
                             {eleve.moyenne !== null ? (
@@ -332,8 +355,11 @@ export function SaisieNotes() {
                   <button
                     onClick={handleSubmit}
                     disabled={saving}
-                    className="h-9 px-4 bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 disabled:opacity-50 transition-colors"
+                    className="h-9 px-4 bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 disabled:opacity-50 transition-colors inline-flex items-center gap-2"
                   >
+                    {saving && (
+                      <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />
+                    )}
                     {saving ? "Enregistrement..." : "Enregistrer les notes"}
                   </button>
                 </div>

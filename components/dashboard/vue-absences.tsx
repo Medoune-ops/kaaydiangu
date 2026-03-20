@@ -173,7 +173,13 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
                 <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
               </div>
             ) : absences.length === 0 ? (
-              <div className="text-center py-12 text-sm text-neutral-500">Aucune absence trouvee</div>
+              <div className="text-center py-12">
+                <div className="w-12 h-12 mx-auto rounded-xl bg-green-50 flex items-center justify-center mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <p className="text-sm text-neutral-500">Aucune absence trouvee pour ces criteres.</p>
+                <p className="text-xs text-neutral-400 mt-1">Modifiez les filtres pour affiner votre recherche.</p>
+              </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">

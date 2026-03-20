@@ -362,7 +362,7 @@ function CreateUserModal({
           )}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Prenom</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Prenom <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 required
@@ -372,7 +372,7 @@ function CreateUserModal({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Nom</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Nom <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 required
@@ -383,7 +383,7 @@ function CreateUserModal({
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1.5">Email</label>
+            <label className="block text-sm font-medium text-neutral-700 mb-1.5">Email <span className="text-red-500">*</span></label>
             <input
               type="email"
               required
@@ -419,8 +419,11 @@ function CreateUserModal({
             <button
               type="submit"
               disabled={saving}
-              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 disabled:opacity-50 transition-colors"
+              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 disabled:opacity-50 transition-colors inline-flex items-center gap-2"
             >
+              {saving && (
+                <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />
+              )}
               {saving ? "Creation..." : "Creer le compte"}
             </button>
           </div>

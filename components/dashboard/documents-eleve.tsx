@@ -68,9 +68,13 @@ export function DocumentsEleve() {
         </div>
         <div className="p-6">
           {data.sequences.length === 0 ? (
-            <p className="text-sm text-neutral-500">
-              Aucun bulletin disponible pour le moment.
-            </p>
+            <div className="text-center py-8">
+              <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+              </div>
+              <p className="text-sm text-neutral-500">Aucun bulletin disponible pour le moment.</p>
+              <p className="text-xs text-neutral-400 mt-1">Les bulletins apparaitront ici une fois generes par l&apos;administration.</p>
+            </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
               {data.sequences.map((seq) => (
@@ -106,9 +110,12 @@ export function DocumentsEleve() {
         </div>
         <div className="p-6">
           {data.paiements.length === 0 ? (
-            <p className="text-sm text-neutral-500">
-              Aucun recu disponible.
-            </p>
+            <div className="text-center py-8">
+              <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              </div>
+              <p className="text-sm text-neutral-500">Aucun recu de paiement disponible.</p>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -179,9 +186,12 @@ export function DocumentsEleve() {
         </div>
         <div className="p-6">
           {data.cours.length === 0 ? (
-            <p className="text-sm text-neutral-500">
-              Aucun cours disponible pour le moment.
-            </p>
+            <div className="text-center py-8">
+              <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+              </div>
+              <p className="text-sm text-neutral-500">Aucun cours disponible pour le moment.</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {data.cours.map((c) => (

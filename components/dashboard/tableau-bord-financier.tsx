@@ -128,31 +128,43 @@ export function TableauBordFinancier() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-neutral-200">
-          <div className="pt-4 pb-4 text-center">
-            <p className="text-sm text-green-600">Recettes du mois</p>
-            <p className="text-2xl font-bold text-green-700">{formatFCFA(data.recettes_mois)}</p>
+        <div className="bg-white rounded-xl border border-neutral-200 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+          <div className="p-5">
+            <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="1.8"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </div>
+            <p className="text-xs text-green-600 uppercase tracking-wider font-semibold">Recettes du mois</p>
+            <p className="text-2xl font-bold text-green-700 mt-1">{formatFCFA(data.recettes_mois)}</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200">
-          <div className="pt-4 pb-4 text-center">
-            <p className="text-sm text-red-600">Depenses du mois</p>
-            <p className="text-2xl font-bold text-red-700">{formatFCFA(data.depenses_mois)}</p>
+        <div className="bg-white rounded-xl border border-neutral-200 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+          <div className="p-5">
+            <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+            </div>
+            <p className="text-xs text-red-600 uppercase tracking-wider font-semibold">Depenses du mois</p>
+            <p className="text-2xl font-bold text-red-700 mt-1">{formatFCFA(data.depenses_mois)}</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200">
-          <div className="pt-4 pb-4 text-center">
-            <p className="text-sm text-indigo-500">Solde net</p>
-            <p className={`text-2xl font-bold ${data.solde_net >= 0 ? "text-green-700" : "text-red-700"}`}>
+        <div className="bg-white rounded-xl border border-neutral-200 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+          <div className="p-5">
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${data.solde_net >= 0 ? "bg-green-50" : "bg-red-50"}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={data.solde_net >= 0 ? "#22c55e" : "#ef4444"} strokeWidth="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            </div>
+            <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Solde net</p>
+            <p className={`text-2xl font-bold mt-1 ${data.solde_net >= 0 ? "text-green-700" : "text-red-700"}`}>
               {data.solde_net >= 0 ? "+" : ""}{formatFCFA(data.solde_net)}
             </p>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200">
-          <div className="pt-4 pb-4 text-center">
-            <p className="text-sm text-indigo-500">Taux de recouvrement</p>
-            <p className="text-2xl font-bold text-indigo-600">{data.taux_recouvrement}%</p>
-            <p className="text-xs text-neutral-400">
+        <div className="bg-white rounded-xl border border-neutral-200 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+          <div className="p-5">
+            <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Recouvrement</p>
+            <p className="text-2xl font-bold text-indigo-600 mt-1">{data.taux_recouvrement}%</p>
+            <p className="text-xs text-neutral-400 mt-0.5">
               {data.mensualites_payees}/{data.mensualites_total} mensualites
             </p>
           </div>
