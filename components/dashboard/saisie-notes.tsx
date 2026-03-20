@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useToast } from "@/components/ui/toast";
 
 interface Matiere {
   id: string;
@@ -29,6 +30,7 @@ interface SaisieNotesProps {
 }
 
 export function SaisieNotes({ matieresApiUrl = "/api/professeur/matieres" }: SaisieNotesProps) {
+  const { toast } = useToast();
   const [matieres, setMatieres] = useState<Matiere[]>([]);
   const [matiereId, setMatiereId] = useState("");
   const [type, setType] = useState<"CONTROLE" | "DEVOIR" | "EXAMEN">("CONTROLE");
@@ -155,6 +157,7 @@ export function SaisieNotes({ matieresApiUrl = "/api/professeur/matieres" }: Sai
         type: "success",
         text: `${data.saved} note(s) enregistree(s) avec succes`,
       });
+      toast({ type: "success", title: "Notes enregistrees", description: `${data.saved} note(s) sauvegardee(s)` });
 
       // Mettre a jour les moyennes affichees
       if (data.moyennes) {
