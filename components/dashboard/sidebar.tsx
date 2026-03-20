@@ -21,7 +21,8 @@ const NAV_ITEMS: Record<string, NavItem[]> = {
   CENSEUR: [
     { label: "Dashboard", href: "/dashboard/censeur", icon: <IconGrid /> },
     { label: "Élèves", href: "/dashboard/censeur/eleves", icon: <IconUsers /> },
-    { label: "Notes", href: "/dashboard/censeur/bulletins", icon: <IconChart /> },
+    { label: "Saisie des notes", href: "/dashboard/censeur/notes", icon: <IconClipboard /> },
+    { label: "Bulletins", href: "/dashboard/censeur/bulletins", icon: <IconChart /> },
     { label: "Absences", href: "/dashboard/censeur/absences", icon: <IconCalendar /> },
     { label: "Emploi du temps", href: "/dashboard/censeur/emplois-du-temps", icon: <IconClock /> },
   ],

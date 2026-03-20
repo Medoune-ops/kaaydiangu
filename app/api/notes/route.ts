@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
 // POST — saisie de notes en lot
 export async function POST(req: NextRequest) {
   const session = await auth();
-  if (!session || !["SUPER_ADMIN", "PROFESSEUR"].includes(session.user.role)) {
+  if (!session || !["SUPER_ADMIN", "PROFESSEUR", "CENSEUR"].includes(session.user.role)) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
   }
 
@@ -91,14 +91,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Séquence doit être entre 1 et 6" }, { status: 400 });
   }
 
-  // Vérifier que la matière appartient au prof
-  const matiere = await prisma.matiere.findFirst({
-    where: { id: matiere_id, professeur_id: session.user.id },
-    include: { classe: true },
-  });
-
-  if (!matiere && session.user.role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Matière non assignée à ce professeur" }, { status: 403 });
+  // Vérifier l'accès à la matière selon le rôle
+  let matiere;
+  if (session.user.role === "PROFESSEUR") {
+    // Le professeur ne peut saisir que pour ses propres matières
+    matiere = await prisma.matiere.findFirst({
+      where: { id: matiere_id, professeur_id: session.user.id },
+      include: { classe: true },
+    });
+    if (!matiere) {
+      return NextResponse.json({ error: "Matière non assignée à ce professeur" }, { status: 403 });
+    }
+  } else if (session.user.role === "CENSEUR") {
+    // Le censeur peut saisir pour toutes les matières de son école
+    matiere = await prisma.matiere.findFirst({
+      where: { id: matiere_id, classe: { ecole_id: session.user.ecoleId } },
+      include: { classe: true },
+    });
+    if (!matiere) {
+      return NextResponse.json({ error: "Matière introuvable dans cet établissement" }, { status: 403 });
+    }
+  } else {
+    // SUPER_ADMIN — accès libre
+    matiere = await prisma.matiere.findFirst({
+      where: { id: matiere_id },
+      include: { classe: true },
+    });
   }
 
   // Valider les notes (0-20)

@@ -15,6 +15,15 @@ export default async function CenseurPage() {
       iconBg: "bg-indigo-50",
     },
     {
+      href: "/dashboard/censeur/notes",
+      label: "Saisie des notes",
+      description: "Saisir et gerer les notes de toutes les classes",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+      ),
+      iconBg: "bg-indigo-50",
+    },
+    {
       href: "/dashboard/censeur/bulletins",
       label: "Bulletins de notes",
       description: "Generer et telecharger les bulletins par classe et sequence",
@@ -52,7 +61,7 @@ export default async function CenseurPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {links.map((link) => (
           <Link
             key={link.href}
