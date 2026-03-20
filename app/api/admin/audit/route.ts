@@ -4,10 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 // GET — journal d'audit avec filtres et pagination
 export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session || session.user.role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
   const { searchParams } = req.nextUrl;
   const page = parseInt(searchParams.get("page") || "1");
@@ -84,4 +85,11 @@ export async function GET(req: NextRequest) {
     actions: actions.map((a) => a.action),
     auteurs,
   });
+  } catch (error) {
+    console.error("[ADMIN_AUDIT_GET] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }

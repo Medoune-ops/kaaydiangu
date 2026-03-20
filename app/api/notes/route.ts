@@ -1,12 +1,14 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { batchNotesSchema } from "@/lib/validations";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET — récupérer les élèves d'une classe avec leurs notes pour une matière/séquence
 export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session || !["SUPER_ADMIN", "PROFESSEUR", "CENSEUR"].includes(session.user.role)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+  try {
+    const session = await auth();
+    if (!session || !["SUPER_ADMIN", "PROFESSEUR", "CENSEUR"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
   }
 
   const { searchParams } = req.nextUrl;
@@ -18,78 +20,104 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "classe_id et matiere_id requis" }, { status: 400 });
   }
 
-  const eleves = await prisma.eleve.findMany({
-    where: { classe_id: classeId, actif: true },
-    select: {
-      id: true,
-      nom: true,
-      prenom: true,
-      matricule: true,
-      notes: {
-        where: {
-          matiere_id: matiereId,
-          ...(sequence ? { sequence: parseInt(sequence) } : {}),
+  const eleveWhere = { classe_id: classeId, actif: true };
+  const page = searchParams.get("page");
+  const limit = parseInt(searchParams.get("limit") || "20");
+
+  const fetchEleves = (skip?: number, take?: number) =>
+    prisma.eleve.findMany({
+      where: eleveWhere,
+      select: {
+        id: true,
+        nom: true,
+        prenom: true,
+        matricule: true,
+        notes: {
+          where: {
+            matiere_id: matiereId,
+            ...(sequence ? { sequence: parseInt(sequence) } : {}),
+          },
+          select: {
+            id: true,
+            valeur: true,
+            type: true,
+            sequence: true,
+            appreciation: true,
+            date: true,
+          },
+          orderBy: { date: "desc" },
         },
-        select: {
-          id: true,
-          valeur: true,
-          type: true,
-          sequence: true,
-          appreciation: true,
-          date: true,
-        },
-        orderBy: { date: "desc" },
       },
-    },
-    orderBy: [{ nom: "asc" }, { prenom: "asc" }],
-  });
+      orderBy: [{ nom: "asc" }, { prenom: "asc" }],
+      ...(skip !== undefined ? { skip } : {}),
+      ...(take !== undefined ? { take } : {}),
+    });
 
-  // Calculer la moyenne par élève pour cette matière/séquence
-  const result = eleves.map((eleve) => {
-    const notesSeq = sequence
-      ? eleve.notes.filter((n) => n.sequence === parseInt(sequence))
-      : eleve.notes;
+  const mapEleves = (eleves: Awaited<ReturnType<typeof fetchEleves>>) =>
+    eleves.map((eleve) => {
+      const notesSeq = sequence
+        ? eleve.notes.filter((n) => n.sequence === parseInt(sequence))
+        : eleve.notes;
 
-    const moyenne =
-      notesSeq.length > 0
-        ? notesSeq.reduce((sum, n) => sum + n.valeur, 0) / notesSeq.length
-        : null;
+      const moyenne =
+        notesSeq.length > 0
+          ? notesSeq.reduce((sum, n) => sum + n.valeur, 0) / notesSeq.length
+          : null;
 
-    return {
-      ...eleve,
-      moyenne: moyenne !== null ? Math.round(moyenne * 100) / 100 : null,
-    };
-  });
+      return {
+        ...eleve,
+        moyenne: moyenne !== null ? Math.round(moyenne * 100) / 100 : null,
+      };
+    });
 
-  return NextResponse.json(result);
+  if (page) {
+    const pageNum = parseInt(page);
+    const skip = (pageNum - 1) * limit;
+
+    const [eleves, total] = await Promise.all([
+      fetchEleves(skip, limit),
+      prisma.eleve.count({ where: eleveWhere }),
+    ]);
+
+    return NextResponse.json({
+      data: mapEleves(eleves),
+      pagination: {
+        page: pageNum,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  }
+
+    const eleves = await fetchEleves();
+    return NextResponse.json(mapEleves(eleves));
+  } catch (error) {
+    console.error("[NOTES_GET] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }
 
 // POST — saisie de notes en lot
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session || !["SUPER_ADMIN", "PROFESSEUR", "CENSEUR"].includes(session.user.role)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || !["SUPER_ADMIN", "PROFESSEUR", "CENSEUR"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
   const body = await req.json();
-  const { matiere_id, type, sequence, date, notes } = body as {
-    matiere_id: string;
-    type: "CONTROLE" | "DEVOIR" | "EXAMEN";
-    sequence: number;
-    date: string;
-    notes: { eleve_id: string; valeur: number; appreciation?: string }[];
-  };
-
-  if (!matiere_id || !type || !sequence || !notes?.length) {
+  const parsed = batchNotesSchema.safeParse(body);
+  if (!parsed.success) {
     return NextResponse.json(
-      { error: "matiere_id, type, sequence et notes sont requis" },
+      { error: "Données invalides", details: parsed.error.flatten().fieldErrors },
       { status: 400 }
     );
   }
-
-  if (sequence < 1 || sequence > 6) {
-    return NextResponse.json({ error: "Séquence doit être entre 1 et 6" }, { status: 400 });
-  }
+  const { matiere_id, type, sequence, date, notes } = parsed.data;
 
   // Vérifier l'accès à la matière selon le rôle
   let matiere;
@@ -117,16 +145,6 @@ export async function POST(req: NextRequest) {
       where: { id: matiere_id },
       include: { classe: true },
     });
-  }
-
-  // Valider les notes (0-20)
-  for (const n of notes) {
-    if (n.valeur < 0 || n.valeur > 20) {
-      return NextResponse.json(
-        { error: "Les notes doivent être entre 0 et 20" },
-        { status: 400 }
-      );
-    }
   }
 
   const dateEval = date ? new Date(date) : new Date();
@@ -247,8 +265,15 @@ export async function POST(req: NextRequest) {
     })
   );
 
-  return NextResponse.json({
-    saved: result.length,
-    moyennes,
-  });
+    return NextResponse.json({
+      saved: result.length,
+      moyennes,
+    });
+  } catch (error) {
+    console.error("[NOTES_POST] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }

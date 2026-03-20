@@ -4,10 +4,11 @@ import { genererBulletinPDF, type BulletinData } from "@/lib/bulletin-pdf";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-  }
+  try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
 
   const { searchParams } = req.nextUrl;
   const eleveId = searchParams.get("eleve_id");
@@ -190,10 +191,17 @@ export async function GET(req: NextRequest) {
 
   const filename = `bulletin_${eleve.matricule}_seq${sequence}.pdf`;
 
-  return new NextResponse(new Uint8Array(pdfBuffer), {
-    headers: {
-      "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${filename}"`,
-    },
-  });
+    return new NextResponse(new Uint8Array(pdfBuffer), {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="${filename}"`,
+      },
+    });
+  } catch (error) {
+    console.error("[BULLETINS_GET] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }

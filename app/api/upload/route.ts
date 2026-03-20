@@ -9,27 +9,27 @@ cloudinary.config({
 });
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-  }
-
-  const formData = await req.formData();
-  const file = formData.get("file") as File | null;
-
-  if (!file) {
-    return NextResponse.json({ error: "Aucun fichier envoyé" }, { status: 400 });
-  }
-
-  if (!file.type.startsWith("image/")) {
-    return NextResponse.json({ error: "Le fichier doit être une image" }, { status: 400 });
-  }
-
-  if (file.size > 5 * 1024 * 1024) {
-    return NextResponse.json({ error: "Taille maximale : 5 Mo" }, { status: 400 });
-  }
-
   try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
+
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
+
+    if (!file) {
+      return NextResponse.json({ error: "Aucun fichier envoyé" }, { status: 400 });
+    }
+
+    if (!file.type.startsWith("image/")) {
+      return NextResponse.json({ error: "Le fichier doit être une image" }, { status: 400 });
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json({ error: "Taille maximale : 5 Mo" }, { status: 400 });
+    }
+
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
@@ -51,9 +51,10 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ url: result.secure_url });
-  } catch {
+  } catch (error) {
+    console.error("[UPLOAD_POST] Erreur:", error);
     return NextResponse.json(
-      { error: "Erreur lors de l'upload vers Cloudinary" },
+      { error: "Erreur serveur interne" },
       { status: 500 }
     );
   }

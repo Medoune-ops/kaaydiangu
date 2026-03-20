@@ -3,10 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const session = await auth();
-  if (!session || session.user.role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || session.user.role !== "SUPER_ADMIN") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
   const ecoleId = session.user.ecoleId;
   const now = new Date();
@@ -164,4 +165,11 @@ export async function GET() {
     elevesImpayes: elevesImpayesList,
     nbImpayes: elevesImpayesList.length,
   });
+  } catch (error) {
+    console.error("[ADMIN_STATS_GET] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }

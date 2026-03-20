@@ -5,12 +5,13 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-  }
+  try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
 
-  const eleve = await prisma.eleve.findFirst({
+    const eleve = await prisma.eleve.findFirst({
     where: { user_id: session.user.id },
     select: {
       id: true,
@@ -157,4 +158,11 @@ export async function GET() {
     absencesNonJustifiees,
     notifications,
   });
+  } catch (error) {
+    console.error("[ELEVE_RESUME_GET] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }

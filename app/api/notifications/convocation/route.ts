@@ -5,10 +5,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 // POST — envoyer une convocation à un élève
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session || !["SUPER_ADMIN", "CENSEUR"].includes(session.user.role)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  try {
+    const session = await auth();
+    if (!session || !["SUPER_ADMIN", "CENSEUR"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    }
 
   const body = await req.json();
   const { eleve_id, motif, date_convocation } = body;
@@ -82,4 +83,11 @@ export async function POST(req: NextRequest) {
     email_eleve: results.email_eleve?.success || false,
     email_parent: results.email_parent?.success || false,
   });
+  } catch (error) {
+    console.error("[NOTIFICATIONS_CONVOCATION_POST] Erreur:", error);
+    return NextResponse.json(
+      { error: "Erreur serveur interne" },
+      { status: 500 }
+    );
+  }
 }
