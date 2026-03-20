@@ -2,6 +2,8 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { NotificationBell } from "@/components/dashboard/notification-bell";
+import { ToastProvider } from "@/components/ui/toast-provider";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 
 export default async function DashboardLayout({
   children,
@@ -15,33 +17,31 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
-      <Sidebar
-        role={session.user.role}
-        userName={session.user.name || "Utilisateur"}
-      />
+    <ToastProvider>
+      <div className="min-h-screen bg-[#fafafa]">
+        <Sidebar
+          role={session.user.role}
+          userName={session.user.name || "Utilisateur"}
+        />
 
-      <div className="lg:pl-[240px]">
-        {/* Header */}
-        <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-neutral-200/60">
-          <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
-            <div className="lg:hidden w-8" />
-            <p className="text-sm text-neutral-400 font-medium hidden sm:block">
-              {new Date().toLocaleDateString("fr-FR", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </p>
-            <div className="flex items-center gap-2">
-              <NotificationBell />
+        <div className="lg:pl-[240px]">
+          {/* Header */}
+          <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-neutral-200/60">
+            <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
+              <div className="lg:hidden w-8" />
+              <div className="flex items-center gap-2">
+                <NotificationBell />
+              </div>
             </div>
-          </div>
-        </header>
+          </header>
 
-        <main className="p-4 sm:p-6 lg:p-8">{children}</main>
+          <main className="p-4 sm:p-6 lg:p-8">
+            <DashboardShell role={session.user.role}>
+              {children}
+            </DashboardShell>
+          </main>
+        </div>
       </div>
-    </div>
+    </ToastProvider>
   );
 }

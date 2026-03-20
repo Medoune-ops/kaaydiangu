@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useToast } from "@/components/ui/toast";
 
 interface Matiere {
   id: string;
@@ -19,6 +20,7 @@ interface CoursItem {
 }
 
 export function DepotCours({ matieres }: { matieres: Matiere[] }) {
+  const { toast } = useToast();
   const [titre, setTitre] = useState("");
   const [description, setDescription] = useState("");
   const [matiereId, setMatiereId] = useState("");
@@ -83,6 +85,7 @@ export function DepotCours({ matieres }: { matieres: Matiere[] }) {
       }
 
       setMessage("Cours depose avec succes !");
+      toast({ type: "success", title: "Cours depose", description: titre });
       setTitre("");
       setDescription("");
       setMatiereId("");

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useToast } from "@/components/ui/toast";
 
 interface EleveResult {
   id: string;
@@ -37,6 +38,7 @@ function imprimerRecu(paiementId: string) {
 }
 
 export function EnregistrementPaiement() {
+  const { toast } = useToast();
   const [query, setQuery] = useState("");
   const [resultats, setResultats] = useState<EleveResult[]>([]);
   const [searching, setSearching] = useState(false);
@@ -132,6 +134,7 @@ export function EnregistrementPaiement() {
       }
 
       setMessage(`Paiement enregistre ! Recu n ${data.recu_numero}`);
+      toast({ type: "success", title: "Paiement enregistre", description: `Recu n ${data.recu_numero}` });
       setLastRecu({ recu_numero: data.recu_numero, paiement_id: selectedPaiementId });
       setSelectedPaiementId("");
       setMontant("");

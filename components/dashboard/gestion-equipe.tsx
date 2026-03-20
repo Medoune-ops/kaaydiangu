@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useToast } from "@/components/ui/toast";
 
 interface MatiereInfo {
   id: string;
@@ -40,6 +41,7 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 export function GestionEquipe() {
+  const { toast } = useToast();
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -64,6 +66,7 @@ export function GestionEquipe() {
   const showMsg = (type: "success" | "error", text: string) => {
     setMessage({ type, text });
     setTimeout(() => setMessage(null), 5000);
+    toast({ type, title: type === "success" ? "Succes" : "Erreur", description: text });
   };
 
   const handleAction = async (

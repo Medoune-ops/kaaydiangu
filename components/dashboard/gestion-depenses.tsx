@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useToast } from "@/components/ui/toast";
 
 interface DepenseItem {
   id: string;
@@ -26,6 +27,7 @@ const CAT_COLORS: Record<string, string> = {
 };
 
 export function GestionDepenses() {
+  const { toast } = useToast();
   const [depenses, setDepenses] = useState<DepenseItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,6 +43,7 @@ export function GestionDepenses() {
   const [filtreMois, setFiltreMois] = useState(String(new Date().getMonth() + 1));
   const [filtreAnnee, setFiltreAnnee] = useState(String(new Date().getFullYear()));
   const [filtreCategorie, setFiltreCategorie] = useState("");
+  const [recherche, setRecherche] = useState("");
 
   async function charger() {
     setLoading(true);
@@ -76,6 +79,7 @@ export function GestionDepenses() {
         return;
       }
       setMessage("Depense enregistree !");
+      toast({ type: "success", title: "Depense enregistree", description: `${libelle} — ${montant} FCFA` });
       setLibelle("");
       setMontant("");
       setDate(new Date().toISOString().split("T")[0]);
@@ -93,7 +97,19 @@ export function GestionDepenses() {
     if (res.ok) setDepenses((prev) => prev.filter((d) => d.id !== id));
   }
 
-  const totalFiltre = depenses.reduce((s, d) => s + d.montant, 0);
+  // Filtrage client par recherche
+  const depensesFiltrees = depenses.filter((d) => {
+    if (!recherche) return true;
+    const q = recherche.toLowerCase();
+    return (
+      d.libelle.toLowerCase().includes(q) ||
+      d.enregistre_par.nom.toLowerCase().includes(q) ||
+      d.enregistre_par.prenom.toLowerCase().includes(q) ||
+      d.montant.toString().includes(q)
+    );
+  });
+
+  const totalFiltre = depensesFiltrees.reduce((s, d) => s + d.montant, 0);
 
   return (
     <div className="space-y-6">
@@ -187,13 +203,25 @@ export function GestionDepenses() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <h3 className="text-lg font-semibold text-neutral-900">
               Liste des depenses
-              {!loading && depenses.length > 0 && (
+              {!loading && (
                 <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-neutral-100 text-neutral-500">
-                  {depenses.length} resultat(s)
+                  {depensesFiltrees.length} resultat(s)
                 </span>
               )}
             </h3>
             <div className="flex flex-wrap items-center gap-3">
+              <div className="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                </svg>
+                <input
+                  type="text"
+                  value={recherche}
+                  onChange={(e) => setRecherche(e.target.value)}
+                  placeholder="Rechercher une depense..."
+                  className="h-9 w-56 bg-neutral-50 border border-neutral-200 rounded-lg pl-9 pr-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                />
+              </div>
               <select
                 value={filtreMois}
                 onChange={(e) => setFiltreMois(e.target.value)}
@@ -217,11 +245,19 @@ export function GestionDepenses() {
                 onChange={(e) => setFiltreCategorie(e.target.value)}
                 className="h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
               >
-                <option value="">Toutes</option>
+                <option value="">Toutes categories</option>
                 {CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>{c.label}</option>
                 ))}
               </select>
+              {(recherche || filtreCategorie) && (
+                <button
+                  onClick={() => { setRecherche(""); setFiltreCategorie(""); }}
+                  className="h-9 px-3 text-sm text-neutral-500 hover:text-neutral-700 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+                >
+                  Reinitialiser
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -231,7 +267,7 @@ export function GestionDepenses() {
               <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
               <p className="text-sm text-neutral-500">Chargement...</p>
             </div>
-          ) : depenses.length === 0 ? (
+          ) : depensesFiltrees.length === 0 ? (
             <div className="text-center py-12">
               <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>

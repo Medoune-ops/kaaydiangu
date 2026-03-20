@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useToast } from "@/components/ui/toast";
 
 interface Matiere {
   id: string;
@@ -22,6 +23,7 @@ interface AbsenceInput {
 }
 
 export function PointageAbsences() {
+  const { toast } = useToast();
   const [matieres, setMatieres] = useState<Matiere[]>([]);
   const [matiereId, setMatiereId] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -115,6 +117,7 @@ export function PointageAbsences() {
         type: "success",
         text: `${data.saved} absence(s) enregistree(s)`,
       });
+      toast({ type: "success", title: "Absences enregistrees", description: `${data.saved} absence(s) sauvegardee(s)` });
 
       // Reinitialiser les checkboxes
       setAbsencesInput((prev) => {

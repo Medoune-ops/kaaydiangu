@@ -1,13 +1,10 @@
 import { z } from "zod";
 
 // Paiement — POST /api/paiements
-// Le POST reçoit paiement_id (ID d'un paiement existant NON_PAYE), montant et mode
 export const paiementSchema = z.object({
   paiement_id: z.string().min(1, "ID paiement requis"),
   montant: z.number().positive("Le montant doit être positif"),
-  mode: z.enum(["ESPECES", "MOBILE_MONEY", "VIREMENT"], {
-    errorMap: () => ({ message: "Mode de paiement invalide" }),
-  }),
+  mode: z.enum(["ESPECES", "MOBILE_MONEY", "VIREMENT"]),
 });
 
 // Note individuelle (dans le batch)
@@ -20,9 +17,7 @@ export const noteItemSchema = z.object({
 // Notes en lot — POST /api/notes
 export const batchNotesSchema = z.object({
   matiere_id: z.string().min(1, "ID matière requis"),
-  type: z.enum(["CONTROLE", "DEVOIR", "EXAMEN"], {
-    errorMap: () => ({ message: "Type de note invalide" }),
-  }),
+  type: z.enum(["CONTROLE", "DEVOIR", "EXAMEN"]),
   sequence: z.number().int().min(1, "Séquence minimum 1").max(6, "Séquence maximum 6"),
   date: z.string().optional(),
   notes: z.array(noteItemSchema).min(1, "Au moins une note requise"),
@@ -45,9 +40,7 @@ export const batchAbsencesSchema = z.object({
 export const depenseSchema = z.object({
   libelle: z.string().min(1, "Libellé requis"),
   montant: z.number().positive("Le montant doit être positif"),
-  categorie: z.enum(["SALAIRE", "FOURNITURE", "MAINTENANCE", "AUTRE"], {
-    errorMap: () => ({ message: "Catégorie invalide" }),
-  }),
+  categorie: z.enum(["SALAIRE", "FOURNITURE", "MAINTENANCE", "AUTRE"]),
   date: z.string().min(1, "Date requise"),
 });
 
@@ -70,9 +63,7 @@ export const userSchema = z.object({
   prenom: z.string().min(1, "Prénom requis"),
   nom: z.string().min(1, "Nom requis"),
   email: z.string().email("Email invalide"),
-  role: z.enum(["COMPTABLE", "CENSEUR", "PROFESSEUR"], {
-    errorMap: () => ({ message: "Rôle invalide (COMPTABLE, CENSEUR ou PROFESSEUR)" }),
-  }),
+  role: z.enum(["COMPTABLE", "CENSEUR", "PROFESSEUR"]),
 });
 
 // Cours — POST /api/cours

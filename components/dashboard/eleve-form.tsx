@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/toast";
 import { PhotoUpload } from "@/components/dashboard/photo-upload";
 
 interface Classe {
@@ -22,6 +23,7 @@ interface ResultData {
 
 export function EleveForm({ classes }: EleveFormProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<ResultData | null>(null);
@@ -68,6 +70,7 @@ export function EleveForm({ classes }: EleveFormProps) {
       }
 
       setResult(data);
+      toast({ type: "success", title: "Eleve inscrit", description: `Matricule: ${data.matricule}` });
     } catch {
       setError("Erreur reseau. Reessayez.");
     } finally {

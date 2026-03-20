@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { signOut } from "next-auth/react";
+import { KeyboardShortcuts } from "./keyboard-shortcuts";
+import { ShortcutHint } from "./shortcut-hint";
 
 interface NavItem {
   label: string;
@@ -57,6 +59,10 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
   const [mobileOpen, setMobileOpen] = useState(false);
   const items = NAV_ITEMS[role] || [];
 
+  const toggleSidebar = useCallback(() => {
+    setMobileOpen((prev) => !prev);
+  }, []);
+
   const initials = userName
     .split(" ")
     .map((n) => n[0])
@@ -80,16 +86,18 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 space-y-0.5">
+      <nav className="flex-1 px-3 space-y-0.5" aria-label="Menu principal">
         <p className="px-3 mb-3 text-xs font-semibold text-neutral-500 uppercase tracking-widest">Menu</p>
-        {items.map((item) => {
+        {items.map((item, index) => {
           const isActive = pathname === item.href || (item.href !== "/dashboard/admin" && item.href !== "/dashboard/censeur" && item.href !== "/dashboard/comptable" && item.href !== "/dashboard/professeur" && item.href !== "/dashboard/eleve" && pathname.startsWith(item.href + "/"));
           return (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-all duration-150 ${
+              aria-label={item.label}
+              aria-current={isActive ? "page" : undefined}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
                 isActive
                   ? "bg-indigo-500/10 text-indigo-400"
                   : "text-neutral-400 hover:bg-white/[0.04] hover:text-neutral-200"
@@ -98,7 +106,10 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
               <span className={`shrink-0 ${isActive ? "text-indigo-400" : "text-neutral-500"}`}>
                 {item.icon}
               </span>
-              <span>{item.label}</span>
+              <span className="flex-1">{item.label}</span>
+              {index < 5 && (
+                <ShortcutHint keys={`Alt+${index + 1}`} />
+              )}
               {isActive && (
                 <div className="ml-auto w-1 h-4 rounded-full bg-indigo-500" />
               )}

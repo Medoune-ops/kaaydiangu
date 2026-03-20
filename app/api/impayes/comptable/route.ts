@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
           user_id: e.user_id,
           classe: e.classe,
           mois_impayes: e.paiements.map(
-            (p) => `${MOIS_NOMS[p.mois]} ${p.annee}`
+            (p: { mois: number; annee: number }) => `${MOIS_NOMS[p.mois]} ${p.annee}`
           ),
           nombre_mois_impayes: e.paiements.length,
           jours_retard: joursRetard,
