@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 
 interface NavItem {
   label: string;
@@ -116,13 +117,13 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
             <p className="text-xs text-neutral-500">{ROLE_LABEL[role] || role}</p>
           </div>
         </div>
-        <Link
-          href="/api/auth/signout"
-          className="flex items-center gap-2 px-3 py-2 mt-1 rounded-lg text-neutral-500 hover:bg-white/[0.04] hover:text-neutral-300 text-sm transition-colors"
+        <button
+          onClick={() => signOut({ callbackUrl: "/" })}
+          className="flex items-center gap-2 px-3 py-2 mt-1 rounded-lg text-neutral-500 hover:bg-white/[0.04] hover:text-neutral-300 text-sm transition-colors w-full"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
           <span>Déconnexion</span>
-        </Link>
+        </button>
       </div>
     </div>
   );
