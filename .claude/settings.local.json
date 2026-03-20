@@ -18,7 +18,9 @@
       "Bash(git status:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(ls -la c:/Users/Medoune/Desktop/kaaydiangu/public/favicon*)",
+      "Bash(ls -la c:/Users/Medoune/Desktop/kaaydiangu/public/icon*)"
     ],
     "additionalDirectories": [
       "c:\\Users\\Medoune\\Desktop\\kaaydiangu\\.next"
