@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 interface EleveResult {
   id: string;
@@ -52,16 +52,36 @@ export function EnregistrementPaiement() {
   const [message, setMessage] = useState("");
   const [lastRecu, setLastRecu] = useState<{ recu_numero: string; paiement_id: string } | null>(null);
 
-  const rechercher = useCallback(async () => {
-    if (query.trim().length < 2) return;
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const rechercher = useCallback(async (q: string) => {
+    if (q.trim().length < 2) {
+      setResultats([]);
+      return;
+    }
     setSearching(true);
     try {
-      const res = await fetch(`/api/paiements/recherche?q=${encodeURIComponent(query.trim())}`);
+      const res = await fetch(`/api/paiements/recherche?q=${encodeURIComponent(q.trim())}`);
       if (res.ok) setResultats(await res.json());
     } finally {
       setSearching(false);
     }
-  }, [query]);
+  }, []);
+
+  useEffect(() => {
+    if (selectedEleve) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (query.trim().length < 2) {
+      setResultats([]);
+      return;
+    }
+    debounceRef.current = setTimeout(() => {
+      rechercher(query);
+    }, 300);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [query, selectedEleve, rechercher]);
 
   async function selectEleve(eleve: EleveResult) {
     setSelectedEleve(eleve);
@@ -133,21 +153,27 @@ export function EnregistrementPaiement() {
           <h3 className="text-lg font-semibold text-neutral-900">Rechercher un eleve</h3>
         </div>
         <div className="px-6 py-4 space-y-3">
-          <div className="flex gap-3">
-            <input
-              placeholder="Nom, prenom ou matricule..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && rechercher()}
-              className="flex-1 h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-            />
-            <button
-              onClick={rechercher}
-              disabled={searching || query.trim().length < 2}
-              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {searching ? "..." : "Rechercher"}
-            </button>
+          <div className="relative">
+            <div className="flex gap-3">
+              <div className="relative flex-1">
+                <input
+                  placeholder="Commencez a taper un nom, prenom ou matricule..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && rechercher(query)}
+                  className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg pl-10 pr-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                />
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                {searching && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className="w-4 h-4 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
+                  </div>
+                )}
+              </div>
+            </div>
+            {query.trim().length > 0 && query.trim().length < 2 && (
+              <p className="text-xs text-neutral-400 mt-1">Tapez au moins 2 caracteres...</p>
+            )}
           </div>
 
           {resultats.length > 0 && (
