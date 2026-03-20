@@ -105,9 +105,13 @@ export function EnregistrementPaiement() {
     setLastRecu(null);
 
     if (!selectedPaiementId || !montant || !mode) {
-      setMessage("Veuillez remplir tous les champs.");
+      setMessage("Veuillez remplir tous les champs obligatoires.");
       return;
     }
+
+    const selectedMois = nonPayes.find((p) => p.id === selectedPaiementId);
+    const moisLabel = selectedMois ? `${MOIS_NOMS[selectedMois.mois]} ${selectedMois.annee}` : "";
+    if (!confirm(`Confirmer le paiement de ${parseFloat(montant).toLocaleString("fr-FR")} FCFA pour ${selectedEleve!.prenom} ${selectedEleve!.nom} (${moisLabel}) ?`)) return;
 
     setSubmitting(true);
     try {
@@ -228,14 +232,19 @@ export function EnregistrementPaiement() {
           </div>
           <div className="px-6 py-4">
             {nonPayes.length === 0 ? (
-              <p className="text-sm text-green-600 font-medium">
-                Tous les mois sont payes pour cet eleve.
-              </p>
+              <div className="text-center py-6">
+                <div className="w-12 h-12 mx-auto rounded-xl bg-green-50 flex items-center justify-center mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <p className="text-sm text-green-600 font-medium">
+                  Tous les mois sont payes pour cet eleve.
+                </p>
+              </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900 mb-1.5">Mois a payer</label>
+                    <label className="block text-sm font-medium text-neutral-900 mb-1.5">Mois a payer <span className="text-red-500">*</span></label>
                     <select
                       value={selectedPaiementId}
                       onChange={(e) => setSelectedPaiementId(e.target.value)}
@@ -251,7 +260,7 @@ export function EnregistrementPaiement() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900 mb-1.5">Montant (FCFA)</label>
+                    <label className="block text-sm font-medium text-neutral-900 mb-1.5">Montant (FCFA) <span className="text-red-500">*</span></label>
                     <input
                       type="number"
                       min="1"
@@ -263,7 +272,7 @@ export function EnregistrementPaiement() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900 mb-1.5">Mode de paiement</label>
+                    <label className="block text-sm font-medium text-neutral-900 mb-1.5">Mode de paiement <span className="text-red-500">*</span></label>
                     <select
                       value={mode}
                       onChange={(e) => setMode(e.target.value)}
@@ -281,8 +290,11 @@ export function EnregistrementPaiement() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-2"
                   >
+                    {submitting && (
+                      <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />
+                    )}
                     {submitting ? "Enregistrement..." : "Valider le paiement"}
                   </button>
                   {lastRecu && (
@@ -307,13 +319,20 @@ export function EnregistrementPaiement() {
                 </div>
 
                 {message && (
-                  <p
-                    className={`text-sm ${
-                      message.includes("enregistre") ? "text-green-600" : "text-red-600"
+                  <div
+                    className={`text-sm px-4 py-2.5 rounded-lg flex items-center gap-2 ${
+                      message.includes("enregistre")
+                        ? "bg-green-50 text-green-700 border border-green-200"
+                        : "bg-red-50 text-red-700 border border-red-200"
                     }`}
                   >
+                    {message.includes("enregistre") ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    )}
                     {message}
-                  </p>
+                  </div>
                 )}
               </form>
             )}

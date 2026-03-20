@@ -130,7 +130,12 @@ export function GenerationBulletins({ classes }: { classes: Classe[] }) {
                 <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
               </div>
             ) : eleves.length === 0 ? (
-              <div className="text-center py-12 text-sm text-neutral-500">Aucun eleve dans cette classe</div>
+              <div className="text-center py-12">
+                <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <p className="text-sm text-neutral-500">Aucun eleve dans cette classe.</p>
+              </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">

@@ -106,7 +106,7 @@ export function GestionDepenses() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-900 mb-1.5">Libelle</label>
+                <label className="block text-sm font-medium text-neutral-900 mb-1.5">Libelle <span className="text-red-500">*</span></label>
                 <input
                   value={libelle}
                   onChange={(e) => setLibelle(e.target.value)}
@@ -116,7 +116,7 @@ export function GestionDepenses() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-900 mb-1.5">Montant (FCFA)</label>
+                <label className="block text-sm font-medium text-neutral-900 mb-1.5">Montant (FCFA) <span className="text-red-500">*</span></label>
                 <input
                   type="number"
                   min="1"
@@ -154,14 +154,28 @@ export function GestionDepenses() {
             <button
               type="submit"
               disabled={submitting}
-              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-2"
             >
+              {submitting && (
+                <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />
+              )}
               {submitting ? "Enregistrement..." : "Enregistrer la depense"}
             </button>
             {message && (
-              <p className={`text-sm ${message.includes("enregistree") ? "text-green-600" : "text-red-600"}`}>
+              <div
+                className={`text-sm px-4 py-2.5 rounded-lg flex items-center gap-2 ${
+                  message.includes("enregistree")
+                    ? "bg-green-50 text-green-700 border border-green-200"
+                    : "bg-red-50 text-red-700 border border-red-200"
+                }`}
+              >
+                {message.includes("enregistree") ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                )}
                 {message}
-              </p>
+              </div>
             )}
           </form>
         </div>
@@ -171,7 +185,14 @@ export function GestionDepenses() {
       <div className="bg-white rounded-xl border border-neutral-200">
         <div className="px-6 py-4 border-b border-neutral-100">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <h3 className="text-lg font-semibold text-neutral-900">Liste des depenses</h3>
+            <h3 className="text-lg font-semibold text-neutral-900">
+              Liste des depenses
+              {!loading && depenses.length > 0 && (
+                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-neutral-100 text-neutral-500">
+                  {depenses.length} resultat(s)
+                </span>
+              )}
+            </h3>
             <div className="flex flex-wrap items-center gap-3">
               <select
                 value={filtreMois}
@@ -211,7 +232,13 @@ export function GestionDepenses() {
               <p className="text-sm text-neutral-500">Chargement...</p>
             </div>
           ) : depenses.length === 0 ? (
-            <p className="text-sm text-neutral-500">Aucune depense pour cette periode.</p>
+            <div className="text-center py-12">
+              <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>
+              </div>
+              <p className="text-sm text-neutral-500">Aucune depense pour cette periode.</p>
+              <p className="text-xs text-neutral-400 mt-1">Utilisez le formulaire ci-dessus pour enregistrer une depense.</p>
+            </div>
           ) : (
             <>
               <div className="mb-4 bg-neutral-50 border border-neutral-200 rounded-lg p-3 text-center">

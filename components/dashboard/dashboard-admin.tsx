@@ -76,6 +76,7 @@ export function DashboardAdmin() {
       value: stats.effectifTotal,
       icon: <IconUsers />,
       detailKey: "effectif" as DetailView,
+      iconBg: "bg-indigo-50 text-indigo-500",
     },
     {
       label: "Recouvrement",
@@ -84,6 +85,7 @@ export function DashboardAdmin() {
       icon: <IconWallet />,
       accent: stats.tauxRecouvrement >= 70,
       detailKey: null as DetailView,
+      iconBg: stats.tauxRecouvrement >= 70 ? "bg-green-50 text-green-500" : "bg-amber-50 text-amber-500",
     },
     {
       label: "Moyenne ecole",
@@ -91,6 +93,7 @@ export function DashboardAdmin() {
       sublabel: `seq. ${stats.sequenceRef}`,
       icon: <IconChart />,
       detailKey: null as DetailView,
+      iconBg: "bg-violet-50 text-violet-500",
     },
     {
       label: "Absences",
@@ -99,6 +102,7 @@ export function DashboardAdmin() {
       icon: <IconAlert />,
       warning: stats.nbAbsences > 0,
       detailKey: "absences" as DetailView,
+      iconBg: stats.nbAbsences > 0 ? "bg-red-50 text-red-500" : "bg-green-50 text-green-500",
     },
     {
       label: "Impayes",
@@ -107,6 +111,7 @@ export function DashboardAdmin() {
       icon: <IconClock />,
       warning: stats.nbImpayes > 0,
       detailKey: "impayes" as DetailView,
+      iconBg: stats.nbImpayes > 0 ? "bg-orange-50 text-orange-500" : "bg-green-50 text-green-500",
     },
   ];
 
@@ -119,13 +124,13 @@ export function DashboardAdmin() {
             key={kpi.label}
             onClick={() => kpi.detailKey && setDetail(detail === kpi.detailKey ? null : kpi.detailKey)}
             disabled={!kpi.detailKey}
-            className={`bg-white rounded-xl border border-neutral-200 p-5 text-left transition-all ${
-              kpi.detailKey ? "cursor-pointer hover:border-indigo-200 hover:shadow-sm" : "cursor-default"
+            className={`bg-white rounded-xl border border-neutral-200 p-5 text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 ${
+              kpi.detailKey ? "cursor-pointer hover:border-indigo-200" : "cursor-default"
             } ${detail === kpi.detailKey ? "ring-2 ring-indigo-500 border-indigo-200" : ""}`}
           >
             <div className="flex items-center justify-between mb-3">
               <span className={`w-9 h-9 rounded-lg flex items-center justify-center ${
-                kpi.warning ? "bg-red-50 text-red-500" : "bg-neutral-50 text-neutral-400"
+                kpi.iconBg || (kpi.warning ? "bg-red-50 text-red-500" : "bg-neutral-50 text-neutral-400")
               }`}>
                 {kpi.icon}
               </span>
@@ -315,7 +320,7 @@ function DetailPanel({
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <div className="max-h-96 overflow-y-auto">{children}</div>
+      <div className="max-h-96 overflow-y-auto overflow-x-auto">{children}</div>
     </div>
   );
 }

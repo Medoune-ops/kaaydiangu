@@ -116,7 +116,7 @@ export function DepotCours({ matieres }: { matieres: Matiere[] }) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-900 mb-1">Matiere / Classe</label>
+                <label className="block text-sm font-medium text-neutral-900 mb-1">Matiere / Classe <span className="text-red-500">*</span></label>
                 <select
                   value={matiereId}
                   onChange={(e) => setMatiereId(e.target.value)}
@@ -132,7 +132,7 @@ export function DepotCours({ matieres }: { matieres: Matiere[] }) {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-900 mb-1">Titre</label>
+                <label className="block text-sm font-medium text-neutral-900 mb-1">Titre <span className="text-red-500">*</span></label>
                 <input
                   value={titre}
                   onChange={(e) => setTitre(e.target.value)}
@@ -155,7 +155,7 @@ export function DepotCours({ matieres }: { matieres: Matiere[] }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1">Fichier (PDF, Word, Image -- max 10 Mo)</label>
+              <label className="block text-sm font-medium text-neutral-900 mb-1">Fichier <span className="text-red-500">*</span> <span className="text-neutral-400 font-normal">(PDF, Word, Image -- max 10 Mo)</span></label>
               <input
                 ref={fileRef}
                 type="file"
@@ -167,8 +167,11 @@ export function DepotCours({ matieres }: { matieres: Matiere[] }) {
             <button
               type="submit"
               disabled={loading}
-              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 transition-colors disabled:opacity-50"
+              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 transition-colors disabled:opacity-50 inline-flex items-center gap-2"
             >
+              {loading && (
+                <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />
+              )}
               {loading ? "Envoi en cours..." : "Deposer le cours"}
             </button>
 
@@ -191,7 +194,13 @@ export function DepotCours({ matieres }: { matieres: Matiere[] }) {
         </div>
         <div className="p-6">
           {cours.length === 0 ? (
-            <p className="text-sm text-neutral-500">Aucun cours depose pour le moment.</p>
+            <div className="text-center py-8">
+              <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+              </div>
+              <p className="text-sm text-neutral-500">Aucun cours depose pour le moment.</p>
+              <p className="text-xs text-neutral-400 mt-1">Utilisez le formulaire ci-dessus pour deposer votre premier cours.</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {cours.map((c) => (

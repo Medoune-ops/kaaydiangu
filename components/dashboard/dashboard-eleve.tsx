@@ -120,8 +120,11 @@ export function DashboardEleve() {
     <div className="space-y-6">
       {/* KPI CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center">
-          <p className="text-sm text-indigo-500 uppercase tracking-wider">Moyenne generale</p>
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+          <div className="w-10 h-10 mx-auto rounded-lg bg-indigo-50 flex items-center justify-center mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Moyenne generale</p>
           <p className="text-3xl font-bold text-neutral-900 mt-1">
             {data.moyenneGenerale !== null
               ? `${data.moyenneGenerale.toFixed(2)}`
@@ -129,16 +132,22 @@ export function DashboardEleve() {
           </p>
           <p className="text-sm text-neutral-400 mt-1">/20 -- Seq. {data.sequence}</p>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center">
-          <p className="text-sm text-indigo-500 uppercase tracking-wider">Rang</p>
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+          <div className="w-10 h-10 mx-auto rounded-lg bg-amber-50 flex items-center justify-center mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p className="text-xs text-amber-500 uppercase tracking-wider font-semibold">Rang</p>
           <p className="text-3xl font-bold text-neutral-900 mt-1">
             {data.rang}
             <span className="text-base">{data.rang === 1 ? "er" : "e"}</span>
           </p>
           <p className="text-sm text-neutral-400 mt-1">sur {data.totalEleves} eleves</p>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center">
-          <p className="text-sm text-indigo-500 uppercase tracking-wider">Mois restants a payer</p>
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+          <div className={`w-10 h-10 mx-auto rounded-lg flex items-center justify-center mb-2 ${data.moisRestants > 0 ? "bg-red-50" : "bg-green-50"}`}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={data.moisRestants > 0 ? "#ef4444" : "#22c55e"} strokeWidth="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+          <p className={`text-xs uppercase tracking-wider font-semibold ${data.moisRestants > 0 ? "text-red-500" : "text-green-500"}`}>Mois restants a payer</p>
           <p className={`text-3xl font-bold mt-1 ${data.moisRestants > 0 ? "text-red-600" : "text-green-600"}`}>
             {data.moisRestants}
           </p>
@@ -146,8 +155,11 @@ export function DashboardEleve() {
             sur {data.paiements.length} mensualites
           </p>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center">
-          <p className="text-sm text-indigo-500 uppercase tracking-wider">Absences</p>
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+          <div className={`w-10 h-10 mx-auto rounded-lg flex items-center justify-center mb-2 ${data.absencesNonJustifiees > 0 ? "bg-red-50" : "bg-neutral-100"}`}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={data.absencesNonJustifiees > 0 ? "#ef4444" : "#a3a3a3"} strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <p className="text-xs text-neutral-500 uppercase tracking-wider font-semibold">Absences</p>
           <p className="text-3xl font-bold text-neutral-900 mt-1">{data.totalAbsences}</p>
           <p className="text-sm text-neutral-400 mt-1">
             {data.totalHeures}h -- {data.absencesNonJustifiees} non justifiee(s)
@@ -164,7 +176,13 @@ export function DashboardEleve() {
         </div>
         <div className="p-6">
           {data.matieres.length === 0 ? (
-            <p className="text-sm text-neutral-500">Aucune matiere.</p>
+            <div className="text-center py-8">
+              <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              </div>
+              <p className="text-sm text-neutral-500">Aucune note disponible pour le moment.</p>
+              <p className="text-xs text-neutral-400 mt-1">Les notes apparaitront ici une fois saisies par vos professeurs.</p>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -306,7 +324,12 @@ export function DashboardEleve() {
         </div>
         <div className="p-6">
           {data.notifications.length === 0 ? (
-            <p className="text-sm text-neutral-500">Aucune notification.</p>
+            <div className="text-center py-8">
+              <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+              </div>
+              <p className="text-sm text-neutral-500">Aucune notification pour le moment.</p>
+            </div>
           ) : (
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {data.notifications.map((n) => (

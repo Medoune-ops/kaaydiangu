@@ -58,7 +58,12 @@ export function PaiementsEleve({ eleveId }: { eleveId: string }) {
         )}
 
         {loaded && paiements.length === 0 && (
-          <p className="text-sm text-neutral-500">Aucun paiement enregistre.</p>
+          <div className="text-center py-8">
+            <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            </div>
+            <p className="text-sm text-neutral-500">Aucun paiement enregistre pour le moment.</p>
+          </div>
         )}
 
         {loaded && paiements.length > 0 && (

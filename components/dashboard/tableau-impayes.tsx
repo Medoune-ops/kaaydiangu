@@ -196,7 +196,14 @@ export function TableauImpayes() {
       <div className="bg-white rounded-xl border border-neutral-200">
         <div className="px-6 py-4 border-b border-neutral-100">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <h3 className="text-lg font-semibold text-neutral-900">Liste des impayes</h3>
+            <h3 className="text-lg font-semibold text-neutral-900">
+              Liste des impayes
+              {!loading && filteredEleves.length > 0 && (
+                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-neutral-100 text-neutral-500">
+                  {filteredEleves.length} resultat(s)
+                </span>
+              )}
+            </h3>
             <div className="flex flex-wrap items-center gap-3">
               <select
                 value={filtreClasse}
@@ -251,9 +258,13 @@ export function TableauImpayes() {
               <p className="text-sm text-neutral-500">Chargement...</p>
             </div>
           ) : filteredEleves.length === 0 ? (
-            <p className="text-sm text-neutral-500">
-              Aucun eleve en retard de paiement pour ces criteres.
-            </p>
+            <div className="text-center py-12">
+              <div className="w-12 h-12 mx-auto rounded-xl bg-green-50 flex items-center justify-center mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <p className="text-sm text-neutral-500">Aucun eleve en retard de paiement pour ces criteres.</p>
+              <p className="text-xs text-neutral-400 mt-1">Tous les paiements sont a jour.</p>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
