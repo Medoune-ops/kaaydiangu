@@ -3,16 +3,8 @@ import Image from "next/image";
 import { ListeImpayes } from "@/components/public/liste-impayes";
 import { ScrollAnimateProvider } from "@/components/public/scroll-animate";
 import { TiltCard } from "@/components/ui/tilt-card";
-import { CountUp } from "@/components/ui/count-up";
 
 /* ─────────────────── DATA ─────────────────── */
-
-const stats = [
-  { label: "Élèves inscrits",     value: "1200+",  raw: "1200+",  icon: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M22 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75", ic: "text-cyan-400",   ib: "bg-cyan-500/15",   bar: "#22d3ee" },
-  { label: "Enseignants qualifiés", value: "85",   raw: "85",     icon: "M22 10v6M2 10l10-5 10 5-10 5z M6 12v5c3 3 9 3 12 0v-5",                                                                               ic: "text-teal-400",   ib: "bg-teal-500/15",   bar: "#2dd4bf" },
-  { label: "Taux de réussite",    value: "94%",    raw: "94%",    icon: "M22 11.08V12a10 10 0 1 1-5.93-9.14 M22 4 12 14.01l-3-3",                                                                            ic: "text-violet-400", ib: "bg-violet-500/15", bar: "#a78bfa" },
-  { label: "Années d'expérience", value: "15+",    raw: "15+",    icon: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",                                                                                      ic: "text-indigo-400", ib: "bg-indigo-500/15", bar: "#818cf8" },
-];
 
 const strengths = [
   { title: "Enseignement d'excellence",  desc: "Un programme conforme au curriculum national, enrichi par des approches pédagogiques modernes et innovantes.", image: "/images/salle-classe-1.jpeg",     span: "md:col-span-2" },
@@ -311,44 +303,6 @@ export default function HomePage() {
 
         {/* Fade to next section */}
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#020c1b] to-transparent pointer-events-none" />
-      </section>
-
-
-      {/* ══════════════════════════════════════════════════════ */}
-      {/*  STATS — Tilt 3D + CountUp                           */}
-      {/* ══════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-[#020c1b] relative section-lazy">
-        <div className="gradient-line absolute top-0 left-[8%] right-[8%]" />
-
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-            {stats.map((stat, i) => (
-              <TiltCard
-                key={stat.label}
-                intensity={6}
-                className={`scroll-animate scroll-animate-delay-${i + 1}`}
-              >
-                <div className="glass-dark p-7 text-center h-full cursor-default">
-                  {/* Icon with pulse */}
-                  <div className={`mx-auto mb-5 w-12 h-12 rounded-2xl ${stat.ib} flex items-center justify-center animate-icon-pulse`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={stat.ic}>
-                      <path d={stat.icon} />
-                    </svg>
-                  </div>
-                  {/* Counter */}
-                  <p className="text-4xl md:text-5xl font-extrabold text-white tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
-                    <CountUp value={stat.raw} />
-                  </p>
-                  {/* Accent line */}
-                  <div className="mx-auto mt-3 mb-3 w-10 h-0.5 rounded-full" style={{ background: `linear-gradient(90deg, ${stat.bar}99, ${stat.bar}44)` }} />
-                  <p className="text-white/40 font-medium text-[13px]">{stat.label}</p>
-                </div>
-              </TiltCard>
-            ))}
-          </div>
-        </div>
-
-        <div className="gradient-line absolute bottom-0 left-[8%] right-[8%]" />
       </section>
 
 
