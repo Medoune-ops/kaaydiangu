@@ -16,7 +16,7 @@ export function Footer() {
                 </svg>
               </div>
               <span className="text-xl font-bold text-white tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
-                Mon <span className="text-cyan-400">Ecole</span>
+                <span className="text-cyan-400">IREF</span>
               </span>
             </div>
             <p className="text-neutral-400 leading-relaxed max-w-xs">
@@ -83,7 +83,7 @@ export function Footer() {
         </div>
 
         <div className="mt-16 pt-8 border-t border-white/[0.06] flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-neutral-600">&copy; {new Date().getFullYear()} Mon Ecole. Tous droits reserves.</p>
+          <p className="text-sm text-neutral-600">&copy; {new Date().getFullYear()} IREF. Tous droits reserves.</p>
           <p className="text-sm text-neutral-600">Concu avec <span className="text-cyan-500">&hearts;</span> au Senegal</p>
         </div>
       </div>

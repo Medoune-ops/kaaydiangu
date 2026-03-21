@@ -15,12 +15,12 @@ const stats = [
 ];
 
 const strengths = [
-  { title: "Enseignement d'excellence",  desc: "Un programme conforme au curriculum national, enrichi par des approches pédagogiques modernes et innovantes.", icon: "M22 10v6M2 10l10-5 10 5-10 5z M6 12v5c3 3 9 3 12 0v-5", ib: "bg-cyan-50",    ic: "text-cyan-600",    glow: "shadow-cyan-500/25",   span: "md:col-span-2" },
-  { title: "Encadrement personnalisé",   desc: "Des effectifs maîtrisés et un suivi individuel de chaque élève pour garantir sa réussite scolaire.",           icon: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M22 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75", ib: "bg-violet-50", ic: "text-violet-600", glow: "shadow-violet-500/25", span: "" },
-  { title: "Infrastructures modernes",   desc: "Salles de classe équipées, bibliothèque, salle informatique et espaces sportifs de qualité.",                   icon: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10",                                                                    ib: "bg-teal-50",   ic: "text-teal-600",   glow: "shadow-teal-500/25",   span: "" },
-  { title: "Suivi en temps réel",        desc: "Espace parent en ligne pour consulter notes, absences et paiements de votre enfant à tout instant.",            icon: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",                                                                    ib: "bg-indigo-50", ic: "text-indigo-600", glow: "shadow-indigo-500/25", span: "md:col-span-2" },
-  { title: "Activités parascolaires",    desc: "Football, basketball, théâtre et chorale pour l'épanouissement complet de chaque élève.",                       icon: "M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0",                                                            ib: "bg-orange-50", ic: "text-orange-600", glow: "shadow-orange-500/25", span: "" },
-  { title: "Discipline et valeurs",      desc: "Un cadre structuré fondé sur le respect, la rigueur et l'intégrité pour former les citoyens de demain.",        icon: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",                                                                                       ib: "bg-rose-50",   ic: "text-rose-600",   glow: "shadow-rose-500/25",   span: "" },
+  { title: "Enseignement d'excellence",  desc: "Un programme conforme au curriculum national, enrichi par des approches pédagogiques modernes et innovantes.", image: "/images/salle-classe-1.jpeg",     span: "md:col-span-2" },
+  { title: "Encadrement personnalisé",   desc: "Des effectifs maîtrisés et un suivi individuel de chaque élève pour garantir sa réussite scolaire.",           image: "/images/salle-classe-2.jpeg",     span: "" },
+  { title: "Infrastructures modernes",   desc: "Salles de classe équipées, bibliothèque, salle informatique et espaces sportifs de qualité.",                   image: "/images/ecole-facade.jpeg",       span: "" },
+  { title: "Suivi en temps réel",        desc: "Espace parent en ligne pour consulter notes, absences et paiements de votre enfant à tout instant.",            image: "/images/salle-classe-3.jpeg",     span: "md:col-span-2" },
+  { title: "Activités parascolaires",    desc: "Football, basketball, théâtre et chorale pour l'épanouissement complet de chaque élève.",                       image: "/images/salle-maternelle-1.jpeg", span: "" },
+  { title: "Discipline et valeurs",      desc: "Un cadre structuré fondé sur le respect, la rigueur et l'intégrité pour former les citoyens de demain.",        image: "/images/salle-maternelle-2.jpeg", span: "" },
 ];
 
 const testimonials = [
@@ -200,7 +200,7 @@ export default function HomePage() {
               >
                 Bienvenue à
                 <br />
-                <span className="text-shimmer">Mon Ecole</span>
+                <span className="text-shimmer">IREF</span>
               </h1>
 
               {/* Subtitle */}
@@ -261,7 +261,7 @@ export default function HomePage() {
                 <div className="relative rounded-2xl overflow-hidden border border-white/[0.12]" style={{ width: "470px" }}>
                   <Image
                     src="/images/ecole-facade.jpeg"
-                    alt="Façade de l'école Mon Ecole"
+                    alt="Façade de l'école IREF"
                     width={470}
                     height={620}
                     className="object-cover"
@@ -276,7 +276,7 @@ export default function HomePage() {
                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#020c1b" strokeWidth="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
                         </div>
                         <div>
-                          <div className="text-white font-bold text-sm">I.R.E.F — Mon Ecole</div>
+                          <div className="text-white font-bold text-sm">I.R.E.F — IREF</div>
                           <div className="text-white/50 text-xs">Un peuple, un but, une foi</div>
                         </div>
                       </div>
@@ -353,7 +353,7 @@ export default function HomePage() {
 
 
       {/* ══════════════════════════════════════════════════════ */}
-      {/*  NOS ATOUTS — TiltCard + icônes colorées             */}
+      {/*  NOS ATOUTS — TiltCard + photos école                */}
       {/* ══════════════════════════════════════════════════════ */}
       <section className="py-28 bg-white relative overflow-hidden section-lazy">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-cyan-400/[0.04] blur-[150px] rounded-full pointer-events-none" />
@@ -381,16 +381,21 @@ export default function HomePage() {
                 glare={true}
                 className={`scroll-animate scroll-animate-delay-${(i % 3) + 1} ${item.span}`}
               >
-                <div className="gradient-border p-8 h-full cursor-default bg-white rounded-2xl">
-                  <div className={`relative w-12 h-12 rounded-2xl ${item.ib} flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300 shadow-lg ${item.glow}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={item.ic}>
-                      <path d={item.icon} />
-                    </svg>
+                <div className="h-full cursor-default bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
+                  <div className="relative w-full overflow-hidden" style={{ height: "200px" }}>
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
-                  <h3 className="text-[18px] font-bold text-neutral-900 mb-2.5" style={{ fontFamily: "var(--font-heading)" }}>
-                    {item.title}
-                  </h3>
-                  <p className="text-neutral-500 leading-relaxed text-[15px]">{item.desc}</p>
+                  <div className="p-6">
+                    <h3 className="text-[18px] font-bold text-neutral-900 mb-2.5" style={{ fontFamily: "var(--font-heading)" }}>
+                      {item.title}
+                    </h3>
+                    <p className="text-neutral-500 leading-relaxed text-[15px]">{item.desc}</p>
+                  </div>
                 </div>
               </TiltCard>
             ))}
@@ -415,28 +420,23 @@ export default function HomePage() {
               <span className="text-sm font-semibold text-cyan-300 tracking-wide">Notre école en images</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
-              Découvrez nos installations
+              Notre espace maternelle
             </h2>
             <p className="text-white/40 mt-5 max-w-xl mx-auto text-lg leading-relaxed">
-              Des salles de classe colorées et accueillantes pour le bonheur de nos élèves.
+              Des salles colorées et accueillantes pour l&apos;éveil et le bonheur de nos tout-petits.
             </p>
           </div>
 
-          {/* Photo grid — masonry style */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {/* Photo grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[
-              { src: "/images/ecole-facade.jpeg", alt: "Façade de l'école", span: "md:col-span-1 md:row-span-2" },
-              { src: "/images/salle-classe-1.jpeg", alt: "Salle de classe avec tableau", span: "md:col-span-1" },
-              { src: "/images/salle-classe-2.jpeg", alt: "Salle de classe", span: "md:col-span-1" },
-              { src: "/images/salle-classe-3.jpeg", alt: "Grande salle de classe", span: "md:col-span-1" },
-              { src: "/images/salle-maternelle-1.jpeg", alt: "Salle maternelle décorée", span: "md:col-span-1" },
-              { src: "/images/salle-maternelle-2.jpeg", alt: "Classe maternelle avec dessins", span: "md:col-span-1" },
-              { src: "/images/salle-maternelle-3.jpeg", alt: "Classe maternelle colorée", span: "md:col-span-1" },
-              { src: "/images/salle-maternelle-4.jpeg", alt: "Salle décorée avec guirlandes", span: "md:col-span-1" },
+              { src: "/images/salle-maternelle-3.jpeg", alt: "Classe maternelle avec personnages de dessins animés" },
+              { src: "/images/salle-maternelle-4.jpeg", alt: "Salle avec guirlandes et décorations" },
+              { src: "/images/salle-maternelle-5.jpeg", alt: "Classe avec dessins animés et pupitres" },
             ].map((photo, i) => (
               <div
                 key={photo.src}
-                className={`scroll-animate scroll-animate-delay-${(i % 4) + 1} ${photo.span} group relative rounded-2xl overflow-hidden border border-white/[0.08] hover:border-cyan-500/30 transition-all duration-500`}
+                className={`scroll-animate scroll-animate-delay-${i + 1} group relative rounded-2xl overflow-hidden border border-white/[0.08] hover:border-cyan-500/30 transition-all duration-500`}
               >
                 <Image
                   src={photo.src}

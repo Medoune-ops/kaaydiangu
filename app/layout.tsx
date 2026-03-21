@@ -21,7 +21,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mon Ecole — Etablissement d'excellence",
+  title: "IREF — Etablissement d'excellence",
   description: "Systeme de gestion scolaire moderne",
   icons: {
     icon: "/icon.svg",

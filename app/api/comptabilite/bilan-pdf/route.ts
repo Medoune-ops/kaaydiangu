@@ -123,7 +123,7 @@ export async function GET(req: NextRequest) {
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
-  doc.text((ecole?.nom || "Mon École").toUpperCase(), pw / 2, 14, { align: "center" });
+  doc.text((ecole?.nom || "IREF").toUpperCase(), pw / 2, 14, { align: "center" });
   doc.setFontSize(8);
   doc.setFont("helvetica", "normal");
   if (ecole?.adresse) doc.text(ecole.adresse, pw / 2, 20, { align: "center" });

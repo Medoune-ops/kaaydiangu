@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     where: { id: session.user.ecoleId },
     select: { nom: true },
   });
-  const ecoleNom = ecole?.nom || "Mon École";
+  const ecoleNom = ecole?.nom || "IREF";
 
   const eleves = await prisma.eleve.findMany({
     where: { id: { in: eleve_ids }, actif: true },

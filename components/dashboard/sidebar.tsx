@@ -88,7 +88,7 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
             </div>
           </div>
           <div>
-            <span className="text-[18px] font-bold text-white tracking-tight">Mon Ecole</span>
+            <span className="text-[18px] font-bold text-white tracking-tight">IREF</span>
             <div className="text-[10px] text-white/30 tracking-widest uppercase">Espace Admin</div>
           </div>
         </div>

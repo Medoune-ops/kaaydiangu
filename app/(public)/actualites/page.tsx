@@ -18,7 +18,7 @@ const articles = [
   {
     id: 3,
     titre: "Journee portes ouvertes",
-    extrait: "Mon Ecole ouvre ses portes le samedi 28 septembre. Venez decouvrir nos locaux et rencontrer l'equipe pedagogique.",
+    extrait: "IREF ouvre ses portes le samedi 28 septembre. Venez decouvrir nos locaux et rencontrer l'equipe pedagogique.",
     date: "2024-09-10",
     categorie: "Evenement",
   },
