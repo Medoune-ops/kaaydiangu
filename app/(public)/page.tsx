@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ListeImpayes } from "@/components/public/liste-impayes";
 import { ScrollAnimateProvider } from "@/components/public/scroll-animate";
 import { TiltCard } from "@/components/ui/tilt-card";
@@ -251,33 +252,57 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* ── RIGHT — 3D Dashboard Mockup ── */}
+            {/* ── RIGHT — Photo de l'école ── */}
             <div className="hidden lg:flex flex-shrink-0 items-center justify-center relative">
-              {/* Glow behind card */}
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-indigo-500/10 blur-[80px] rounded-3xl" />
+              {/* Glow behind image */}
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/15 to-indigo-500/15 blur-[80px] rounded-3xl" />
 
-              <TiltCard intensity={10} scale={1.02} className="float-shadow">
-                <DashboardMockup />
+              <TiltCard intensity={8} scale={1.02} className="float-shadow">
+                <div className="relative rounded-2xl overflow-hidden border border-white/[0.12]" style={{ width: "470px" }}>
+                  <Image
+                    src="/images/ecole-facade.jpeg"
+                    alt="Façade de l'école Mon Ecole"
+                    width={470}
+                    height={620}
+                    className="object-cover"
+                    priority
+                  />
+                  {/* Overlay gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#020c1b]/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <div className="glass-dark px-4 py-3 border border-white/10 rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-teal-400 flex items-center justify-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#020c1b" strokeWidth="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                        </div>
+                        <div>
+                          <div className="text-white font-bold text-sm">I.R.E.F — Mon Ecole</div>
+                          <div className="text-white/50 text-xs">Un peuple, un but, une foi</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </TiltCard>
 
-              {/* Floating notification bubble */}
-              <div className="absolute -top-4 -right-6 glass-dark px-3.5 py-2.5 border border-white/10 animate-float-gentle-2 z-20">
+              {/* Floating stat bubble */}
+              <div className="absolute -top-4 -right-6 glass-dark px-3.5 py-2.5 border border-white/10 animate-float-gentle-2 z-20 rounded-xl">
                 <div className="flex items-center gap-2">
                   <div className="relative">
                     <div className="w-2 h-2 rounded-full bg-teal-400" />
                     <div className="absolute inset-0 w-2 h-2 rounded-full bg-teal-400/50 ping-ring" />
                   </div>
                   <div>
-                    <div className="text-[10px] text-white/50">Paiement reçu</div>
-                    <div className="text-[11px] font-bold text-white">12 000 FCFA</div>
+                    <div className="text-[10px] text-white/50">Taux de réussite</div>
+                    <div className="text-[11px] font-bold text-white">94%</div>
                   </div>
                 </div>
               </div>
 
-              {/* Floating stat bubble */}
-              <div className="absolute -bottom-4 -left-6 glass-dark px-3.5 py-2.5 border border-cyan-500/20 animate-float-gentle-3 z-20">
-                <div className="text-[9px] text-white/40 mb-0.5">Taux de réussite</div>
-                <div className="text-[15px] font-extrabold text-transparent bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text">94%</div>
+              {/* Floating students bubble */}
+              <div className="absolute -bottom-4 -left-6 glass-dark px-3.5 py-2.5 border border-cyan-500/20 animate-float-gentle-3 z-20 rounded-xl">
+                <div className="text-[9px] text-white/40 mb-0.5">Élèves inscrits</div>
+                <div className="text-[15px] font-extrabold text-transparent bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text">1 200+</div>
               </div>
             </div>
 
@@ -371,6 +396,66 @@ export default function HomePage() {
             ))}
           </div>
         </div>
+      </section>
+
+
+      {/* ══════════════════════════════════════════════════════ */}
+      {/*  GALERIE PHOTOS — Nos installations                   */}
+      {/* ══════════════════════════════════════════════════════ */}
+      <section className="py-28 bg-[#020c1b] relative overflow-hidden section-lazy">
+        <div className="absolute top-[10%] left-[5%] w-[500px] h-[500px] rounded-full bg-cyan-500/[0.08] blur-[170px] animate-aurora-slow pointer-events-none" />
+        <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-teal-400/[0.06] blur-[150px] animate-aurora-mid pointer-events-none" />
+        <div className="absolute inset-0 dot-grid opacity-45" />
+        <div className="gradient-line absolute top-0 left-[8%] right-[8%]" />
+
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16 scroll-animate">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-dark border border-cyan-500/20 mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-cyan-400"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span className="text-sm font-semibold text-cyan-300 tracking-wide">Notre école en images</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+              Découvrez nos installations
+            </h2>
+            <p className="text-white/40 mt-5 max-w-xl mx-auto text-lg leading-relaxed">
+              Des salles de classe colorées et accueillantes pour le bonheur de nos élèves.
+            </p>
+          </div>
+
+          {/* Photo grid — masonry style */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              { src: "/images/ecole-facade.jpeg", alt: "Façade de l'école", span: "md:col-span-1 md:row-span-2" },
+              { src: "/images/salle-classe-1.jpeg", alt: "Salle de classe avec tableau", span: "md:col-span-1" },
+              { src: "/images/salle-classe-2.jpeg", alt: "Salle de classe", span: "md:col-span-1" },
+              { src: "/images/salle-classe-3.jpeg", alt: "Grande salle de classe", span: "md:col-span-1" },
+              { src: "/images/salle-maternelle-1.jpeg", alt: "Salle maternelle décorée", span: "md:col-span-1" },
+              { src: "/images/salle-maternelle-2.jpeg", alt: "Classe maternelle avec dessins", span: "md:col-span-1" },
+              { src: "/images/salle-maternelle-3.jpeg", alt: "Classe maternelle colorée", span: "md:col-span-1" },
+              { src: "/images/salle-maternelle-4.jpeg", alt: "Salle décorée avec guirlandes", span: "md:col-span-1" },
+            ].map((photo, i) => (
+              <div
+                key={photo.src}
+                className={`scroll-animate scroll-animate-delay-${(i % 4) + 1} ${photo.span} group relative rounded-2xl overflow-hidden border border-white/[0.08] hover:border-cyan-500/30 transition-all duration-500`}
+              >
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  width={400}
+                  height={300}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#020c1b]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                  <p className="text-white text-sm font-medium">{photo.alt}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="gradient-line absolute bottom-0 left-[8%] right-[8%]" />
       </section>
 
 
