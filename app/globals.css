@@ -632,11 +632,145 @@ svg {
 }
 .glass-input::placeholder { color: rgba(255, 255, 255, 0.30); }
 
-/* Sidebar nav active glow */
+/* Sidebar nav active glow (legacy) */
 .sidebar-active-glow {
   background: rgba(99, 102, 241, 0.14);
   box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.25),
               0 0 20px rgba(99, 102, 241, 0.08);
+}
+
+/* ═══════════════════════════════════════════ */
+/*  Dashboard — Modern card & layout system   */
+/* ═══════════════════════════════════════════ */
+
+/* Dashboard card with premium shadow */
+.dash-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 2px 8px rgba(0, 0, 0, 0.02);
+  transition:
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.25s ease;
+}
+.dash-card:hover {
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.06),
+    0 1px 4px rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+  border-color: rgba(99, 102, 241, 0.15);
+}
+
+/* Dashboard KPI card with accent top */
+.dash-kpi {
+  position: relative;
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 2px 8px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  transition:
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dash-kpi::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--kpi-accent, #6366f1);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.dash-kpi:hover {
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+}
+.dash-kpi:hover::before {
+  opacity: 1;
+}
+
+/* Dashboard section card */
+.dash-section {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 1px 6px rgba(0, 0, 0, 0.01);
+  overflow: hidden;
+}
+
+/* Action card — for landing pages */
+.dash-action-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  transition:
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s ease;
+}
+.dash-action-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--card-accent, linear-gradient(90deg, #6366f1, #8b5cf6));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.dash-action-card:hover {
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.03);
+  transform: translateY(-3px);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+.dash-action-card:hover::before {
+  opacity: 1;
+}
+
+/* Spinner */
+.dash-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2.5px solid #e5e7eb;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Scrollbar for sidebar */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* ═══════════════════════════════════════════ */

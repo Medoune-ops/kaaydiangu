@@ -20,18 +20,13 @@ export default async function CenseurElevesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h2 className="text-2xl font-bold text-neutral-900">Gestion des eleves</h2>
-          <p className="text-neutral-500 text-sm">
-            {eleves.length} eleve(s) inscrit(s)
-          </p>
-        </div>
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm text-neutral-500">{eleves.length} élève(s) inscrit(s)</p>
         <Link
           href="/dashboard/censeur/eleves/nouveau"
-          className="h-9 px-4 inline-flex items-center bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 transition-colors shrink-0"
+          className="h-9 px-4 inline-flex items-center bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 transition-all shadow-sm shadow-indigo-500/20 shrink-0"
         >
-          + Inscrire un eleve
+          + Inscrire un élève
         </Link>
       </div>
 

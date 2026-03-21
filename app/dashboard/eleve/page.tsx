@@ -22,8 +22,7 @@ export default async function ElevePage() {
 
   if (!eleve) {
     return (
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Mon espace élève</h2>
+      <div className="dash-section p-8 text-center">
         <p className="text-neutral-500">Aucun profil élève associé à ce compte.</p>
       </div>
     );
@@ -31,12 +30,10 @@ export default async function ElevePage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold">Mon espace élève</h2>
-        <p className="text-neutral-500">
-          {eleve.prenom} {eleve.nom} — {eleve.matricule} — {eleve.classe.nom}
-        </p>
-      </div>
+      <p className="text-sm text-neutral-500">
+        <span className="font-medium text-neutral-700">{eleve.prenom} {eleve.nom}</span>
+        {" — "}{eleve.matricule} — {eleve.classe.nom}
+      </p>
       <DashboardEleve />
     </div>
   );
