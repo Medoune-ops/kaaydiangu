@@ -18,7 +18,7 @@ export default async function DashboardLayout({
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-[#fafafa]">
+      <div className="min-h-screen bg-neutral-50/80">
         <Sidebar
           role={session.user.role}
           userName={session.user.name || "Utilisateur"}
@@ -26,7 +26,7 @@ export default async function DashboardLayout({
 
         <div className="lg:pl-[240px]">
           {/* Header */}
-          <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-neutral-200/60">
+          <header className="sticky top-0 z-20 bg-white/75 backdrop-blur-2xl border-b border-neutral-200/50 shadow-sm shadow-black/[0.03]">
             <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
               <div className="lg:hidden w-8" />
               <div className="flex items-center gap-2">

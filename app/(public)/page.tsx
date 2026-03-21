@@ -70,27 +70,37 @@ export default function HomePage() {
   return (
     <ScrollAnimateProvider>
       {/* ─── HERO ─── */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-50/80 via-white to-teal-50/50" />
-        <div className="absolute inset-0 grid-bg" />
-        <div className="absolute top-[10%] left-[10%] w-[500px] h-[500px] rounded-full bg-cyan-400/[0.08] blur-[120px] animate-float-slow" />
-        <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-teal-400/[0.06] blur-[100px] animate-float" />
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-[#020c1b]">
+        {/* Aurora blobs */}
+        <div className="absolute -top-[20%] -left-[10%] w-[700px] h-[700px] rounded-full bg-cyan-500/[0.22] blur-[180px] animate-aurora pointer-events-none" />
+        <div className="absolute -bottom-[20%] -right-[10%] w-[600px] h-[600px] rounded-full bg-teal-400/[0.18] blur-[160px] animate-aurora-slow pointer-events-none" />
+        <div className="absolute top-[40%] left-[55%] w-[350px] h-[350px] rounded-full bg-indigo-500/[0.10] blur-[130px] animate-aurora-mid pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20 relative z-10 w-full">
+        {/* Grid overlay */}
+        <div className="absolute inset-0 grid-bg opacity-50" />
+
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-28 relative z-10 w-full">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="animate-slide-up inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-cyan-50 border border-cyan-200 mb-10">
-              <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
-              <span className="text-sm font-medium text-cyan-700">Inscriptions ouvertes 2025-2026</span>
+            {/* Badge glass */}
+            <div className="animate-slide-up inline-flex items-center gap-2.5 px-5 py-2 rounded-full glass-dark mb-10">
+              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span className="text-sm font-medium text-cyan-300">Inscriptions ouvertes 2025-2026</span>
             </div>
 
-            <h1 className="animate-slide-up-delay-1 text-[clamp(2.5rem,7vw,5rem)] font-extrabold text-neutral-900 tracking-tight leading-[1.05]" style={{ fontFamily: "var(--font-heading)" }}>
+            <h1
+              className="animate-slide-up-delay-1 text-[clamp(2.5rem,7vw,5rem)] font-extrabold text-white tracking-tight leading-[1.05]"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
               Bienvenue a{" "}
-              <span className="bg-gradient-to-r from-cyan-600 via-cyan-500 to-teal-500 bg-clip-text text-transparent animate-gradient-shift" style={{ backgroundSize: "200% 200%" }}>
+              <span
+                className="bg-gradient-to-r from-cyan-400 via-cyan-300 to-teal-400 bg-clip-text text-transparent animate-gradient-shift"
+                style={{ backgroundSize: "200% 200%" }}
+              >
                 Mon Ecole
               </span>
             </h1>
 
-            <p className="animate-slide-up-delay-2 mt-8 text-lg md:text-xl text-neutral-500 max-w-2xl mx-auto leading-relaxed">
+            <p className="animate-slide-up-delay-2 mt-8 text-lg md:text-xl text-white/55 max-w-2xl mx-auto leading-relaxed">
               Depuis plus de 15 ans, nous formons les esprits brillants de demain
               grace a un enseignement d&apos;excellence, un encadrement rigoureux
               et un environnement propice a la reussite.
@@ -99,47 +109,61 @@ export default function HomePage() {
             <div className="animate-slide-up-delay-3 flex flex-col sm:flex-row gap-4 justify-center mt-12">
               <Link
                 href="/nos-classes"
-                className="group btn-primary h-13 px-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 text-white font-semibold text-[16px] hover:from-cyan-600 hover:to-teal-600 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30"
+                className="group btn-primary h-13 px-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold text-[16px] hover:from-cyan-300 hover:to-teal-300 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50"
               >
                 Decouvrir nos classes
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="ml-2 group-hover:translate-x-1 transition-transform duration-300"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
               </Link>
               <Link
                 href="/contact"
-                className="btn-secondary h-13 px-8 inline-flex items-center justify-center rounded-2xl border border-neutral-200 text-neutral-700 font-semibold text-[16px] hover:bg-neutral-50 hover:border-neutral-300"
+                className="btn-secondary h-13 px-8 inline-flex items-center justify-center rounded-2xl glass-dark text-white font-semibold text-[16px] hover:border-white/20"
               >
                 Nous contacter
               </Link>
             </div>
           </div>
         </div>
+
+        {/* Fade to next section */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#020c1b] to-transparent pointer-events-none" />
       </section>
 
       {/* ─── STATS ─── */}
-      <section className="py-24 bg-white relative border-y border-neutral-100 section-lazy">
+      <section className="py-24 bg-[#020c1b] relative section-lazy">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
             {stats.map((stat, i) => (
-              <div key={stat.label} className={`glass-card p-8 text-center group scroll-animate scroll-animate-delay-${i + 1}`}>
-                <p className="text-4xl md:text-5xl font-extrabold text-neutral-900 tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+              <div
+                key={stat.label}
+                className={`glass-dark p-8 text-center group scroll-animate scroll-animate-delay-${i + 1}`}
+              >
+                <p
+                  className="text-4xl md:text-5xl font-extrabold text-white tracking-tight"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
                   {stat.value}
                 </p>
-                <p className="text-neutral-500 mt-2 font-medium">{stat.label}</p>
+                <p className="text-white/45 mt-2 font-medium text-[15px]">{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       </section>
 
       {/* ─── NOS ATOUTS ─── */}
-      <section className="py-28 bg-neutral-50/50 relative overflow-hidden section-lazy">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-400/[0.04] blur-[120px] rounded-full" />
+      <section className="py-28 bg-white relative overflow-hidden section-lazy">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-400/[0.04] blur-[120px] rounded-full pointer-events-none" />
         <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
           <div className="text-center mb-20 scroll-animate">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 mb-6">
               <span className="text-sm font-semibold text-cyan-700 tracking-wide">Nos atouts</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-neutral-900 tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2
+              className="text-4xl md:text-5xl font-extrabold text-neutral-900 tracking-tight"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
               Pourquoi choisir notre ecole ?
             </h2>
             <p className="text-neutral-500 mt-5 max-w-xl mx-auto text-lg">
@@ -167,20 +191,28 @@ export default function HomePage() {
       </section>
 
       {/* ─── TEMOIGNAGES ─── */}
-      <section className="py-28 bg-gradient-to-b from-cyan-50/30 to-white relative overflow-hidden section-lazy">
+      <section className="py-28 bg-[#020c1b] relative overflow-hidden section-lazy">
+        {/* Aurora blobs */}
+        <div className="absolute top-[5%] right-[8%] w-[500px] h-[500px] rounded-full bg-teal-500/[0.13] blur-[160px] animate-aurora-slow pointer-events-none" />
+        <div className="absolute bottom-[5%] left-[5%] w-[400px] h-[400px] rounded-full bg-cyan-500/[0.10] blur-[140px] animate-aurora-mid pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
         <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
           <div className="text-center mb-20 scroll-animate">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 mb-6">
-              <span className="text-sm font-semibold text-cyan-700 tracking-wide">Temoignages</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-dark mb-6">
+              <span className="text-sm font-semibold text-cyan-300 tracking-wide">Temoignages</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-neutral-900 tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2
+              className="text-4xl md:text-5xl font-extrabold text-white tracking-tight"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
               Ce qu&apos;ils disent de nous
             </h2>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
-              <div key={t.name} className={`gradient-border p-8 hover:-translate-y-1 scroll-animate scroll-animate-delay-${i + 1}`}>
+              <div key={t.name} className={`glass-dark p-8 scroll-animate scroll-animate-delay-${i + 1}`}>
                 <div className="flex gap-1 mb-6">
                   {[...Array(5)].map((_, j) => (
                     <svg key={j} xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="text-cyan-400">
@@ -188,20 +220,21 @@ export default function HomePage() {
                     </svg>
                   ))}
                 </div>
-                <p className="text-neutral-600 leading-relaxed text-[15px] mb-8">&ldquo;{t.quote}&rdquo;</p>
-                <div className="flex items-center gap-3 pt-6 border-t border-neutral-100">
-                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-cyan-100 to-teal-100 flex items-center justify-center text-cyan-700 font-bold text-sm group-hover:scale-105 transition-transform duration-300">
+                <p className="text-white/65 leading-relaxed text-[15px] mb-8">&ldquo;{t.quote}&rdquo;</p>
+                <div className="flex items-center gap-3 pt-6 border-t border-white/[0.08]">
+                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-cyan-500/25 to-teal-500/25 border border-white/10 flex items-center justify-center text-cyan-300 font-bold text-sm">
                     {t.name.split(" ").map(n => n[0]).join("")}
                   </div>
                   <div>
-                    <p className="text-neutral-900 font-semibold text-[15px]">{t.name}</p>
-                    <p className="text-neutral-400 text-sm">{t.role}</p>
+                    <p className="text-white/90 font-semibold text-[15px]">{t.name}</p>
+                    <p className="text-white/40 text-sm">{t.role}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       </section>
 
       <ListeImpayes />
