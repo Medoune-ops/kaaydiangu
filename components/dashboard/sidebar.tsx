@@ -97,21 +97,21 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
               onClick={() => setMobileOpen(false)}
               aria-label={item.label}
               aria-current={isActive ? "page" : undefined}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
                 isActive
-                  ? "bg-indigo-500/10 text-indigo-400"
-                  : "text-neutral-400 hover:bg-white/[0.04] hover:text-neutral-200"
+                  ? "sidebar-active-glow text-indigo-300"
+                  : "text-neutral-400 hover:bg-white/[0.05] hover:text-neutral-200"
               }`}
             >
-              <span className={`shrink-0 ${isActive ? "text-indigo-400" : "text-neutral-500"}`}>
+              <span className={`shrink-0 transition-colors duration-200 ${isActive ? "text-indigo-400" : "text-neutral-500 group-hover:text-neutral-400"}`}>
                 {item.icon}
               </span>
-              <span className="flex-1">{item.label}</span>
+              <span className="flex-1 text-[14px]">{item.label}</span>
               {index < 5 && (
                 <ShortcutHint keys={`Alt+${index + 1}`} />
               )}
               {isActive && (
-                <div className="ml-auto w-1 h-4 rounded-full bg-indigo-500" />
+                <div className="ml-auto w-1 h-4 rounded-full bg-gradient-to-b from-indigo-400 to-violet-500 shadow-lg shadow-indigo-500/50" />
               )}
             </Link>
           );
@@ -120,18 +120,21 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
 
       {/* User */}
       <div className="px-3 py-4 mt-auto border-t border-white/[0.06]">
-        <div className="flex items-center gap-3 px-3 py-2">
-          <div className="w-9 h-9 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-sm font-bold">
-            {initials}
+        <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] mb-1">
+          <div className="relative shrink-0">
+            <div className="absolute inset-0 bg-indigo-500 rounded-full blur opacity-30" />
+            <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500/30 to-violet-500/30 border border-indigo-500/30 flex items-center justify-center text-indigo-300 text-sm font-bold">
+              {initials}
+            </div>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="font-medium text-neutral-200 truncate">{userName}</p>
-            <p className="text-xs text-neutral-500">{ROLE_LABEL[role] || role}</p>
+            <p className="font-semibold text-neutral-100 truncate text-[14px]">{userName}</p>
+            <p className="text-xs text-neutral-500 truncate">{ROLE_LABEL[role] || role}</p>
           </div>
         </div>
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
-          className="flex items-center gap-2 px-3 py-2 mt-1 rounded-lg text-neutral-500 hover:bg-white/[0.04] hover:text-neutral-300 text-sm transition-colors w-full"
+          className="flex items-center gap-2.5 px-3 py-2.5 mt-1 rounded-xl text-neutral-500 hover:bg-red-500/[0.08] hover:text-red-400 hover:border-red-500/10 border border-transparent text-[13px] font-medium transition-all duration-200 w-full"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
           <span>Déconnexion</span>
