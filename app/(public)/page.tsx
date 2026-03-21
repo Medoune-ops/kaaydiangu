@@ -381,81 +381,28 @@ export default function HomePage() {
                 glare={true}
                 className={`scroll-animate scroll-animate-delay-${(i % 3) + 1} ${item.span}`}
               >
-                <div className="h-full cursor-default bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
-                  <div className="relative w-full overflow-hidden" style={{ height: "200px" }}>
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-[18px] font-bold text-neutral-900 mb-2.5" style={{ fontFamily: "var(--font-heading)" }}>
+                <div className="group h-full cursor-default rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 relative" style={{ minHeight: "280px" }}>
+                  {/* Photo en fond */}
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  {/* Overlay gradient sombre */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 group-hover:from-black/85 group-hover:via-black/50 transition-all duration-500" />
+                  {/* Texte au-dessus */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-6 z-10">
+                    <h3 className="text-[20px] font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
                       {item.title}
                     </h3>
-                    <p className="text-neutral-500 leading-relaxed text-[15px]">{item.desc}</p>
+                    <p className="text-white/70 leading-relaxed text-[14px]">{item.desc}</p>
                   </div>
                 </div>
               </TiltCard>
             ))}
           </div>
         </div>
-      </section>
-
-
-      {/* ══════════════════════════════════════════════════════ */}
-      {/*  GALERIE PHOTOS — Nos installations                   */}
-      {/* ══════════════════════════════════════════════════════ */}
-      <section className="py-28 bg-[#020c1b] relative overflow-hidden section-lazy">
-        <div className="absolute top-[10%] left-[5%] w-[500px] h-[500px] rounded-full bg-cyan-500/[0.08] blur-[170px] animate-aurora-slow pointer-events-none" />
-        <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-teal-400/[0.06] blur-[150px] animate-aurora-mid pointer-events-none" />
-        <div className="absolute inset-0 dot-grid opacity-45" />
-        <div className="gradient-line absolute top-0 left-[8%] right-[8%]" />
-
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16 scroll-animate">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-dark border border-cyan-500/20 mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-cyan-400"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span className="text-sm font-semibold text-cyan-300 tracking-wide">Notre école en images</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
-              Notre espace maternelle
-            </h2>
-            <p className="text-white/40 mt-5 max-w-xl mx-auto text-lg leading-relaxed">
-              Des salles colorées et accueillantes pour l&apos;éveil et le bonheur de nos tout-petits.
-            </p>
-          </div>
-
-          {/* Photo grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {[
-              { src: "/images/salle-maternelle-3.jpeg", alt: "Classe maternelle avec personnages de dessins animés" },
-              { src: "/images/salle-maternelle-4.jpeg", alt: "Salle avec guirlandes et décorations" },
-              { src: "/images/salle-maternelle-5.jpeg", alt: "Classe avec dessins animés et pupitres" },
-            ].map((photo, i) => (
-              <div
-                key={photo.src}
-                className={`scroll-animate scroll-animate-delay-${i + 1} group relative rounded-2xl overflow-hidden border border-white/[0.08] hover:border-cyan-500/30 transition-all duration-500`}
-              >
-                <Image
-                  src={photo.src}
-                  alt={photo.alt}
-                  width={400}
-                  height={300}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#020c1b]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                  <p className="text-white text-sm font-medium">{photo.alt}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="gradient-line absolute bottom-0 left-[8%] right-[8%]" />
       </section>
 
 
