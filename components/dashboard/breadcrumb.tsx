@@ -2,73 +2,35 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ChevronRight, Home } from "lucide-react";
 
 const LABELS: Record<string, string> = {
   dashboard: "Dashboard",
   admin: "Administration",
-  comptable: "Comptabilite",
-  censeur: "Scolarite",
+  comptable: "Comptabilité",
+  censeur: "Scolarité",
   professeur: "Enseignement",
   eleve: "Mon espace",
   notes: "Notes",
-  eleves: "Eleves",
+  eleves: "Élèves",
   paiements: "Paiements",
-  depenses: "Depenses",
+  depenses: "Dépenses",
   bulletins: "Bulletins",
   absences: "Absences",
   cours: "Cours",
   "emplois-du-temps": "Emplois du temps",
   configuration: "Configuration",
-  equipe: "Equipe",
+  equipe: "Équipe",
   audit: "Journal d'audit",
-  impayes: "Impayes",
+  impayes: "Impayés",
   documents: "Documents",
   nouveau: "Nouveau",
 };
-
-function HomeIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="15"
-      height="15"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      <polyline points="9 22 9 12 15 12 15 22" />
-    </svg>
-  );
-}
-
-function ChevronIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="text-neutral-500"
-    >
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
-  );
-}
 
 export function Breadcrumb() {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
-  // Build crumbs: skip "dashboard" as label, use it only for home icon
   const crumbs = segments.map((segment, index) => {
     const href = "/" + segments.slice(0, index + 1).join("/");
     const label = LABELS[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
@@ -77,29 +39,28 @@ export function Breadcrumb() {
   });
 
   return (
-    <nav aria-label="Fil d'Ariane" className="flex items-center gap-1.5 text-sm">
+    <nav aria-label="Fil d'Ariane" className="flex items-center gap-1 text-sm">
       {crumbs.map((crumb, index) => (
-        <span key={crumb.href} className="flex items-center gap-1.5">
-          {index > 0 && <ChevronIcon />}
+        <span key={crumb.href} className="flex items-center gap-1">
+          {index > 0 && <ChevronRight size={13} className="text-neutral-300 shrink-0" />}
           {index === 0 ? (
-            // Dashboard = home icon
             <Link
               href={crumb.href}
-              className={`flex items-center gap-1 transition-colors duration-150 ${
+              className={`flex items-center gap-1.5 transition-colors duration-150 ${
                 crumb.isLast
-                  ? "text-white"
-                  : "text-neutral-400 hover:text-indigo-400"
+                  ? "text-neutral-700"
+                  : "text-neutral-400 hover:text-indigo-500"
               }`}
             >
-              <HomeIcon />
-              {crumbs.length === 1 && <span>Dashboard</span>}
+              <Home size={14} />
+              {crumbs.length === 1 && <span className="font-medium">Dashboard</span>}
             </Link>
           ) : crumb.isLast ? (
-            <span className="text-white font-medium">{crumb.label}</span>
+            <span className="text-neutral-700 font-medium">{crumb.label}</span>
           ) : (
             <Link
               href={crumb.href}
-              className="text-neutral-400 hover:text-indigo-400 transition-colors duration-150"
+              className="text-neutral-400 hover:text-indigo-500 transition-colors duration-150"
             >
               {crumb.label}
             </Link>

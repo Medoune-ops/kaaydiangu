@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Bell, Check, CheckCheck, Clock } from "lucide-react";
 
 interface Notification {
   id: string;
@@ -72,41 +73,28 @@ export function NotificationBell() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="relative p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+        className="relative p-2 rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 transition-all duration-200"
         aria-label="Notifications"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-neutral-500"
-        >
-          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-        </svg>
+        <Bell size={18} />
         {nonLues > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 bg-indigo-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+          <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 ring-2 ring-white">
             {nonLues > 99 ? "99+" : nonLues}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-xl border border-neutral-200 shadow-lg z-50 max-h-[480px] flex flex-col overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-xl border border-neutral-200/80 shadow-xl shadow-black/8 z-50 max-h-[480px] flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100">
             <span className="text-sm font-semibold text-neutral-900">Notifications</span>
             {nonLues > 0 && (
               <button
                 onClick={toutMarquerLu}
-                className="text-sm text-indigo-500 hover:text-indigo-600 font-medium"
+                className="inline-flex items-center gap-1 text-xs text-indigo-500 hover:text-indigo-700 font-medium px-2 py-1 rounded-md hover:bg-indigo-50 transition-colors"
               >
+                <CheckCheck size={13} />
                 Tout marquer lu
               </button>
             )}
@@ -116,8 +104,8 @@ export function NotificationBell() {
           <div className="overflow-y-auto flex-1">
             {notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10">
-                <div className="w-10 h-10 rounded-lg bg-neutral-100 flex items-center justify-center mb-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
+                  <Bell size={18} className="text-neutral-400" />
                 </div>
                 <p className="text-sm text-neutral-400">Aucune notification</p>
               </div>
@@ -125,13 +113,13 @@ export function NotificationBell() {
               notifications.map((n) => (
                 <div
                   key={n.id}
-                  className={`px-4 py-3 border-b border-neutral-100 last:border-b-0 hover:bg-neutral-50 transition-colors ${
-                    !n.lu ? "bg-indigo-50/40" : ""
+                  className={`px-4 py-3 border-b border-neutral-50 last:border-b-0 hover:bg-neutral-50/70 transition-colors ${
+                    !n.lu ? "bg-indigo-50/30" : ""
                   }`}
                 >
                   <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center shrink-0">
-                      <TypeIcon type={n.type} />
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${!n.lu ? "bg-indigo-100" : "bg-neutral-100"}`}>
+                      <TypeIcon type={n.type} unread={!n.lu} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
@@ -146,7 +134,8 @@ export function NotificationBell() {
                         {n.message}
                       </p>
                       <div className="flex items-center justify-between mt-1.5">
-                        <span className="text-xs text-neutral-400">
+                        <span className="flex items-center gap-1 text-xs text-neutral-400">
+                          <Clock size={10} />
                           {formatRelative(n.date_envoi)}
                         </span>
                         {!n.lu && (
@@ -155,9 +144,9 @@ export function NotificationBell() {
                               e.stopPropagation();
                               marquerLu(n.id);
                             }}
-                            className="text-xs text-indigo-500 hover:text-indigo-600 font-medium"
+                            className="inline-flex items-center gap-1 text-xs text-indigo-500 hover:text-indigo-700 font-medium"
                           >
-                            Marquer lu
+                            <Check size={11} /> Lu
                           </button>
                         )}
                       </div>
@@ -170,12 +159,12 @@ export function NotificationBell() {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="border-t border-neutral-100 px-4 py-2.5 text-center">
-              <span className="text-sm text-neutral-400">
+            <div className="border-t border-neutral-100 px-4 py-2.5 text-center bg-neutral-50/50">
+              <span className="text-xs text-neutral-400">
                 {notifications.length} notification(s)
                 {nonLues > 0 && (
                   <span className="ml-1.5 text-indigo-500 font-medium">
-                    {nonLues} non lue(s)
+                    • {nonLues} non lue(s)
                   </span>
                 )}
               </span>
@@ -187,18 +176,19 @@ export function NotificationBell() {
   );
 }
 
-function TypeIcon({ type }: { type: string | null }) {
-  const cls = "w-4 h-4 text-neutral-400";
+function TypeIcon({ type, unread }: { type: string | null; unread: boolean }) {
+  const color = unread ? "text-indigo-500" : "text-neutral-400";
+  const size = 14;
   switch (type) {
     case "NOTE":
-      return <svg className={cls} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>;
+      return <svg className={color} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>;
     case "PAIEMENT":
     case "RAPPEL_PAIEMENT":
-      return <svg className={cls} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>;
+      return <svg className={color} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>;
     case "BULLETIN":
-      return <svg className={cls} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>;
+      return <svg className={color} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>;
     default:
-      return <svg className={cls} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>;
+      return <Bell size={size} className={color} />;
   }
 }
 
@@ -207,7 +197,7 @@ function formatRelative(dateStr: string): string {
   const d = new Date(dateStr).getTime();
   const diff = Math.floor((now - d) / 1000);
 
-  if (diff < 60) return "A l'instant";
+  if (diff < 60) return "À l'instant";
   if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
   if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)}h`;
   if (diff < 604800) return `Il y a ${Math.floor(diff / 86400)}j`;

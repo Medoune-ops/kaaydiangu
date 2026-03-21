@@ -2,10 +2,31 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { signOut } from "next-auth/react";
-import { KeyboardShortcuts } from "./keyboard-shortcuts";
-import { ShortcutHint } from "./shortcut-hint";
+import {
+  LayoutDashboard,
+  Users,
+  Settings,
+  Shield,
+  PenLine,
+  FileText,
+  Calendar,
+  Clock,
+  Wallet,
+  AlertTriangle,
+  Receipt,
+  BookOpen,
+  FolderOpen,
+  Search,
+  LogOut,
+  GraduationCap,
+  X,
+  Menu,
+  BarChart3,
+} from "lucide-react";
+
+/* ─── Types ─── */
 
 interface NavItem {
   label: string;
@@ -13,55 +34,128 @@ interface NavItem {
   icon: React.ReactNode;
 }
 
-const NAV_ITEMS: Record<string, NavItem[]> = {
-  SUPER_ADMIN: [
-    { label: "Dashboard", href: "/dashboard/admin", icon: <IconGrid /> },
-    { label: "Équipe", href: "/dashboard/admin/equipe", icon: <IconUsers /> },
-    { label: "Configuration", href: "/dashboard/admin/configuration", icon: <IconSettings /> },
-    { label: "Audit", href: "/dashboard/admin/audit", icon: <IconClipboard /> },
-  ],
-  CENSEUR: [
-    { label: "Dashboard", href: "/dashboard/censeur", icon: <IconGrid /> },
-    { label: "Élèves", href: "/dashboard/censeur/eleves", icon: <IconUsers /> },
-    { label: "Saisie des notes", href: "/dashboard/censeur/notes", icon: <IconClipboard /> },
-    { label: "Bulletins", href: "/dashboard/censeur/bulletins", icon: <IconChart /> },
-    { label: "Absences", href: "/dashboard/censeur/absences", icon: <IconCalendar /> },
-    { label: "Emploi du temps", href: "/dashboard/censeur/emplois-du-temps", icon: <IconClock /> },
-  ],
-  COMPTABLE: [
-    { label: "Dashboard", href: "/dashboard/comptable", icon: <IconGrid /> },
-    { label: "Paiements", href: "/dashboard/comptable/paiements", icon: <IconWallet /> },
-    { label: "Impayés", href: "/dashboard/comptable/impayes", icon: <IconAlert /> },
-    { label: "Dépenses", href: "/dashboard/comptable/depenses", icon: <IconReceipt /> },
-  ],
-  PROFESSEUR: [
-    { label: "Dashboard", href: "/dashboard/professeur", icon: <IconGrid /> },
-    { label: "Notes", href: "/dashboard/professeur/notes", icon: <IconChart /> },
-    { label: "Absences", href: "/dashboard/professeur/absences", icon: <IconCalendar /> },
-    { label: "Cours", href: "/dashboard/professeur/cours", icon: <IconBook /> },
-  ],
-  ELEVE: [
-    { label: "Dashboard", href: "/dashboard/eleve", icon: <IconGrid /> },
-    { label: "Documents", href: "/dashboard/eleve/documents", icon: <IconFolder /> },
-  ],
+interface NavGroup {
+  title: string;
+  items: NavItem[];
+}
+
+/* ─── Navigation config per role ─── */
+
+const NAV_CONFIG: Record<string, { roleLabel: string; groups: NavGroup[] }> = {
+  SUPER_ADMIN: {
+    roleLabel: "Administrateur",
+    groups: [
+      {
+        title: "Principal",
+        items: [
+          { label: "Vue d'ensemble", href: "/dashboard/admin", icon: <LayoutDashboard size={18} /> },
+        ],
+      },
+      {
+        title: "Gestion",
+        items: [
+          { label: "Équipe", href: "/dashboard/admin/equipe", icon: <Users size={18} /> },
+          { label: "Configuration", href: "/dashboard/admin/configuration", icon: <Settings size={18} /> },
+          { label: "Journal d'audit", href: "/dashboard/admin/audit", icon: <Shield size={18} /> },
+        ],
+      },
+    ],
+  },
+  CENSEUR: {
+    roleLabel: "Censeur",
+    groups: [
+      {
+        title: "Principal",
+        items: [
+          { label: "Vue d'ensemble", href: "/dashboard/censeur", icon: <LayoutDashboard size={18} /> },
+        ],
+      },
+      {
+        title: "Pédagogie",
+        items: [
+          { label: "Élèves", href: "/dashboard/censeur/eleves", icon: <Users size={18} /> },
+          { label: "Notes", href: "/dashboard/censeur/notes", icon: <PenLine size={18} /> },
+          { label: "Bulletins", href: "/dashboard/censeur/bulletins", icon: <BarChart3 size={18} /> },
+        ],
+      },
+      {
+        title: "Suivi",
+        items: [
+          { label: "Absences", href: "/dashboard/censeur/absences", icon: <Calendar size={18} /> },
+          { label: "Emploi du temps", href: "/dashboard/censeur/emplois-du-temps", icon: <Clock size={18} /> },
+        ],
+      },
+    ],
+  },
+  COMPTABLE: {
+    roleLabel: "Comptable",
+    groups: [
+      {
+        title: "Principal",
+        items: [
+          { label: "Vue d'ensemble", href: "/dashboard/comptable", icon: <LayoutDashboard size={18} /> },
+        ],
+      },
+      {
+        title: "Finances",
+        items: [
+          { label: "Paiements", href: "/dashboard/comptable/paiements", icon: <Wallet size={18} /> },
+          { label: "Impayés", href: "/dashboard/comptable/impayes", icon: <AlertTriangle size={18} /> },
+          { label: "Dépenses", href: "/dashboard/comptable/depenses", icon: <Receipt size={18} /> },
+        ],
+      },
+    ],
+  },
+  PROFESSEUR: {
+    roleLabel: "Professeur",
+    groups: [
+      {
+        title: "Principal",
+        items: [
+          { label: "Vue d'ensemble", href: "/dashboard/professeur", icon: <LayoutDashboard size={18} /> },
+        ],
+      },
+      {
+        title: "Enseignement",
+        items: [
+          { label: "Notes", href: "/dashboard/professeur/notes", icon: <PenLine size={18} /> },
+          { label: "Absences", href: "/dashboard/professeur/absences", icon: <Calendar size={18} /> },
+          { label: "Cours", href: "/dashboard/professeur/cours", icon: <BookOpen size={18} /> },
+        ],
+      },
+    ],
+  },
+  ELEVE: {
+    roleLabel: "Élève",
+    groups: [
+      {
+        title: "Mon espace",
+        items: [
+          { label: "Tableau de bord", href: "/dashboard/eleve", icon: <LayoutDashboard size={18} /> },
+          { label: "Documents", href: "/dashboard/eleve/documents", icon: <FolderOpen size={18} /> },
+        ],
+      },
+    ],
+  },
 };
 
-const ROLE_LABEL: Record<string, string> = {
-  SUPER_ADMIN: "Administrateur",
-  COMPTABLE: "Comptable",
-  CENSEUR: "Censeur",
-  PROFESSEUR: "Professeur",
-  ELEVE: "Élève",
+/* ─── Role colors ─── */
+
+const ROLE_COLORS: Record<string, { gradient: string; ring: string; badge: string }> = {
+  SUPER_ADMIN: { gradient: "from-indigo-500 to-violet-600", ring: "ring-indigo-400/30", badge: "bg-indigo-500/15 text-indigo-300" },
+  COMPTABLE: { gradient: "from-emerald-500 to-teal-600", ring: "ring-emerald-400/30", badge: "bg-emerald-500/15 text-emerald-300" },
+  CENSEUR: { gradient: "from-amber-500 to-orange-600", ring: "ring-amber-400/30", badge: "bg-amber-500/15 text-amber-300" },
+  PROFESSEUR: { gradient: "from-violet-500 to-purple-600", ring: "ring-violet-400/30", badge: "bg-violet-500/15 text-violet-300" },
+  ELEVE: { gradient: "from-sky-500 to-cyan-600", ring: "ring-sky-400/30", badge: "bg-sky-500/15 text-sky-300" },
 };
+
+/* ─── Sidebar component ─── */
 
 export function Sidebar({ role, userName }: { role: string; userName: string }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const items = NAV_ITEMS[role] || [];
-
-  const toggleSidebar = useCallback(() => {
-    setMobileOpen((prev) => !prev);
-  }, []);
+  const config = NAV_CONFIG[role] || NAV_CONFIG.ELEVE;
+  const colors = ROLE_COLORS[role] || ROLE_COLORS.ELEVE;
 
   const initials = userName
     .split(" ")
@@ -70,87 +164,109 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
     .slice(0, 2)
     .toUpperCase();
 
+  const checkActive = (href: string) => {
+    if (pathname === href) return true;
+    const roots = ["/dashboard/admin", "/dashboard/censeur", "/dashboard/comptable", "/dashboard/professeur", "/dashboard/eleve"];
+    if (roots.includes(href)) return pathname === href;
+    return pathname.startsWith(href + "/");
+  };
+
   const sidebarContent = (
-    <div className="flex flex-col h-full">
-      {/* Gradient accent strip at top */}
-      <div className="sidebar-accent-top" />
+    <div className="flex flex-col h-full bg-[#0f172a]">
+      {/* Top accent line */}
+      <div className="h-[2px] bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500 opacity-80" />
 
       {/* Logo */}
-      <div className="px-6 py-5">
-        <div className="flex items-center gap-3">
+      <div className="px-5 pt-5 pb-4">
+        <Link href="/" className="flex items-center gap-3 group">
           <div className="relative">
-            <div className="absolute inset-0 bg-indigo-500 rounded-xl blur-md opacity-40" />
-            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                <path d="M6 12v5c3 3 9 3 12 0v-5" />
-              </svg>
+            <div className="absolute inset-0 bg-indigo-500 rounded-xl blur-lg opacity-25 group-hover:opacity-45 transition-opacity duration-300" />
+            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+              <GraduationCap size={20} className="text-white" />
             </div>
           </div>
           <div>
-            <span className="text-[18px] font-bold text-white tracking-tight">IREF</span>
-            <div className="text-[10px] text-white/30 tracking-widest uppercase">Espace Admin</div>
+            <span className="text-lg font-bold text-white tracking-tight block leading-none">IREF</span>
+            <span className="text-[11px] text-slate-500 tracking-wide leading-none mt-0.5 block">Gestion scolaire</span>
           </div>
-        </div>
+        </Link>
+      </div>
+
+      {/* Search trigger */}
+      <div className="px-4 mb-3">
+        <button
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-500 text-[13px] hover:bg-slate-800/80 hover:border-slate-600/50 transition-all duration-200"
+          onClick={() => {
+            document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }));
+          }}
+        >
+          <Search size={14} />
+          <span className="flex-1 text-left">Rechercher...</span>
+          <kbd className="hidden sm:inline-flex items-center rounded bg-slate-700/60 px-1.5 py-0.5 text-[10px] font-medium text-slate-400 border border-slate-600/40">
+            Ctrl K
+          </kbd>
+        </button>
       </div>
 
       {/* Separator */}
-      <div className="mx-6 h-px bg-white/[0.06] mb-1" />
+      <div className="mx-5 h-px bg-slate-700/40 mb-2" />
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 space-y-0.5 py-2" aria-label="Menu principal">
-        <p className="px-3 mb-2 text-[10px] font-bold text-neutral-600 uppercase tracking-[0.15em]">Navigation</p>
-        {items.map((item, index) => {
-          const isActive = pathname === item.href || (item.href !== "/dashboard/admin" && item.href !== "/dashboard/censeur" && item.href !== "/dashboard/comptable" && item.href !== "/dashboard/professeur" && item.href !== "/dashboard/eleve" && pathname.startsWith(item.href + "/"));
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setMobileOpen(false)}
-              aria-label={item.label}
-              aria-current={isActive ? "page" : undefined}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                isActive
-                  ? "sidebar-active-glow text-indigo-300"
-                  : "text-neutral-400 hover:bg-white/[0.05] hover:text-neutral-200"
-              }`}
-            >
-              <span className={`shrink-0 transition-colors duration-200 ${isActive ? "text-indigo-400" : "text-neutral-500 group-hover:text-neutral-400"}`}>
-                {item.icon}
-              </span>
-              <span className="flex-1 text-[14px]">{item.label}</span>
-              {index < 5 && (
-                <ShortcutHint keys={`Alt+${index + 1}`} />
-              )}
-              {isActive && (
-                <div className="ml-auto w-1 h-4 rounded-full bg-gradient-to-b from-indigo-400 to-violet-500 shadow-lg shadow-indigo-500/50" />
-              )}
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* User */}
-      <div className="px-3 py-4 mt-auto border-t border-white/[0.06]">
-        <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] mb-1">
-          <div className="relative shrink-0">
-            <div className="absolute inset-0 bg-indigo-500 rounded-full blur opacity-30" />
-            <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500/30 to-violet-500/30 border border-indigo-500/30 flex items-center justify-center text-indigo-300 text-sm font-bold">
-              {initials}
+      {/* Navigation groups */}
+      <nav className="flex-1 px-3 py-1 space-y-5 overflow-y-auto scrollbar-thin" aria-label="Menu principal">
+        {config.groups.map((group) => (
+          <div key={group.title}>
+            <p className="px-3 mb-1.5 text-[10px] font-semibold text-slate-500 uppercase tracking-[0.14em]">
+              {group.title}
+            </p>
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const active = checkActive(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`relative flex items-center gap-3 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-150 group/nav ${
+                      active
+                        ? "bg-indigo-500/[0.12] text-white"
+                        : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-200"
+                    }`}
+                  >
+                    {active && (
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-indigo-400 shadow-lg shadow-indigo-500/50" />
+                    )}
+                    <span className={`shrink-0 transition-colors duration-150 ${active ? "text-indigo-400" : "text-slate-500 group-hover/nav:text-slate-400"}`}>
+                      {item.icon}
+                    </span>
+                    <span className="flex-1 truncate">{item.label}</span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="font-semibold text-neutral-100 truncate text-[14px]">{userName}</p>
-            <p className="text-xs text-neutral-500 truncate">{ROLE_LABEL[role] || role}</p>
+        ))}
+      </nav>
+
+      {/* User card */}
+      <div className="px-3 py-3 mt-auto border-t border-slate-700/40">
+        <div className="flex items-center gap-3 px-2.5 py-2.5 rounded-lg hover:bg-white/[0.03] transition-colors">
+          <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${colors.gradient} flex items-center justify-center text-white text-xs font-bold ring-2 ${colors.ring} shrink-0`}>
+            {initials}
           </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-medium text-slate-200 truncate">{userName}</p>
+            <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${colors.badge} mt-0.5`}>
+              {config.roleLabel}
+            </span>
+          </div>
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="p-1.5 rounded-md text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 shrink-0"
+            title="Déconnexion"
+          >
+            <LogOut size={15} />
+          </button>
         </div>
-        <button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="flex items-center gap-2.5 px-3 py-2.5 mt-1 rounded-xl text-neutral-500 hover:bg-red-500/[0.08] hover:text-red-400 hover:border-red-500/10 border border-transparent text-[13px] font-medium transition-all duration-200 w-full"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          <span>Déconnexion</span>
-        </button>
       </div>
     </div>
   );
@@ -160,74 +276,40 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
       {/* Mobile hamburger */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-neutral-900 border border-white/10 rounded-lg text-neutral-400 hover:text-white transition-colors"
+        className="lg:hidden fixed top-3 left-3 z-50 p-2 bg-white rounded-xl border border-neutral-200/80 shadow-sm text-neutral-500 hover:text-neutral-800 hover:shadow-md transition-all duration-200"
+        aria-label="Ouvrir le menu"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <Menu size={18} />
       </button>
 
       {/* Mobile overlay */}
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => setMobileOpen(false)} />
+        <div
+          className="lg:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 animate-fade-in"
+          onClick={() => setMobileOpen(false)}
+        />
       )}
 
-      {/* Sidebar desktop */}
-      <aside className="hidden lg:block fixed top-0 left-0 h-screen w-[240px] bg-[#0a0a0a] border-r border-white/[0.06] z-30">
+      {/* Desktop sidebar */}
+      <aside className="hidden lg:block fixed top-0 left-0 h-screen w-[272px] z-30 shadow-2xl shadow-black/20">
         {sidebarContent}
       </aside>
 
-      {/* Sidebar mobile */}
+      {/* Mobile sidebar */}
       <aside
-        className={`lg:hidden fixed top-0 left-0 h-screen w-[240px] bg-[#0a0a0a] border-r border-white/[0.06] z-50 transition-transform duration-200 ${
+        className={`lg:hidden fixed top-0 left-0 h-screen w-[272px] z-50 shadow-2xl shadow-black/30 transition-transform duration-300 ease-out ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <button
           onClick={() => setMobileOpen(false)}
-          className="absolute top-5 right-4 text-neutral-500 hover:text-white transition-colors"
+          className="absolute top-4 right-3 p-1.5 rounded-md text-slate-500 hover:text-white hover:bg-white/10 transition-colors z-10"
+          aria-label="Fermer le menu"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <X size={18} />
         </button>
         {sidebarContent}
       </aside>
     </>
   );
-}
-
-// ─── ICONS ───
-
-function IconGrid() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>;
-}
-function IconUsers() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
-}
-function IconSettings() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>;
-}
-function IconClipboard() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>;
-}
-function IconChart() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>;
-}
-function IconCalendar() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
-}
-function IconClock() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
-}
-function IconWallet() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>;
-}
-function IconAlert() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
-}
-function IconReceipt() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>;
-}
-function IconBook() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>;
-}
-function IconFolder() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>;
 }

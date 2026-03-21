@@ -2,6 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { EmploiDuTempsViewer } from "@/components/public/emploi-du-temps-viewer";
+import {
+  BarChart3,
+  Star,
+  Wallet,
+  Calendar,
+  Bell,
+  FileDown,
+  CheckCircle2,
+  XCircle,
+  Clock,
+} from "lucide-react";
 
 interface NoteItem {
   valeur: number;
@@ -56,18 +67,13 @@ interface ResumeData {
   notifications: NotificationItem[];
 }
 
-const MOIS_NOMS = [
-  "", "Jan", "Fev", "Mar", "Avr", "Mai", "Jun",
-  "Jul", "Aou", "Sep", "Oct", "Nov", "Dec",
-];
-
 const MOIS_COMPLETS = [
-  "", "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin",
-  "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre",
+  "", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
 ];
 
 const MODE_LABELS: Record<string, string> = {
-  ESPECES: "Especes",
+  ESPECES: "Espèces",
   MOBILE_MONEY: "Mobile Money",
   VIREMENT: "Virement",
 };
@@ -84,7 +90,7 @@ export function DashboardEleve() {
         return r.json();
       })
       .then(setData)
-      .catch(() => setError("Impossible de charger les donnees."))
+      .catch(() => setError("Impossible de charger les données."))
       .finally(() => setLoading(false));
   }, []);
 
@@ -108,8 +114,8 @@ export function DashboardEleve() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
+      <div className="flex items-center justify-center py-16">
+        <div className="dash-spinner" />
       </div>
     );
   if (error || !data) return <p className="text-sm text-red-500">{error}</p>;
@@ -120,97 +126,98 @@ export function DashboardEleve() {
     <div className="space-y-6">
       {/* KPI CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-          <div className="w-10 h-10 mx-auto rounded-lg bg-indigo-50 flex items-center justify-center mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <div className="dash-kpi p-5 text-center" style={{ "--kpi-accent": "#6366f1" } as React.CSSProperties}>
+          <div className="w-10 h-10 mx-auto rounded-xl bg-indigo-50 flex items-center justify-center mb-2.5">
+            <BarChart3 size={20} className="text-indigo-500" />
           </div>
-          <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Moyenne generale</p>
-          <p className="text-3xl font-bold text-neutral-900 mt-1">
-            {data.moyenneGenerale !== null
-              ? `${data.moyenneGenerale.toFixed(2)}`
-              : "--"}
+          <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Moyenne générale</p>
+          <p className="text-3xl font-bold text-neutral-900 mt-1 tracking-tight">
+            {data.moyenneGenerale !== null ? `${data.moyenneGenerale.toFixed(2)}` : "--"}
           </p>
-          <p className="text-sm text-neutral-400 mt-1">/20 -- Seq. {data.sequence}</p>
+          <p className="text-sm text-neutral-400 mt-0.5">/20 — Séq. {data.sequence}</p>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-          <div className="w-10 h-10 mx-auto rounded-lg bg-amber-50 flex items-center justify-center mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+
+        <div className="dash-kpi p-5 text-center" style={{ "--kpi-accent": "#f59e0b" } as React.CSSProperties}>
+          <div className="w-10 h-10 mx-auto rounded-xl bg-amber-50 flex items-center justify-center mb-2.5">
+            <Star size={20} className="text-amber-500" />
           </div>
           <p className="text-xs text-amber-500 uppercase tracking-wider font-semibold">Rang</p>
-          <p className="text-3xl font-bold text-neutral-900 mt-1">
+          <p className="text-3xl font-bold text-neutral-900 mt-1 tracking-tight">
             {data.rang}
-            <span className="text-base">{data.rang === 1 ? "er" : "e"}</span>
+            <span className="text-base font-medium text-neutral-400">{data.rang === 1 ? "er" : "e"}</span>
           </p>
-          <p className="text-sm text-neutral-400 mt-1">sur {data.totalEleves} eleves</p>
+          <p className="text-sm text-neutral-400 mt-0.5">sur {data.totalEleves} élèves</p>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-          <div className={`w-10 h-10 mx-auto rounded-lg flex items-center justify-center mb-2 ${data.moisRestants > 0 ? "bg-red-50" : "bg-green-50"}`}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={data.moisRestants > 0 ? "#ef4444" : "#22c55e"} strokeWidth="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+
+        <div className="dash-kpi p-5 text-center" style={{ "--kpi-accent": data.moisRestants > 0 ? "#ef4444" : "#22c55e" } as React.CSSProperties}>
+          <div className={`w-10 h-10 mx-auto rounded-xl flex items-center justify-center mb-2.5 ${data.moisRestants > 0 ? "bg-red-50" : "bg-emerald-50"}`}>
+            <Wallet size={20} className={data.moisRestants > 0 ? "text-red-500" : "text-emerald-500"} />
           </div>
-          <p className={`text-xs uppercase tracking-wider font-semibold ${data.moisRestants > 0 ? "text-red-500" : "text-green-500"}`}>Mois restants a payer</p>
-          <p className={`text-3xl font-bold mt-1 ${data.moisRestants > 0 ? "text-red-600" : "text-green-600"}`}>
+          <p className={`text-xs uppercase tracking-wider font-semibold ${data.moisRestants > 0 ? "text-red-500" : "text-emerald-500"}`}>
+            Mois restants
+          </p>
+          <p className={`text-3xl font-bold mt-1 tracking-tight ${data.moisRestants > 0 ? "text-red-600" : "text-emerald-600"}`}>
             {data.moisRestants}
           </p>
-          <p className="text-sm text-neutral-400 mt-1">
-            sur {data.paiements.length} mensualites
-          </p>
+          <p className="text-sm text-neutral-400 mt-0.5">sur {data.paiements.length} mensualités</p>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
-          <div className={`w-10 h-10 mx-auto rounded-lg flex items-center justify-center mb-2 ${data.absencesNonJustifiees > 0 ? "bg-red-50" : "bg-neutral-100"}`}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={data.absencesNonJustifiees > 0 ? "#ef4444" : "#a3a3a3"} strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+
+        <div className="dash-kpi p-5 text-center" style={{ "--kpi-accent": data.absencesNonJustifiees > 0 ? "#ef4444" : "#94a3b8" } as React.CSSProperties}>
+          <div className={`w-10 h-10 mx-auto rounded-xl flex items-center justify-center mb-2.5 ${data.absencesNonJustifiees > 0 ? "bg-red-50" : "bg-neutral-100"}`}>
+            <Calendar size={20} className={data.absencesNonJustifiees > 0 ? "text-red-500" : "text-neutral-400"} />
           </div>
           <p className="text-xs text-neutral-500 uppercase tracking-wider font-semibold">Absences</p>
-          <p className="text-3xl font-bold text-neutral-900 mt-1">{data.totalAbsences}</p>
-          <p className="text-sm text-neutral-400 mt-1">
-            {data.totalHeures}h -- {data.absencesNonJustifiees} non justifiee(s)
+          <p className="text-3xl font-bold text-neutral-900 mt-1 tracking-tight">{data.totalAbsences}</p>
+          <p className="text-sm text-neutral-400 mt-0.5">
+            {data.totalHeures}h — {data.absencesNonJustifiees} non justifiée(s)
           </p>
         </div>
       </div>
 
       {/* MES NOTES */}
-      <div className="bg-white rounded-xl border border-neutral-200">
+      <div className="dash-section">
         <div className="px-6 py-4 border-b border-neutral-100">
-          <h2 className="text-lg font-semibold text-neutral-900">
-            Mes notes -- Sequence {data.sequence}
+          <h2 className="text-base font-semibold text-neutral-900">
+            Mes notes — Séquence {data.sequence}
           </h2>
         </div>
         <div className="p-6">
           {data.matieres.length === 0 ? (
-            <div className="text-center py-8">
+            <div className="text-center py-10">
               <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <BarChart3 size={22} className="text-neutral-400" />
               </div>
               <p className="text-sm text-neutral-500">Aucune note disponible pour le moment.</p>
-              <p className="text-xs text-neutral-400 mt-1">Les notes apparaitront ici une fois saisies par vos professeurs.</p>
+              <p className="text-xs text-neutral-400 mt-1">Les notes apparaîtront ici une fois saisies par vos professeurs.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-neutral-100">
-                    <th className="text-left px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Matiere</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500 w-14">Coef.</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Notes</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500 w-20">Moyenne</th>
+                    <th className="text-left px-4 py-2.5 text-xs uppercase tracking-wider font-semibold text-neutral-400">Matière</th>
+                    <th className="text-center px-4 py-2.5 text-xs uppercase tracking-wider font-semibold text-neutral-400 w-14">Coef.</th>
+                    <th className="text-center px-4 py-2.5 text-xs uppercase tracking-wider font-semibold text-neutral-400">Notes</th>
+                    <th className="text-center px-4 py-2.5 text-xs uppercase tracking-wider font-semibold text-neutral-400 w-20">Moyenne</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.matieres.map((m, i) => (
                     <tr
                       key={m.nom}
-                      className={`border-b border-neutral-100 ${i % 2 === 0 ? "bg-white" : "bg-neutral-50"}`}
+                      className={`border-b border-neutral-50 hover:bg-neutral-50/70 transition-colors ${i % 2 ? "bg-neutral-50/30" : ""}`}
                     >
-                      <td className="px-3 py-2 text-sm font-medium text-neutral-900">{m.nom}</td>
-                      <td className="px-3 py-2 text-center text-sm text-neutral-500">{m.coefficient}</td>
-                      <td className="px-3 py-2 text-center text-sm text-neutral-500">
+                      <td className="px-4 py-2.5 text-sm font-medium text-neutral-900">{m.nom}</td>
+                      <td className="px-4 py-2.5 text-center text-sm text-neutral-400">{m.coefficient}</td>
+                      <td className="px-4 py-2.5 text-center text-sm text-neutral-500">
                         {m.notes.length > 0
                           ? m.notes.map((n) => n.valeur.toFixed(1)).join(" / ")
-                          : "--"}
+                          : "—"}
                       </td>
-                      <td className="px-3 py-2 text-center">
+                      <td className="px-4 py-2.5 text-center">
                         {m.moyenne !== null ? (
                           <span
-                            className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${
+                            className={`inline-block px-2.5 py-0.5 rounded-md text-sm font-semibold ${
                               m.moyenne >= 10
                                 ? "bg-indigo-50 text-indigo-600"
                                 : "bg-red-50 text-red-600"
@@ -219,7 +226,7 @@ export function DashboardEleve() {
                             {m.moyenne.toFixed(2)}
                           </span>
                         ) : (
-                          "--"
+                          "—"
                         )}
                       </td>
                     </tr>
@@ -229,11 +236,11 @@ export function DashboardEleve() {
             </div>
           )}
           {data.moyenneGenerale !== null && (
-            <div className="mt-4 bg-indigo-50 border border-indigo-100 rounded-lg p-3 flex items-center justify-between">
+            <div className="mt-5 bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-100 rounded-xl p-4 flex items-center justify-between">
               <span className="text-sm font-medium text-indigo-600">
-                Moyenne generale ponderee
+                Moyenne générale pondérée
               </span>
-              <span className="text-lg font-bold text-indigo-700">
+              <span className="text-xl font-bold text-indigo-700 tracking-tight">
                 {data.moyenneGenerale.toFixed(2)} / 20
               </span>
             </div>
@@ -241,40 +248,38 @@ export function DashboardEleve() {
         </div>
       </div>
 
-      {/* MA SITUATION FINANCIERE */}
-      <div className="bg-white rounded-xl border border-neutral-200">
+      {/* MA SITUATION FINANCIÈRE */}
+      <div className="dash-section">
         <div className="px-6 py-4 border-b border-neutral-100">
-          <h2 className="text-lg font-semibold text-neutral-900">Ma situation financiere</h2>
+          <h2 className="text-base font-semibold text-neutral-900">Ma situation financière</h2>
         </div>
         <div className="p-6">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             {data.paiements.map((p) => (
               <div
                 key={p.id}
-                className={`rounded-lg border p-3 text-center transition-all ${
+                className={`rounded-xl border p-3.5 text-center transition-all duration-200 hover:-translate-y-0.5 ${
                   p.statut === "PAYE"
-                    ? "border-green-200 bg-green-50"
-                    : "border-red-200 bg-red-50"
+                    ? "border-emerald-200 bg-emerald-50/50"
+                    : "border-red-200 bg-red-50/50"
                 }`}
               >
-                <p className="text-sm font-semibold text-neutral-900">
-                  {MOIS_COMPLETS[p.mois]}
-                </p>
-                <p className="text-sm text-neutral-400">{p.annee}</p>
+                <p className="text-sm font-semibold text-neutral-800">{MOIS_COMPLETS[p.mois]}</p>
+                <p className="text-xs text-neutral-400">{p.annee}</p>
                 <div className="mt-2">
-                  <span
-                    className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                      p.statut === "PAYE"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {p.statut === "PAYE" ? "Paye" : "Non paye"}
-                  </span>
+                  {p.statut === "PAYE" ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-700">
+                      <CheckCircle2 size={12} /> Payé
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-red-100 text-red-700">
+                      <XCircle size={12} /> Non payé
+                    </span>
+                  )}
                 </div>
                 {p.statut === "PAYE" && (
                   <div className="mt-2 space-y-0.5">
-                    <p className="text-sm font-medium text-green-700">
+                    <p className="text-sm font-medium text-emerald-700">
                       {p.montant.toLocaleString("fr-FR")} F
                     </p>
                     <p className="text-xs text-neutral-400">
@@ -285,9 +290,9 @@ export function DashboardEleve() {
                         href={`/api/paiements/recu?paiement_id=${p.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-indigo-500 hover:underline"
+                        className="inline-flex items-center gap-1 text-xs text-indigo-500 hover:text-indigo-700 font-medium mt-0.5"
                       >
-                        Recu
+                        <FileDown size={11} /> Reçu
                       </a>
                     )}
                   </div>
@@ -299,9 +304,9 @@ export function DashboardEleve() {
       </div>
 
       {/* MON EMPLOI DU TEMPS */}
-      <div className="bg-white rounded-xl border border-neutral-200">
+      <div className="dash-section">
         <div className="px-6 py-4 border-b border-neutral-100">
-          <h2 className="text-lg font-semibold text-neutral-900">Mon emploi du temps</h2>
+          <h2 className="text-base font-semibold text-neutral-900">Mon emploi du temps</h2>
         </div>
         <div>
           <EmploiDuTempsViewer classeId={data.eleve.classe.id} />
@@ -309,14 +314,12 @@ export function DashboardEleve() {
       </div>
 
       {/* MES NOTIFICATIONS */}
-      <div className="bg-white rounded-xl border border-neutral-200">
+      <div className="dash-section">
         <div className="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-neutral-900">
-              Mes notifications
-            </h2>
+            <h2 className="text-base font-semibold text-neutral-900">Notifications</h2>
             {nonLues > 0 && (
-              <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-600">
+              <span className="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[11px] font-bold bg-red-500 text-white">
                 {nonLues}
               </span>
             )}
@@ -324,9 +327,9 @@ export function DashboardEleve() {
         </div>
         <div className="p-6">
           {data.notifications.length === 0 ? (
-            <div className="text-center py-8">
+            <div className="text-center py-10">
               <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                <Bell size={22} className="text-neutral-400" />
               </div>
               <p className="text-sm text-neutral-500">Aucune notification pour le moment.</p>
             </div>
@@ -335,16 +338,16 @@ export function DashboardEleve() {
               {data.notifications.map((n) => (
                 <div
                   key={n.id}
-                  className={`border border-neutral-200 rounded-lg p-3 transition-all ${
-                    n.lu ? "bg-white" : "bg-indigo-50 border-indigo-200"
+                  className={`rounded-xl border p-3.5 transition-all duration-200 ${
+                    n.lu ? "bg-white border-neutral-100" : "bg-indigo-50/50 border-indigo-200"
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm text-neutral-900">{n.titre}</span>
+                        <span className="font-medium text-sm text-neutral-900 truncate">{n.titre}</span>
                         {n.type && (
-                          <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-neutral-50 text-neutral-500 border border-neutral-200">
+                          <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold bg-neutral-100 text-neutral-500 border border-neutral-200">
                             {n.type}
                           </span>
                         )}
@@ -352,21 +355,24 @@ export function DashboardEleve() {
                           <span className="w-2 h-2 rounded-full bg-indigo-500 shrink-0" />
                         )}
                       </div>
-                      <p className="text-sm text-neutral-500 mt-1">{n.message}</p>
-                      <p className="text-xs text-neutral-400 mt-1">
-                        {new Date(n.date_envoi).toLocaleDateString("fr-FR", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </p>
+                      <p className="text-sm text-neutral-500 mt-1 line-clamp-2">{n.message}</p>
+                      <div className="flex items-center gap-1.5 mt-1.5 text-xs text-neutral-400">
+                        <Clock size={11} />
+                        <span>
+                          {new Date(n.date_envoi).toLocaleDateString("fr-FR", {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
                     </div>
                     {!n.lu && (
                       <button
                         onClick={() => marquerLu(n.id)}
-                        className="text-sm text-indigo-500 hover:underline shrink-0"
+                        className="text-xs text-indigo-500 hover:text-indigo-700 font-medium shrink-0 px-2 py-1 rounded-md hover:bg-indigo-50 transition-colors"
                       >
                         Lu
                       </button>
