@@ -53,7 +53,7 @@ export function Navbar() {
             </div>
           </div>
           <span className="text-[22px] font-bold text-white tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
-            Mon <span className="text-cyan-400">Ecole</span>
+            <span className="text-cyan-400">IREF</span>
           </span>
         </Link>
 
