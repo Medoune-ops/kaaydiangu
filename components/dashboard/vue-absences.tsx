@@ -45,6 +45,8 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
   const [seuil, setSeuil] = useState(SEUIL_DEFAUT);
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState<"liste" | "alertes">("liste");
+  const [recherche, setRecherche] = useState("");
+  const [filtreJustifiee, setFiltreJustifiee] = useState<"tous" | "justifiee" | "non_justifiee">("tous");
 
   const loadAbsences = useCallback(async () => {
     setLoading(true);
@@ -87,6 +89,22 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
 
   const alertes = stats.filter((s) => s.totalAbsences >= seuil);
 
+  const absencesFiltrees = absences.filter((a) => {
+    if (filtreJustifiee === "justifiee" && !a.justifiee) return false;
+    if (filtreJustifiee === "non_justifiee" && a.justifiee) return false;
+    if (recherche) {
+      const q = recherche.toLowerCase();
+      return (
+        a.eleve.nom.toLowerCase().includes(q) ||
+        a.eleve.prenom.toLowerCase().includes(q) ||
+        a.eleve.matricule.toLowerCase().includes(q) ||
+        a.eleve.classe.nom.toLowerCase().includes(q) ||
+        a.matiere.nom.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
+
   return (
     <div className="space-y-6">
       {/* Filtres */}
@@ -124,14 +142,46 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
                 className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
               />
             </div>
-            <div className="flex items-end">
+            <div>
+              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Statut</label>
+              <select
+                value={filtreJustifiee}
+                onChange={(e) => setFiltreJustifiee(e.target.value as "tous" | "justifiee" | "non_justifiee")}
+                className="w-full h-9 bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+              >
+                <option value="tous">Toutes</option>
+                <option value="justifiee">Justifiees</option>
+                <option value="non_justifiee">Non justifiees</option>
+              </select>
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <div className="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+              </svg>
+              <input
+                type="text"
+                data-search-input
+                value={recherche}
+                onChange={(e) => setRecherche(e.target.value)}
+                placeholder="Rechercher un eleve, une matiere..."
+                className="h-9 w-72 bg-white border border-neutral-200 rounded-lg pl-9 pr-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+              />
+            </div>
+            {(classeId || dateDebut || dateFin || recherche || filtreJustifiee !== "tous") && (
               <button
-                onClick={() => { setClasseId(""); setDateDebut(""); setDateFin(""); }}
-                className="h-9 px-4 bg-white border border-neutral-200 text-neutral-900 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors"
+                onClick={() => { setClasseId(""); setDateDebut(""); setDateFin(""); setRecherche(""); setFiltreJustifiee("tous"); }}
+                className="h-9 px-3 text-sm text-neutral-500 hover:text-neutral-700 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
               >
                 Reinitialiser
               </button>
-            </div>
+            )}
+            {!loading && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-neutral-100 text-neutral-500">
+                {absencesFiltrees.length} resultat(s)
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -146,7 +196,7 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
               : "bg-white border border-neutral-200 text-neutral-900 hover:bg-neutral-50"
           }`}
         >
-          Liste des absences ({absences.length})
+          Liste des absences ({absencesFiltrees.length})
         </button>
         <button
           onClick={() => setTab("alertes")}
@@ -172,7 +222,7 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
               <div className="flex justify-center py-12">
                 <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
               </div>
-            ) : absences.length === 0 ? (
+            ) : absencesFiltrees.length === 0 ? (
               <div className="text-center py-12">
                 <div className="w-12 h-12 mx-auto rounded-xl bg-green-50 flex items-center justify-center mb-3">
                   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -195,7 +245,7 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {absences.map((a) => (
+                    {absencesFiltrees.map((a) => (
                       <tr key={a.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
                         <td className="px-4 py-2 text-sm text-neutral-500">
                           {new Date(a.date).toLocaleDateString("fr-FR")}

@@ -119,6 +119,7 @@ export function JournalAudit() {
             <label className="block text-xs font-medium text-neutral-400 uppercase tracking-wider mb-1">Recherche</label>
             <input
               type="text"
+              data-search-input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Nom, action..."

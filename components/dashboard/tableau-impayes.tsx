@@ -57,6 +57,7 @@ export function TableauImpayes() {
   const [filtreClasse, setFiltreClasse] = useState("");
   const [filtreRetard, setFiltreRetard] = useState<NiveauRetard>("tous");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [recherche, setRecherche] = useState("");
   const [sending, setSending] = useState(false);
   const [sendingId, setSendingId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
@@ -82,11 +83,20 @@ export function TableauImpayes() {
     charger(filtreClasse || undefined);
   }, [filtreClasse]);
 
-  // Filtrage par niveau de retard
+  // Filtrage par niveau de retard + recherche
   const filteredEleves = eleves.filter((e) => {
-    if (filtreRetard === "leger") return e.jours_retard >= 30 && e.jours_retard < 60;
-    if (filtreRetard === "moyen") return e.jours_retard >= 60 && e.jours_retard < 90;
-    if (filtreRetard === "critique") return e.jours_retard >= 90;
+    if (filtreRetard === "leger" && !(e.jours_retard >= 30 && e.jours_retard < 60)) return false;
+    if (filtreRetard === "moyen" && !(e.jours_retard >= 60 && e.jours_retard < 90)) return false;
+    if (filtreRetard === "critique" && !(e.jours_retard >= 90)) return false;
+    if (recherche) {
+      const q = recherche.toLowerCase();
+      return (
+        e.nom.toLowerCase().includes(q) ||
+        e.prenom.toLowerCase().includes(q) ||
+        e.matricule.toLowerCase().includes(q) ||
+        e.classe.nom.toLowerCase().includes(q)
+      );
+    }
     return true;
   });
 
@@ -205,10 +215,23 @@ export function TableauImpayes() {
               )}
             </h3>
             <div className="flex flex-wrap items-center gap-3">
+              <div className="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                </svg>
+                <input
+                  type="text"
+                  data-search-input
+                  value={recherche}
+                  onChange={(e) => setRecherche(e.target.value)}
+                  placeholder="Rechercher un eleve..."
+                  className="h-9 w-56 bg-white border border-neutral-200 rounded-lg pl-9 pr-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                />
+              </div>
               <select
                 value={filtreClasse}
                 onChange={(e) => setFiltreClasse(e.target.value)}
-                className="h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                className="h-9 bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
               >
                 <option value="">Toutes les classes</option>
                 {classes.map((c) => (
@@ -221,13 +244,22 @@ export function TableauImpayes() {
               <select
                 value={filtreRetard}
                 onChange={(e) => setFiltreRetard(e.target.value as NiveauRetard)}
-                className="h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                className="h-9 bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
               >
                 <option value="tous">Tous les niveaux</option>
                 <option value="leger">Leger (30-59j)</option>
                 <option value="moyen">Moyen (60-89j)</option>
                 <option value="critique">Critique (+90j)</option>
               </select>
+
+              {(recherche || filtreClasse || filtreRetard !== "tous") && (
+                <button
+                  onClick={() => { setRecherche(""); setFiltreClasse(""); setFiltreRetard("tous"); }}
+                  className="h-9 px-3 text-sm text-neutral-500 hover:text-neutral-700 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+                >
+                  Reinitialiser
+                </button>
+              )}
 
               <button
                 onClick={rappelGroupe}

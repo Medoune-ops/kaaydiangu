@@ -216,6 +216,7 @@ export function GestionDepenses() {
                 </svg>
                 <input
                   type="text"
+                  data-search-input
                   value={recherche}
                   onChange={(e) => setRecherche(e.target.value)}
                   placeholder="Rechercher une depense..."
@@ -296,7 +297,7 @@ export function GestionDepenses() {
                     </tr>
                   </thead>
                   <tbody>
-                    {depenses.map((d) => (
+                    {depensesFiltrees.map((d) => (
                       <tr key={d.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
                         <td className="px-3 py-2 text-sm text-neutral-500">
                           {new Date(d.date).toLocaleDateString("fr-FR")}
