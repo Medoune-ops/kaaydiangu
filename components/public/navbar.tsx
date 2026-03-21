@@ -58,12 +58,12 @@ export function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-0.5">
+        <nav className="hidden md:flex items-center gap-0">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`relative px-4 py-2 rounded-xl text-[15px] font-medium transition-all duration-250 ease-out ${
+              className={`relative px-3 lg:px-4 py-2 rounded-xl text-[13px] lg:text-[15px] font-medium transition-all duration-250 ease-out whitespace-nowrap ${
                 pathname === link.href
                   ? "text-cyan-400 bg-white/[0.08]"
                   : "text-white/55 hover:text-white hover:bg-white/[0.06]"
@@ -75,7 +75,7 @@ export function Navbar() {
         </nav>
 
         {/* CTA button */}
-        <div className="hidden lg:flex items-center">
+        <div className="hidden md:flex items-center">
           <Link
             href="/login"
             className="btn-primary h-10 px-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold text-[15px] hover:from-cyan-300 hover:to-teal-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40"
@@ -87,7 +87,7 @@ export function Navbar() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setOpen(!open)}
-          className="lg:hidden p-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/[0.06] transition-all duration-200"
+          className="md:hidden p-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/[0.06] transition-all duration-200"
           aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
         >
           <div className="relative w-[22px] h-[22px]">
@@ -112,7 +112,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       <div
-        className={`lg:hidden overflow-hidden transition-all duration-300 ease-out ${
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-out ${
           open ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
