@@ -48,6 +48,7 @@ export function GestionEquipe() {
   const [assignProf, setAssignProf] = useState<UserInfo | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [filter, setFilter] = useState<string>("TOUS");
+  const [recherche, setRecherche] = useState("");
 
   const fetchUsers = useCallback(() => {
     fetch("/api/admin/users")
@@ -116,8 +117,18 @@ export function GestionEquipe() {
     }
   };
 
-  const filteredUsers =
-    filter === "TOUS" ? users : users.filter((u) => u.role === filter);
+  const filteredUsers = users.filter((u) => {
+    if (filter !== "TOUS" && u.role !== filter) return false;
+    if (recherche) {
+      const q = recherche.toLowerCase();
+      return (
+        u.nom.toLowerCase().includes(q) ||
+        u.prenom.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
 
   if (loading) {
     return (
@@ -143,11 +154,24 @@ export function GestionEquipe() {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+            </svg>
+            <input
+              type="text"
+              data-search-input
+              value={recherche}
+              onChange={(e) => setRecherche(e.target.value)}
+              placeholder="Rechercher un utilisateur..."
+              className="h-9 w-56 bg-white border border-neutral-200 rounded-lg pl-9 pr-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+            />
+          </div>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+            className="h-9 bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm text-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
           >
             <option value="TOUS">Tous les roles</option>
             <option value="CENSEUR">Censeurs</option>
@@ -155,7 +179,15 @@ export function GestionEquipe() {
             <option value="PROFESSEUR">Professeurs</option>
             <option value="SUPER_ADMIN">Super Admins</option>
           </select>
-          <span className="text-sm text-neutral-400">{filteredUsers.length} utilisateur(s)</span>
+          {(recherche || filter !== "TOUS") && (
+            <button
+              onClick={() => { setRecherche(""); setFilter("TOUS"); }}
+              className="h-9 px-3 text-sm text-neutral-500 hover:text-neutral-700 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+            >
+              Reinitialiser
+            </button>
+          )}
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-neutral-100 text-neutral-500">{filteredUsers.length} utilisateur(s)</span>
         </div>
         <button
           onClick={() => setShowCreate(true)}

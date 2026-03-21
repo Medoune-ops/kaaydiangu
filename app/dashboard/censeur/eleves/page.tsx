@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { TableauEleves } from "@/components/dashboard/tableau-eleves";
 
 export const dynamic = "force-dynamic";
 
@@ -49,44 +50,7 @@ export default async function CenseurElevesPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[640px]">
-              <thead>
-                <tr className="border-b border-neutral-100 bg-neutral-50">
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500 text-sm uppercase tracking-wider">Matricule</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500 text-sm uppercase tracking-wider">Nom & Prenom</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500 text-sm uppercase tracking-wider">Classe</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500 text-sm uppercase tracking-wider">Email</th>
-                  <th className="text-left px-4 py-3 font-medium text-neutral-500 text-sm uppercase tracking-wider">Statut</th>
-                </tr>
-              </thead>
-              <tbody>
-                {eleves.map((eleve) => (
-                  <tr key={eleve.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50 transition-colors">
-                    <td className="px-4 py-3 font-mono text-sm text-indigo-500">{eleve.matricule}</td>
-                    <td className="px-4 py-3 font-medium text-neutral-900">
-                      {eleve.nom} {eleve.prenom}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-sm text-neutral-600 bg-neutral-50 border border-neutral-200 rounded-md px-2 py-0.5">{eleve.classe.nom}</span>
-                    </td>
-                    <td className="px-4 py-3 text-neutral-500">{eleve.user.email}</td>
-                    <td className="px-4 py-3">
-                      <span className={`text-sm font-medium rounded-md px-2 py-0.5 ${
-                        eleve.actif
-                          ? "text-green-600 bg-green-50"
-                          : "text-red-600 bg-red-50"
-                      }`}>
-                        {eleve.actif ? "Actif" : "Inactif"}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <TableauEleves eleves={eleves as Parameters<typeof TableauEleves>[0]["eleves"]} />
       )}
     </div>
   );
