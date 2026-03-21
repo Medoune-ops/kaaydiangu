@@ -72,22 +72,34 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
+      {/* Gradient accent strip at top */}
+      <div className="sidebar-accent-top" />
+
       {/* Logo */}
-      <div className="px-6 py-6">
+      <div className="px-6 py-5">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-              <path d="M6 12v5c3 3 9 3 12 0v-5" />
-            </svg>
+          <div className="relative">
+            <div className="absolute inset-0 bg-indigo-500 rounded-xl blur-md opacity-40" />
+            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                <path d="M6 12v5c3 3 9 3 12 0v-5" />
+              </svg>
+            </div>
           </div>
-          <span className="text-xl font-bold text-white tracking-tight">Mon Ecole</span>
+          <div>
+            <span className="text-[18px] font-bold text-white tracking-tight">Mon Ecole</span>
+            <div className="text-[10px] text-white/30 tracking-widest uppercase">Espace Admin</div>
+          </div>
         </div>
       </div>
 
+      {/* Separator */}
+      <div className="mx-6 h-px bg-white/[0.06] mb-1" />
+
       {/* Nav */}
-      <nav className="flex-1 px-3 space-y-0.5" aria-label="Menu principal">
-        <p className="px-3 mb-3 text-xs font-semibold text-neutral-500 uppercase tracking-widest">Menu</p>
+      <nav className="flex-1 px-3 space-y-0.5 py-2" aria-label="Menu principal">
+        <p className="px-3 mb-2 text-[10px] font-bold text-neutral-600 uppercase tracking-[0.15em]">Navigation</p>
         {items.map((item, index) => {
           const isActive = pathname === item.href || (item.href !== "/dashboard/admin" && item.href !== "/dashboard/censeur" && item.href !== "/dashboard/comptable" && item.href !== "/dashboard/professeur" && item.href !== "/dashboard/eleve" && pathname.startsWith(item.href + "/"));
           return (
