@@ -21,7 +21,17 @@
       "Bash(git push:*)",
       "Bash(ls -la c:/Users/Medoune/Desktop/kaaydiangu/public/favicon*)",
       "Bash(ls -la c:/Users/Medoune/Desktop/kaaydiangu/public/icon*)",
-      "Bash(xargs head:*)"
+      "Bash(xargs head:*)",
+      "Bash(find c:/Users/Medoune/Desktop/kaaydiangu -maxdepth 3 -name *.jpg -o -name *.jpeg -o -name *.png -o -name *.webp)",
+      "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.483.jpeg\" public/images/ecole-facade.jpeg)",
+      "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.48.jpeg\" public/images/salle-classe-1.jpeg)",
+      "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.481.jpeg\" public/images/salle-classe-2.jpeg)",
+      "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.482.jpeg\" public/images/salle-classe-3.jpeg)",
+      "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36..jpeg\" public/images/salle-maternelle-1.jpeg)",
+      "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.4.jpeg\" public/images/salle-maternelle-2.jpeg)",
+      "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.47.jpeg\" public/images/salle-maternelle-3.jpeg)",
+      "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.471.jpeg\" public/images/salle-maternelle-4.jpeg)",
+      "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.472.jpeg\" public/images/salle-maternelle-5.jpeg)"
     ],
     "additionalDirectories": [
       "c:\\Users\\Medoune\\Desktop\\kaaydiangu\\.next"
