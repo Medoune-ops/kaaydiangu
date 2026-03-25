@@ -123,52 +123,52 @@ export function DashboardEleve() {
   const nonLues = data.notifications.filter((n) => !n.lu).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* KPI CARDS */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="dash-kpi p-5 text-center" style={{ "--kpi-accent": "#6366f1" } as React.CSSProperties}>
-          <div className="w-10 h-10 mx-auto rounded-xl bg-indigo-50 flex items-center justify-center mb-2.5">
-            <BarChart3 size={20} className="text-indigo-500" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="dash-kpi p-3.5 text-center" style={{ "--kpi-accent": "#6366f1" } as React.CSSProperties}>
+          <div className="w-8 h-8 mx-auto rounded-lg bg-indigo-50 flex items-center justify-center mb-1.5">
+            <BarChart3 size={16} className="text-indigo-500" />
           </div>
-          <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Moyenne générale</p>
-          <p className="text-3xl font-bold text-neutral-900 mt-1 tracking-tight">
+          <p className="text-[10px] text-indigo-500 uppercase tracking-wider font-semibold">Moyenne</p>
+          <p className="text-2xl font-bold text-neutral-900 mt-0.5 tracking-tight">
             {data.moyenneGenerale !== null ? `${data.moyenneGenerale.toFixed(2)}` : "--"}
           </p>
-          <p className="text-sm text-neutral-400 mt-0.5">/20 — Séq. {data.sequence}</p>
+          <p className="text-xs text-neutral-400">/20 — Séq. {data.sequence}</p>
         </div>
 
-        <div className="dash-kpi p-5 text-center" style={{ "--kpi-accent": "#f59e0b" } as React.CSSProperties}>
-          <div className="w-10 h-10 mx-auto rounded-xl bg-amber-50 flex items-center justify-center mb-2.5">
-            <Star size={20} className="text-amber-500" />
+        <div className="dash-kpi p-3.5 text-center" style={{ "--kpi-accent": "#f59e0b" } as React.CSSProperties}>
+          <div className="w-8 h-8 mx-auto rounded-lg bg-amber-50 flex items-center justify-center mb-1.5">
+            <Star size={16} className="text-amber-500" />
           </div>
-          <p className="text-xs text-amber-500 uppercase tracking-wider font-semibold">Rang</p>
-          <p className="text-3xl font-bold text-neutral-900 mt-1 tracking-tight">
+          <p className="text-[10px] text-amber-500 uppercase tracking-wider font-semibold">Rang</p>
+          <p className="text-2xl font-bold text-neutral-900 mt-0.5 tracking-tight">
             {data.rang}
-            <span className="text-base font-medium text-neutral-400">{data.rang === 1 ? "er" : "e"}</span>
+            <span className="text-sm font-medium text-neutral-400">{data.rang === 1 ? "er" : "e"}</span>
           </p>
-          <p className="text-sm text-neutral-400 mt-0.5">sur {data.totalEleves} élèves</p>
+          <p className="text-xs text-neutral-400">sur {data.totalEleves} élèves</p>
         </div>
 
-        <div className="dash-kpi p-5 text-center" style={{ "--kpi-accent": data.moisRestants > 0 ? "#ef4444" : "#22c55e" } as React.CSSProperties}>
-          <div className={`w-10 h-10 mx-auto rounded-xl flex items-center justify-center mb-2.5 ${data.moisRestants > 0 ? "bg-red-50" : "bg-emerald-50"}`}>
-            <Wallet size={20} className={data.moisRestants > 0 ? "text-red-500" : "text-emerald-500"} />
+        <div className="dash-kpi p-3.5 text-center" style={{ "--kpi-accent": data.moisRestants > 0 ? "#ef4444" : "#22c55e" } as React.CSSProperties}>
+          <div className={`w-8 h-8 mx-auto rounded-lg flex items-center justify-center mb-1.5 ${data.moisRestants > 0 ? "bg-red-50" : "bg-emerald-50"}`}>
+            <Wallet size={16} className={data.moisRestants > 0 ? "text-red-500" : "text-emerald-500"} />
           </div>
-          <p className={`text-xs uppercase tracking-wider font-semibold ${data.moisRestants > 0 ? "text-red-500" : "text-emerald-500"}`}>
+          <p className={`text-[10px] uppercase tracking-wider font-semibold ${data.moisRestants > 0 ? "text-red-500" : "text-emerald-500"}`}>
             Mois restants
           </p>
-          <p className={`text-3xl font-bold mt-1 tracking-tight ${data.moisRestants > 0 ? "text-red-600" : "text-emerald-600"}`}>
+          <p className={`text-2xl font-bold mt-0.5 tracking-tight ${data.moisRestants > 0 ? "text-red-600" : "text-emerald-600"}`}>
             {data.moisRestants}
           </p>
-          <p className="text-sm text-neutral-400 mt-0.5">sur {data.paiements.length} mensualités</p>
+          <p className="text-xs text-neutral-400">sur {data.paiements.length} mensualités</p>
         </div>
 
-        <div className="dash-kpi p-5 text-center" style={{ "--kpi-accent": data.absencesNonJustifiees > 0 ? "#ef4444" : "#94a3b8" } as React.CSSProperties}>
-          <div className={`w-10 h-10 mx-auto rounded-xl flex items-center justify-center mb-2.5 ${data.absencesNonJustifiees > 0 ? "bg-red-50" : "bg-neutral-100"}`}>
-            <Calendar size={20} className={data.absencesNonJustifiees > 0 ? "text-red-500" : "text-neutral-400"} />
+        <div className="dash-kpi p-3.5 text-center" style={{ "--kpi-accent": data.absencesNonJustifiees > 0 ? "#ef4444" : "#94a3b8" } as React.CSSProperties}>
+          <div className={`w-8 h-8 mx-auto rounded-lg flex items-center justify-center mb-1.5 ${data.absencesNonJustifiees > 0 ? "bg-red-50" : "bg-neutral-100"}`}>
+            <Calendar size={16} className={data.absencesNonJustifiees > 0 ? "text-red-500" : "text-neutral-400"} />
           </div>
-          <p className="text-xs text-neutral-500 uppercase tracking-wider font-semibold">Absences</p>
-          <p className="text-3xl font-bold text-neutral-900 mt-1 tracking-tight">{data.totalAbsences}</p>
-          <p className="text-sm text-neutral-400 mt-0.5">
+          <p className="text-[10px] text-neutral-500 uppercase tracking-wider font-semibold">Absences</p>
+          <p className="text-2xl font-bold text-neutral-900 mt-0.5 tracking-tight">{data.totalAbsences}</p>
+          <p className="text-xs text-neutral-400">
             {data.totalHeures}h — {data.absencesNonJustifiees} non justifiée(s)
           </p>
         </div>
@@ -176,16 +176,16 @@ export function DashboardEleve() {
 
       {/* MES NOTES */}
       <div className="dash-section">
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <h2 className="text-base font-semibold text-neutral-900">
+        <div className="px-5 py-3 border-b border-neutral-100">
+          <h2 className="text-sm font-semibold text-neutral-900">
             Mes notes — Séquence {data.sequence}
           </h2>
         </div>
-        <div className="p-6">
+        <div className="p-4">
           {data.matieres.length === 0 ? (
-            <div className="text-center py-10">
-              <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
-                <BarChart3 size={22} className="text-neutral-400" />
+            <div className="text-center py-6">
+              <div className="w-10 h-10 mx-auto rounded-lg bg-neutral-100 flex items-center justify-center mb-2">
+                <BarChart3 size={18} className="text-neutral-400" />
               </div>
               <p className="text-sm text-neutral-500">Aucune note disponible pour le moment.</p>
               <p className="text-xs text-neutral-400 mt-1">Les notes apparaîtront ici une fois saisies par vos professeurs.</p>
@@ -236,7 +236,7 @@ export function DashboardEleve() {
             </div>
           )}
           {data.moyenneGenerale !== null && (
-            <div className="mt-5 bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-100 rounded-xl p-4 flex items-center justify-between">
+            <div className="mt-3 bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-100 rounded-lg p-3 flex items-center justify-between">
               <span className="text-sm font-medium text-indigo-600">
                 Moyenne générale pondérée
               </span>
@@ -250,10 +250,10 @@ export function DashboardEleve() {
 
       {/* MA SITUATION FINANCIÈRE */}
       <div className="dash-section">
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <h2 className="text-base font-semibold text-neutral-900">Ma situation financière</h2>
+        <div className="px-5 py-3 border-b border-neutral-100">
+          <h2 className="text-sm font-semibold text-neutral-900">Ma situation financière</h2>
         </div>
-        <div className="p-6">
+        <div className="p-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             {data.paiements.map((p) => (
               <div
@@ -305,8 +305,8 @@ export function DashboardEleve() {
 
       {/* MON EMPLOI DU TEMPS */}
       <div className="dash-section">
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <h2 className="text-base font-semibold text-neutral-900">Mon emploi du temps</h2>
+        <div className="px-5 py-3 border-b border-neutral-100">
+          <h2 className="text-sm font-semibold text-neutral-900">Mon emploi du temps</h2>
         </div>
         <div>
           <EmploiDuTempsViewer classeId={data.eleve.classe.id} />
@@ -315,9 +315,9 @@ export function DashboardEleve() {
 
       {/* MES NOTIFICATIONS */}
       <div className="dash-section">
-        <div className="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
+        <div className="px-5 py-3 border-b border-neutral-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-neutral-900">Notifications</h2>
+            <h2 className="text-sm font-semibold text-neutral-900">Notifications</h2>
             {nonLues > 0 && (
               <span className="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[11px] font-bold bg-red-500 text-white">
                 {nonLues}
@@ -325,9 +325,9 @@ export function DashboardEleve() {
             )}
           </div>
         </div>
-        <div className="p-6">
+        <div className="p-4">
           {data.notifications.length === 0 ? (
-            <div className="text-center py-10">
+            <div className="text-center py-6">
               <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
                 <Bell size={22} className="text-neutral-400" />
               </div>
