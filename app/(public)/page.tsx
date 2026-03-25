@@ -158,7 +158,7 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════ */}
       {/*  HERO — Split 2 colonnes + Dashboard 3D flottant      */}
       {/* ══════════════════════════════════════════════════════ */}
-      <section className="relative min-h-[70vh] flex items-center overflow-hidden bg-[#020c1b] hero-spotlight">
+      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-[#020c1b] hero-spotlight">
 
         {/* Aurora blobs */}
         <div className="absolute -top-[30%] -left-[15%] w-[800px] h-[800px] rounded-full bg-cyan-500/[0.18] blur-[200px] animate-aurora pointer-events-none" />
@@ -169,14 +169,14 @@ export default function HomePage() {
         <div className="absolute inset-0 dot-grid opacity-65" />
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 relative z-10 w-full">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8 relative z-10 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-8 xl:gap-16">
 
             {/* ── LEFT — Text content ── */}
             <div className="flex-1 text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
 
               {/* Badge with conic animated border */}
-              <div className="animate-slide-up inline-flex items-center gap-2.5 px-5 py-2 rounded-full conic-border mb-6">
+              <div className="animate-slide-up inline-flex items-center gap-2.5 px-5 py-2 rounded-full conic-border mb-4">
                 <div className="relative">
                   <div className="w-2 h-2 rounded-full bg-cyan-400 ping-ring" />
                 </div>
@@ -196,14 +196,14 @@ export default function HomePage() {
               </h1>
 
               {/* Subtitle */}
-              <p className="animate-slide-up-delay-2 mt-5 text-[16px] text-white/50 leading-relaxed max-w-lg mx-auto lg:mx-0">
+              <p className="animate-slide-up-delay-2 mt-3 text-[15px] text-white/50 leading-relaxed max-w-lg mx-auto lg:mx-0">
                 Depuis plus de{" "}
                 <span className="text-white/80 font-semibold">15 ans</span>,
                 nous formons les esprits brillants de demain grâce à un enseignement d&apos;excellence et un encadrement rigoureux.
               </p>
 
               {/* CTAs */}
-              <div className="animate-slide-up-delay-3 flex flex-col sm:flex-row gap-3.5 justify-center lg:justify-start mt-7">
+              <div className="animate-slide-up-delay-3 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mt-5">
                 <Link
                   href="/nos-classes"
                   className="group btn-primary h-[52px] px-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold text-[16px] hover:from-cyan-300 hover:to-teal-300 shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-shadow duration-300"
@@ -222,7 +222,7 @@ export default function HomePage() {
               </div>
 
               {/* Trust badges */}
-              <div className="mt-6 flex flex-wrap items-center gap-2.5 justify-center lg:justify-start animate-fade-in">
+              <div className="mt-4 flex flex-wrap items-center gap-2 justify-center lg:justify-start animate-fade-in">
                 <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl glass-dark border border-white/[0.07] animate-float-gentle">
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
