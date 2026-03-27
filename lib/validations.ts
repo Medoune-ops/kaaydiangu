@@ -49,6 +49,7 @@ export const eleveSchema = z.object({
   prenom: z.string().min(1, "Prénom requis"),
   nom: z.string().min(1, "Nom requis"),
   classe_id: z.string().min(1, "Classe requise"),
+  montant_inscription: z.number().min(0, "Le montant doit être positif ou nul").optional(),
   date_naissance: z.string().optional(),
   sexe: z.enum(["M", "F"]).optional().nullable(),
   photo: z.string().optional().nullable(),

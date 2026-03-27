@@ -95,12 +95,19 @@ export async function POST(req: NextRequest) {
       telephone_parent,
       email_parent,
       classe_id,
+      montant_inscription,
     } = parsed.data;
 
-    // Vérifier que la classe appartient à cette école
-    const classe = await prisma.classe.findFirst({
-      where: { id: classe_id, ecole_id: session.user.ecoleId },
-    });
+    // Vérifier que la classe appartient à cette école + récupérer infos école
+    const [classe, ecole] = await Promise.all([
+      prisma.classe.findFirst({
+        where: { id: classe_id, ecole_id: session.user.ecoleId },
+      }),
+      prisma.ecole.findUnique({
+        where: { id: session.user.ecoleId },
+        select: { nom: true, adresse: true, telephone: true, email: true, annee_scolaire: true, logo: true, frais_inscription: true },
+      }),
+    ]);
     if (!classe) {
       return NextResponse.json({ error: "Classe introuvable" }, { status: 404 });
     }
@@ -183,11 +190,27 @@ export async function POST(req: NextRequest) {
       return { eleve, user, motDePasseProvisoire: motDePasseProvisoire };
     });
 
+    // Utiliser le montant saisi dans le formulaire ; si absent, fallback sur frais_inscription de l'école
+    const montantRecu = montant_inscription ?? ecole?.frais_inscription ?? 0;
+
     return NextResponse.json({
       id: result.eleve.id,
       matricule: result.eleve.matricule,
       email: result.user.email,
       mot_de_passe_provisoire: result.motDePasseProvisoire,
+      nom: result.eleve.nom,
+      prenom: result.eleve.prenom,
+      classe_nom: classe.nom,
+      date_inscription: new Date().toISOString(),
+      montant_inscription: montantRecu,
+      ecole: ecole ? {
+        nom: ecole.nom,
+        adresse: ecole.adresse,
+        telephone: ecole.telephone,
+        email: ecole.email,
+        annee_scolaire: ecole.annee_scolaire,
+        logo: ecole.logo,
+      } : null,
     });
   } catch (error) {
     console.error("[ELEVES_POST] Erreur:", error);

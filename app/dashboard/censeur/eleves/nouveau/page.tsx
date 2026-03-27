@@ -8,11 +8,17 @@ export default async function NouvelElevePage() {
   const session = await auth();
   if (!session) return null;
 
-  const classes = await prisma.classe.findMany({
-    where: { ecole_id: session.user.ecoleId },
-    orderBy: [{ niveau: "asc" }, { nom: "asc" }],
-    select: { id: true, nom: true, niveau: true },
-  });
+  const [classes, ecole] = await Promise.all([
+    prisma.classe.findMany({
+      where: { ecole_id: session.user.ecoleId },
+      orderBy: [{ niveau: "asc" }, { nom: "asc" }],
+      select: { id: true, nom: true, niveau: true },
+    }),
+    prisma.ecole.findUnique({
+      where: { id: session.user.ecoleId },
+      select: { frais_inscription: true },
+    }),
+  ]);
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -23,7 +29,7 @@ export default async function NouvelElevePage() {
         </p>
       </div>
 
-      <EleveForm classes={classes} />
+      <EleveForm classes={classes} fraisInscriptionDefaut={ecole?.frais_inscription ?? 0} />
     </div>
   );
 }
