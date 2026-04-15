@@ -31,7 +31,8 @@
       "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.4.jpeg\" public/images/salle-maternelle-2.jpeg)",
       "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.47.jpeg\" public/images/salle-maternelle-3.jpeg)",
       "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.471.jpeg\" public/images/salle-maternelle-4.jpeg)",
-      "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.472.jpeg\" public/images/salle-maternelle-5.jpeg)"
+      "Bash(cp \"WhatsApp Image 2025-08-20 at 14.36.472.jpeg\" public/images/salle-maternelle-5.jpeg)",
+      "Bash(git rm:*)"
     ],
     "additionalDirectories": [
       "c:\\Users\\Medoune\\Desktop\\kaaydiangu\\.next"
