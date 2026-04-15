@@ -31,8 +31,15 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# Variables d'environnement — NE JAMAIS COMMITER les secrets
+# .env.example est la seule exception : il contient des placeholders, pas de secrets.
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+# Exclure explicitement .env.example du gitignore pour qu'il soit versionné :
+!.env.example
 
 # vercel
 .vercel

@@ -9,6 +9,10 @@ export const authConfig: NextAuthConfig = {
     signIn: "/login",
     signOut: "/",
   },
+  // trustHost: true est requis en production quand l'app est derrière un reverse proxy
+  // (Vercel, Nginx, etc.) — NextAuth v5 vérifie le header Host pour prévenir les attaques
+  // SSRF. Sans cette option, les callbacks OAuth/email cassent en production.
+  trustHost: true,
   providers: [],
   callbacks: {
     async redirect({ url, baseUrl }) {

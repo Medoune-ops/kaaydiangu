@@ -193,11 +193,29 @@ export async function POST(req: NextRequest) {
     // Utiliser le montant saisi dans le formulaire ; si absent, fallback sur frais_inscription de l'école
     const montantRecu = montant_inscription ?? ecole?.frais_inscription ?? 0;
 
+    // SÉCURITÉ — EXCEPTION DOCUMENTÉE :
+    // Le mot de passe provisoire est retourné ICI intentionnellement pour permettre la
+    // génération immédiate du reçu d'inscription PDF (voir genererRecuInscriptionPDF).
+    // Cette exception est acceptable car :
+    //   1. La route est protégée par session.user.role (SUPER_ADMIN | CENSEUR uniquement)
+    //   2. Le mot de passe n'est utilisé que pour l'impression du reçu, immédiatement
+    //   3. Le reçu doit être imprimé dans les 24h — le mot de passe doit ensuite être changé
+    //   4. Cette route ne retourne pas de liste (une seule réponse par inscription)
+    //
+    // ACTION REQUISE : L'élève doit changer son mot de passe à la première connexion.
+    // Implémenter un flag `must_change_password` dans le modèle User si ce n'est pas fait.
+    //
+    // password_expires_at indique quand le reçu doit avoir été imprimé (24h).
+    const passwordExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
     return NextResponse.json({
       id: result.eleve.id,
       matricule: result.eleve.matricule,
       email: result.user.email,
+      // Mot de passe en clair retourné uniquement pour génération du reçu PDF d'inscription.
+      // Ne pas stocker, ne pas logger, imprimer immédiatement.
       mot_de_passe_provisoire: result.motDePasseProvisoire,
+      password_expires_at: passwordExpiresAt,
       nom: result.eleve.nom,
       prenom: result.eleve.prenom,
       classe_nom: classe.nom,

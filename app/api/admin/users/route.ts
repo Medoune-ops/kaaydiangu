@@ -131,13 +131,21 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  // SÉCURITÉ : Le mot de passe provisoire n'est JAMAIS retourné dans la réponse JSON.
+  // Les réponses API sont loggées par les proxies, SIEM et outils de monitoring — un mot
+  // de passe en clair dans un log est une fuite. L'UI admin doit afficher le mot de passe
+  // via une variable d'état React locale (jamais persistée) immédiatement après création,
+  // en le lisant depuis une réponse dédiée ou en le générant côté client avant envoi.
+  //
+  // Alternative recommandée : générer le mot de passe côté client, l'envoyer hashé via
+  // l'API, et l'afficher dans un modal "à copier maintenant" avec avertissement.
   return NextResponse.json({
     id: user.id,
     nom: user.nom,
     prenom: user.prenom,
     email: user.email,
     role: user.role,
-    mot_de_passe_provisoire: motDePasseProvisoire,
+    message: "Compte créé. Transmettez les identifiants à l'utilisateur de façon sécurisée.",
   });
   } catch (error) {
     console.error("[ADMIN_USERS_POST] Erreur:", error);
@@ -242,7 +250,15 @@ export async function PATCH(req: NextRequest) {
           details: JSON.parse(JSON.stringify({ user_id, nom: `${user.prenom} ${user.nom}` })),
         },
       });
-      return NextResponse.json({ ok: true, nouveau_mot_de_passe: newPassword });
+      // SÉCURITÉ : Le nouveau mot de passe n'est pas retourné dans la réponse JSON pour
+      // éviter qu'il apparaisse dans les logs serveur, proxies ou outils de monitoring.
+      // L'UI admin doit utiliser une approche "mot de passe généré côté client" :
+      // générer le mot de passe dans le browser, l'afficher dans un modal éphémère,
+      // puis envoyer uniquement le hash bcrypt à l'API via un endpoint dédié.
+      return NextResponse.json({
+        ok: true,
+        message: "Mot de passe réinitialisé. Communiquez le nouveau mot de passe à l'utilisateur de façon sécurisée.",
+      });
     }
 
     case "ASSIGNER_MATIERES": {
