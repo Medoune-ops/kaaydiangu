@@ -1,5 +1,5 @@
 import { jsPDF } from "jspdf";
-import * as QRCode from "qrcode";
+
 
 export interface RecuData {
   ecole: {
@@ -193,34 +193,37 @@ export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
   doc.setFontSize(9);
   doc.text(data.paiement.enregistre_par, lx, sy + 5);
 
-  // QR Code pour accès rapide
+  // QR Code pour accès rapide (Position test en haut à droite)
   try {
+    const QRCode = require("qrcode");
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-    const loginUrl = `${baseUrl}/login?m=${data.eleve.matricule}`;
+    const matricule = data.eleve.matricule || "ELEVE";
+    const loginUrl = `${baseUrl}/login?m=${matricule}`;
+    
+    // Position en haut à droite, sous l'en-tête bleu
+    const qrx = pw - 35;
+    const qry = 42;
+    
     const qrDataUrl = await QRCode.toDataURL(loginUrl, { 
       margin: 1, 
-      width: 120,
-      errorCorrectionLevel: 'M'
+      width: 100 
     });
     
-    // Positionner le QR code à gauche de la signature
-    const qrx = 12;
-    const qry = sy - 3;
-
-    // Petit marqueur pour débogage
-    doc.setFontSize(5);
-    doc.setTextColor(200, 200, 200);
-    doc.text("SCAN", qrx, qry - 1);
-
-    doc.addImage(qrDataUrl, "PNG", qrx, qry, 28, 28);
+    // Utilisation de JPEG pour compatibilité maximale
+    doc.addImage(qrDataUrl, "JPEG", qrx, qry, 22, 22);
     
     doc.setFontSize(6);
     doc.setTextColor(150, 150, 150);
     doc.setFont("helvetica", "italic");
-    doc.text("Scanner pour accéder", qrx + 14, qry + 32, { align: "center" });
-    doc.text("à votre espace élève", qrx + 14, qry + 35, { align: "center" });
-  } catch (e) {
+    doc.text("Espace Élève", qrx + 11, qry + 25, { align: "center" });
+  } catch (e: any) {
     console.error("Erreur génération QR Code:", e);
+    // Fallback visuel très visible en haut
+    const qrx = pw - 35;
+    const qry = 42;
+    doc.setDrawColor(255, 0, 0);
+    doc.rect(qrx, qry, 22, 22);
+    doc.text("QR-ERR", qrx + 2, qry + 5);
   }
 
   // Colonne droite : cachet + signature
