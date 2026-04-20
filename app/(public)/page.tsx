@@ -326,34 +326,40 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-5">
-            {strengths.map((item, i) => (
-              <TiltCard
-                key={item.title}
-                intensity={5}
-                glare={true}
-                className={`scroll-animate scroll-animate-delay-${(i % 3) + 1} ${item.span}`}
-              >
-                <div className="group h-full cursor-default rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 relative" style={{ minHeight: "280px" }}>
-                  {/* Photo en fond */}
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  {/* Overlay gradient sombre */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 group-hover:from-black/85 group-hover:via-black/50 transition-all duration-500" />
-                  {/* Texte au-dessus */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 z-10">
-                    <h3 className="text-[20px] font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
-                      {item.title}
-                    </h3>
-                    <p className="text-white/70 leading-relaxed text-[14px]">{item.desc}</p>
-                  </div>
+          <div className="relative w-full overflow-hidden flex scroll-animate py-4">
+            {/* Dégradés pour fondre les bords */}
+            <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-white to-transparent z-20 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-white to-transparent z-20 pointer-events-none" />
+
+            <div className="flex w-max animate-marquee gap-6">
+              {[...strengths, ...strengths].map((item, i) => (
+                <div key={`${item.title}-${i}`} className={`shrink-0 ${item.span ? 'w-[500px] md:w-[650px]' : 'w-[300px] md:w-[380px]'}`}>
+                  <TiltCard
+                    intensity={5}
+                    glare={true}
+                  >
+                    <div className="group h-full cursor-default rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 relative" style={{ minHeight: "350px" }}>
+                      {/* Photo en fond */}
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                      {/* Overlay gradient sombre */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 group-hover:from-black/85 group-hover:via-black/50 transition-all duration-500" />
+                      {/* Texte au-dessus */}
+                      <div className="absolute inset-0 flex flex-col justify-end p-6 z-10">
+                        <h3 className="text-[20px] font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+                          {item.title}
+                        </h3>
+                        <p className="text-white/80 leading-relaxed text-[14px]">{item.desc}</p>
+                      </div>
+                    </div>
+                  </TiltCard>
                 </div>
-              </TiltCard>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
