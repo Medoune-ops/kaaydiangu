@@ -22,12 +22,6 @@ export default async function CenseurElevesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm text-neutral-500">{eleves.length} élève(s) inscrit(s)</p>
-        <Link
-          href="/dashboard/censeur/eleves/nouveau"
-          className="h-9 px-4 inline-flex items-center bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 transition-all shadow-sm shadow-indigo-500/20 shrink-0"
-        >
-          + Inscrire un élève
-        </Link>
       </div>
 
       {eleves.length === 0 ? (
@@ -36,13 +30,6 @@ export default async function CenseurElevesPage() {
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
           <p className="text-neutral-500 text-sm">Aucun eleve inscrit pour le moment.</p>
-          <p className="text-xs text-neutral-400 mt-1">Commencez par inscrire votre premier eleve.</p>
-          <Link
-            href="/dashboard/censeur/eleves/nouveau"
-            className="mt-4 inline-flex h-9 px-4 items-center text-sm font-medium text-white bg-indigo-500 rounded-lg hover:bg-indigo-600 transition-colors"
-          >
-            Inscrire le premier eleve
-          </Link>
         </div>
       ) : (
         <TableauEleves eleves={eleves as Parameters<typeof TableauEleves>[0]["eleves"]} />

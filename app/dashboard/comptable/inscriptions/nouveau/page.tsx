@@ -1,12 +1,15 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { EleveForm } from "@/components/dashboard/eleve-form";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function NouvelElevePage() {
+export default async function ComptableNouvelElevePage() {
   const session = await auth();
-  if (!session) return null;
+  if (!session || !["SUPER_ADMIN", "COMPTABLE"].includes(session.user.role)) {
+    redirect("/login");
+  }
 
   const [classes, ecole] = await Promise.all([
     prisma.classe.findMany({
@@ -25,7 +28,7 @@ export default async function NouvelElevePage() {
       <div>
         <h2 className="text-2xl font-bold">Inscrire un nouvel élève</h2>
         <p className="text-neutral-500">
-          Remplissez le formulaire pour inscrire un élève. Un compte et un matricule seront générés automatiquement.
+          En tant que comptable, vous enregistrez l'élève et son paiement d'inscription simultanément.
         </p>
       </div>
 
