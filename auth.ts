@@ -15,9 +15,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
+        const identifier = credentials.email as string;
+        
+        // On cherche soit par email soit par matricule d'élève
+        let user = await prisma.user.findUnique({
+          where: { email: identifier },
         });
+
+        // Si non trouvé par email, on cherche par matricule
+        if (!user) {
+          const eleve = await prisma.eleve.findUnique({
+            where: { matricule: identifier },
+            include: { user: true }
+          });
+          if (eleve) {
+            user = eleve.user;
+          }
+        }
 
         if (!user || !user.actif) return null;
 

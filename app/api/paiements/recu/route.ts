@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
     // Récupérer le logo en base64
     const logoBase64 = await fetchLogoBase64(ecole.logo);
 
-    const pdfBuffer = genererRecuPDF({
+    const pdfBuffer = await genererRecuPDF({
       ecole: {
         nom: ecole.nom,
         logo: ecole.logo,
