@@ -157,7 +157,7 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════ */}
       {/*  HERO — Split 2 colonnes + Dashboard 3D flottant      */}
       {/* ══════════════════════════════════════════════════════ */}
-      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-[#020c1b] hero-spotlight">
+      <section className="relative min-h-[45vh] flex items-center overflow-hidden bg-[#020c1b] hero-spotlight">
 
         {/* Aurora blobs */}
         <div className="absolute -top-[30%] -left-[15%] w-[800px] h-[800px] rounded-full bg-cyan-500/[0.18] blur-[200px] animate-aurora pointer-events-none" />
@@ -249,12 +249,12 @@ export default function HomePage() {
               <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/15 to-indigo-500/15 blur-[80px] rounded-3xl" />
 
               <TiltCard intensity={8} scale={1.02} className="float-shadow">
-                <div className="relative rounded-2xl overflow-hidden border border-white/[0.12]" style={{ width: "470px" }}>
+                <div className="relative rounded-2xl overflow-hidden border border-white/[0.12]" style={{ width: "380px" }}>
                   <Image
                     src="/images/ecole-facade.jpeg"
                     alt="Façade de l'école IREF"
-                    width={470}
-                    height={620}
+                    width={380}
+                    height={480}
                     className="object-cover"
                     priority
                   />
