@@ -6,6 +6,7 @@ interface Classe {
   id: string;
   nom: string;
   niveau: string;
+  matieres?: { id: string; nom: string }[];
 }
 
 interface Absence {
@@ -48,6 +49,35 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
   const [recherche, setRecherche] = useState("");
   const [filtreJustifiee, setFiltreJustifiee] = useState<"tous" | "justifiee" | "non_justifiee">("tous");
 
+  // Formulaire d'ajout
+  const [showForm, setShowForm] = useState(false);
+  const [formEleves, setFormEleves] = useState<{ id: string; nom: string; prenom: string; matricule: string }[]>([]);
+  const [formClasseId, setFormClasseId] = useState("");
+  const [formMatiereId, setFormMatiereId] = useState("");
+  const [formEleveId, setFormEleveId] = useState("");
+  const [formDate, setFormDate] = useState(new Date().toISOString().split("T")[0]);
+  const [formDuree, setFormDuree] = useState(2);
+  const [formMotif, setFormMotif] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  // Charger les élèves quand une classe est sélectionnée dans le formulaire
+  useEffect(() => {
+    if (!formClasseId) {
+      setFormEleves([]);
+      return;
+    }
+    fetch(`/api/eleves?classe_id=${formClasseId}&limit=100`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.data && Array.isArray(data.data)) {
+          setFormEleves(data.data);
+        } else if (Array.isArray(data)) {
+          setFormEleves(data);
+        }
+      })
+      .catch(console.error);
+  }, [formClasseId]);
+
   const loadAbsences = useCallback(async () => {
     setLoading(true);
     try {
@@ -85,6 +115,38 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
       body: JSON.stringify({ id: absence.id, justifiee: !absence.justifiee }),
     });
     if (res.ok) loadAbsences();
+  }
+
+  async function handleSubmitAbsence(e: React.FormEvent) {
+    e.preventDefault();
+    if (!formMatiereId || !formEleveId || !formDate || !formDuree) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/absences", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          matiere_id: formMatiereId,
+          date: new Date(formDate).toISOString(),
+          duree_heures: Number(formDuree),
+          absences: [{ eleve_id: formEleveId, motif: formMotif || null }],
+        }),
+      });
+      if (res.ok) {
+        setShowForm(false);
+        setFormEleveId("");
+        setFormMotif("");
+        loadAbsences();
+        loadStats();
+      } else {
+        alert("Erreur lors de l'enregistrement de l'absence");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erreur serveur");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const alertes = stats.filter((s) => s.totalAbsences >= seuil);
@@ -187,31 +249,41 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
       </div>
 
       {/* Onglets */}
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setTab("liste")}
+            className={`h-9 px-4 text-sm font-medium rounded-lg transition-colors ${
+              tab === "liste"
+                ? "bg-indigo-500 text-white hover:bg-indigo-600"
+                : "bg-white border border-neutral-200 text-neutral-900 hover:bg-neutral-50"
+            }`}
+          >
+            Liste des absences ({absencesFiltrees.length})
+          </button>
+          <button
+            onClick={() => setTab("alertes")}
+            className={`h-9 px-4 text-sm font-medium rounded-lg transition-colors inline-flex items-center gap-2 ${
+              tab === "alertes"
+                ? "bg-indigo-500 text-white hover:bg-indigo-600"
+                : "bg-white border border-neutral-200 text-neutral-900 hover:bg-neutral-50"
+            }`}
+          >
+            Alertes
+            {alertes.length > 0 && (
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-xs font-medium bg-red-50 text-red-600">
+                {alertes.length}
+              </span>
+            )}
+          </button>
+        </div>
+        
         <button
-          onClick={() => setTab("liste")}
-          className={`h-9 px-4 text-sm font-medium rounded-lg transition-colors ${
-            tab === "liste"
-              ? "bg-indigo-500 text-white hover:bg-indigo-600"
-              : "bg-white border border-neutral-200 text-neutral-900 hover:bg-neutral-50"
-          }`}
+          onClick={() => setShowForm(true)}
+          className="h-9 px-4 inline-flex items-center gap-2 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm"
         >
-          Liste des absences ({absencesFiltrees.length})
-        </button>
-        <button
-          onClick={() => setTab("alertes")}
-          className={`h-9 px-4 text-sm font-medium rounded-lg transition-colors inline-flex items-center gap-2 ${
-            tab === "alertes"
-              ? "bg-indigo-500 text-white hover:bg-indigo-600"
-              : "bg-white border border-neutral-200 text-neutral-900 hover:bg-neutral-50"
-          }`}
-        >
-          Alertes
-          {alertes.length > 0 && (
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-xs font-medium bg-red-50 text-red-600">
-              {alertes.length}
-            </span>
-          )}
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Signaler une absence
         </button>
       </div>
 
@@ -351,6 +423,127 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
                 </table>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal d'ajout d'absence */}
+      {showForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-neutral-900">Signaler une absence</h3>
+              <button onClick={() => setShowForm(false)} className="text-neutral-400 hover:text-neutral-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            
+            <form onSubmit={handleSubmitAbsence} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-neutral-900 mb-1.5">Classe <span className="text-red-500">*</span></label>
+                  <select
+                    required
+                    value={formClasseId}
+                    onChange={(e) => {
+                      setFormClasseId(e.target.value);
+                      setFormMatiereId("");
+                      setFormEleveId("");
+                    }}
+                    className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  >
+                    <option value="">Sélectionner</option>
+                    {classes.map((c) => (
+                      <option key={c.id} value={c.id}>{c.nom} ({c.niveau})</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-neutral-900 mb-1.5">Matière <span className="text-red-500">*</span></label>
+                  <select
+                    required
+                    disabled={!formClasseId}
+                    value={formMatiereId}
+                    onChange={(e) => setFormMatiereId(e.target.value)}
+                    className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 disabled:opacity-50"
+                  >
+                    <option value="">Sélectionner</option>
+                    {classes.find(c => c.id === formClasseId)?.matieres?.map((m) => (
+                      <option key={m.id} value={m.id}>{m.nom}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-900 mb-1.5">Élève absent <span className="text-red-500">*</span></label>
+                <select
+                  required
+                  disabled={!formClasseId || formEleves.length === 0}
+                  value={formEleveId}
+                  onChange={(e) => setFormEleveId(e.target.value)}
+                  className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 disabled:opacity-50"
+                >
+                  <option value="">Sélectionner un élève</option>
+                  {formEleves.map((e) => (
+                    <option key={e.id} value={e.id}>{e.nom} {e.prenom} ({e.matricule})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-neutral-900 mb-1.5">Date <span className="text-red-500">*</span></label>
+                  <input
+                    type="date"
+                    required
+                    value={formDate}
+                    onChange={(e) => setFormDate(e.target.value)}
+                    className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-neutral-900 mb-1.5">Durée (heures) <span className="text-red-500">*</span></label>
+                  <input
+                    type="number"
+                    required
+                    min={1}
+                    max={8}
+                    value={formDuree}
+                    onChange={(e) => setFormDuree(Number(e.target.value))}
+                    className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-neutral-900 mb-1.5">Motif (optionnel)</label>
+                <input
+                  type="text"
+                  value={formMotif}
+                  onChange={(e) => setFormMotif(e.target.value)}
+                  placeholder="Ex: Maladie, retard..."
+                  className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                />
+              </div>
+
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-neutral-100">
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="h-10 px-4 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="h-10 px-6 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submitting ? "Enregistrement..." : "Enregistrer"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

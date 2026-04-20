@@ -7,7 +7,6 @@ export const authConfig: NextAuthConfig = {
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
-    signOut: "/",
   },
   // trustHost: true est requis en production quand l'app est derrière un reverse proxy
   // (Vercel, Nginx, etc.) — NextAuth v5 vérifie le header Host pour prévenir les attaques
