@@ -1,5 +1,5 @@
 import { jsPDF } from "jspdf";
-import QRCode from "qrcode";
+import * as QRCode from "qrcode";
 
 export interface RecuData {
   ecole: {
@@ -197,13 +197,28 @@ export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
   try {
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
     const loginUrl = `${baseUrl}/login?m=${data.eleve.matricule}`;
-    const qrDataUrl = await QRCode.toDataURL(loginUrl, { margin: 1, width: 100 });
-    doc.addImage(qrDataUrl, "PNG", lx, sy + 10, 25, 25);
+    const qrDataUrl = await QRCode.toDataURL(loginUrl, { 
+      margin: 1, 
+      width: 120,
+      errorCorrectionLevel: 'M'
+    });
+    
+    // Positionner le QR code à gauche de la signature
+    const qrx = 12;
+    const qry = sy - 3;
+
+    // Petit marqueur pour débogage
+    doc.setFontSize(5);
+    doc.setTextColor(200, 200, 200);
+    doc.text("SCAN", qrx, qry - 1);
+
+    doc.addImage(qrDataUrl, "PNG", qrx, qry, 28, 28);
+    
     doc.setFontSize(6);
     doc.setTextColor(150, 150, 150);
     doc.setFont("helvetica", "italic");
-    doc.text("Scanner pour accéder", lx, sy + 38);
-    doc.text("à votre espace élève", lx, sy + 41);
+    doc.text("Scanner pour accéder", qrx + 14, qry + 32, { align: "center" });
+    doc.text("à votre espace élève", qrx + 14, qry + 35, { align: "center" });
   } catch (e) {
     console.error("Erreur génération QR Code:", e);
   }
