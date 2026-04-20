@@ -1,4 +1,5 @@
 import { ScrollAnimateProvider } from "@/components/public/scroll-animate";
+import { ListeImpayes } from "@/components/public/liste-impayes";
 
 const articles = [
   {
@@ -72,6 +73,8 @@ export default function ActualitesPage() {
           </p>
         </div>
       </section>
+
+      <ListeImpayes />
 
       <section className="py-28 bg-neutral-50/50 relative section-lazy">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">

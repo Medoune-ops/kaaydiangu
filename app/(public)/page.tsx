@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ListeImpayes } from "@/components/public/liste-impayes";
 import { ScrollAnimateProvider } from "@/components/public/scroll-animate";
 import { TiltCard } from "@/components/ui/tilt-card";
 
@@ -417,9 +416,6 @@ export default function HomePage() {
 
         <div className="gradient-line absolute bottom-0 left-[8%] right-[8%]" />
       </section>
-
-
-      <ListeImpayes />
 
 
       {/* ══════════════════════════════════════════════════════ */}
