@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
     const recuNumero = `RECU-${paiement.annee}-${String(count + 1).padStart(5, "0")}`;
 
     const MOIS_NOMS = [
-      "", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+  "Inscription", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
       "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
     ];
 

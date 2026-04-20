@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 
 const MOIS_NOMS = [
-  "", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+  "Inscription", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
   "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
 ];
 

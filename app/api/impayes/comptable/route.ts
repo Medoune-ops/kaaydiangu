@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
     };
 
     const MOIS_NOMS = [
-      "", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+  "Inscription", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
       "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
     ];
 
