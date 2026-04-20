@@ -4,7 +4,7 @@ import { notifierRappelPaiement } from "@/lib/notifications";
 import { NextRequest, NextResponse } from "next/server";
 
 const MOIS_NOMS = [
-  "", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+  "Inscription", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
   "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
 ];
 

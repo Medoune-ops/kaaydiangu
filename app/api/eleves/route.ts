@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
     const moisDebut = 10; // Octobre
     const moisFin = 7;    // Juillet
 
-    const moisList: { mois: number; annee: number }[] = [];
+    const moisList: { mois: number; annee: number }[] = [{ mois: 0, annee }]; // 0 = Inscription
     for (let m = moisDebut; m <= 12; m++) {
       moisList.push({ mois: m, annee });
     }

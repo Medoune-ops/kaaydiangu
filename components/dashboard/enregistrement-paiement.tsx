@@ -23,7 +23,7 @@ interface PaiementItem {
 }
 
 const MOIS_NOMS = [
-  "", "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin",
+  "Inscription", "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin",
   "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre",
 ];
 
@@ -149,8 +149,8 @@ export function EnregistrementPaiement() {
     }
   }
 
-  const nonPayes = paiements.filter((p) => p.statut === "NON_PAYE");
-  const payes = paiements.filter((p) => p.statut === "PAYE");
+  const nonPayes = paiements.filter((p) => p.statut === "NON_PAYE" && p.mois !== 0);
+  const payes = paiements.filter((p) => p.statut === "PAYE" && p.mois !== 0);
 
   return (
     <div className="space-y-6">

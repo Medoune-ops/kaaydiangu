@@ -30,7 +30,7 @@ interface DocsData {
 }
 
 const MOIS_NOMS = [
-  "", "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin",
+  "Inscription", "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin",
   "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre",
 ];
 

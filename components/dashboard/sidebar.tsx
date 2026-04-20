@@ -99,6 +99,7 @@ const NAV_CONFIG: Record<string, { roleLabel: string; groups: NavGroup[] }> = {
       {
         title: "Finances",
         items: [
+          { label: "Inscriptions", href: "/dashboard/comptable/inscriptions", icon: <GraduationCap size={18} /> },
           { label: "Paiements", href: "/dashboard/comptable/paiements", icon: <Wallet size={18} /> },
           { label: "Impayés", href: "/dashboard/comptable/impayes", icon: <AlertTriangle size={18} /> },
           { label: "Dépenses", href: "/dashboard/comptable/depenses", icon: <Receipt size={18} /> },
