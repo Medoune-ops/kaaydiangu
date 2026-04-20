@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import QRCode from "qrcode";
 
 export interface RecuData {
   ecole: {
@@ -42,7 +43,7 @@ function formatMontant(montant: number): string {
   return montant.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
-export function genererRecuPDF(data: RecuData): Buffer {
+export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a5" });
   const pw = doc.internal.pageSize.getWidth(); // 148mm
   const ph = doc.internal.pageSize.getHeight(); // 210mm
@@ -179,7 +180,7 @@ export function genererRecuPDF(data: RecuData): Buffer {
     { align: "right" }
   );
 
-  // ─── ZONE SIGNATURE / CACHET ───
+  // ─── ZONE SIGNATURE / CACHET / QR CODE ───
   const sy = my + 24;
 
   // Colonne gauche : enregistré par
@@ -191,6 +192,21 @@ export function genererRecuPDF(data: RecuData): Buffer {
   doc.setTextColor(50, 50, 50);
   doc.setFontSize(9);
   doc.text(data.paiement.enregistre_par, lx, sy + 5);
+
+  // QR Code pour accès rapide
+  try {
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+    const loginUrl = `${baseUrl}/login?m=${data.eleve.matricule}`;
+    const qrDataUrl = await QRCode.toDataURL(loginUrl, { margin: 1, width: 100 });
+    doc.addImage(qrDataUrl, "PNG", lx, sy + 10, 25, 25);
+    doc.setFontSize(6);
+    doc.setTextColor(150, 150, 150);
+    doc.setFont("helvetica", "italic");
+    doc.text("Scanner pour accéder", lx, sy + 38);
+    doc.text("à votre espace élève", lx, sy + 41);
+  } catch (e) {
+    console.error("Erreur génération QR Code:", e);
+  }
 
   // Colonne droite : cachet + signature
   const sx = pw - 55;
@@ -230,3 +246,4 @@ export function genererRecuPDF(data: RecuData): Buffer {
 
   return Buffer.from(doc.output("arraybuffer"));
 }
+
