@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 
 const links = [
@@ -15,6 +17,8 @@ const links = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -31,6 +35,10 @@ export function Navbar() {
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/" });
+  };
 
   return (
     <header
@@ -75,13 +83,38 @@ export function Navbar() {
         </nav>
 
         {/* CTA button */}
-        <div className="hidden md:flex items-center">
-          <Link
-            href="/login"
-            className="btn-primary h-10 px-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold text-[15px] hover:from-cyan-300 hover:to-teal-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40"
-          >
-            Espace prive
-          </Link>
+        <div className="hidden md:flex items-center gap-2">
+          {status === "loading" ? (
+            <div className="h-10 w-24 bg-white/10 rounded-xl animate-pulse" />
+          ) : session ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="h-10 px-4 py-2 text-sm font-bold text-white bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/20 transition-all flex items-center gap-2"
+              >
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-xs font-bold text-white">
+                  {session.user.name?.[0] || "U"}
+                </div>
+                Dashboard
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="h-10 px-4 py-2 text-sm font-semibold text-white/80 bg-neutral-900/20 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-neutral-800/30 transition-all flex items-center gap-1.5"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7" />
+                </svg>
+                Déconnexion
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="btn-primary h-10 px-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold text-[15px] hover:from-cyan-300 hover:to-teal-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40"
+            >
+              Espace privé
+            </Link>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -117,7 +150,7 @@ export function Navbar() {
         }`}
       >
         <div className="border-t border-white/[0.08] bg-[#020c1b]/95 backdrop-blur-xl px-6 py-5 space-y-1 animate-mobile-menu-in">
-          {links.map((link, i) => (
+{links.map((link, i) => (
             <Link
               key={link.href}
               href={link.href}
@@ -131,14 +164,41 @@ export function Navbar() {
             >
               {link.label}
             </Link>
-          ))}
-          <Link
-            href="/login"
-            onClick={() => setOpen(false)}
-            className="block mt-4 h-11 flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold transition-all duration-300 hover:from-cyan-300 hover:to-teal-300"
-          >
-            Espace prive
-          </Link>
+          ))} 
+          
+          {status === "loading" ? (
+            <div className="mt-4 h-11 bg-white/10 rounded-xl animate-pulse" />
+          ) : session ? (
+            <>
+              <Link
+                href="/dashboard"
+                onClick={() => setOpen(false)}
+                className="block mt-3 px-4 py-3 rounded-xl bg-white/[0.08] text-cyan-400 font-semibold flex items-center gap-3"
+              >
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
+                  {session.user.name?.[0] || "U"}
+                </div>
+                Mon Dashboard
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="block w-full mt-2 px-4 py-3 rounded-xl text-left text-white/80 font-medium bg-neutral-900/20 hover:bg-neutral-800/30 transition-all flex items-center gap-3"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7" />
+                </svg>
+                Se déconnecter
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="block mt-4 h-11 flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold transition-all duration-300 hover:from-cyan-300 hover:to-teal-300"
+            >
+              Espace privé
+            </Link>
+          )}
         </div>
       </div>
     </header>
