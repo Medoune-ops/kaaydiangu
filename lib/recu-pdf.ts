@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import QRCode from "qrcode";
 
 
 export interface RecuData {
@@ -17,6 +18,7 @@ export interface RecuData {
     classe: string;
   };
   paiement: {
+    id: string;
     recu_numero: string;
     mois: number;
     annee: number;
@@ -195,10 +197,8 @@ export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
 
   // QR Code pour accès rapide (Position test en haut à droite)
   try {
-    const QRCode = require("qrcode");
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-    const matricule = data.eleve.matricule || "ELEVE";
-    const loginUrl = `${baseUrl}/login?m=${matricule}`;
+    const loginUrl = `${baseUrl}/eleve/${data.paiement.id}`;
     
     // Position en haut à droite, sous l'en-tête bleu
     const qrx = pw - 35;
@@ -216,7 +216,7 @@ export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
     doc.setTextColor(150, 150, 150);
     doc.setFont("helvetica", "italic");
     doc.text("Espace Élève", qrx + 11, qry + 25, { align: "center" });
-  } catch (e: any) {
+  } catch (e) {
     console.error("Erreur génération QR Code:", e);
     // Fallback visuel très visible en haut
     const qrx = pw - 35;

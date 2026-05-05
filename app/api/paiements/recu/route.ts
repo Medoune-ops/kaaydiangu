@@ -83,6 +83,7 @@ export async function GET(req: NextRequest) {
         classe: paiement.eleve.classe.nom,
       },
       paiement: {
+        id: paiement.id,
         recu_numero: paiement.recu_numero,
         mois: paiement.mois,
         annee: paiement.annee,
