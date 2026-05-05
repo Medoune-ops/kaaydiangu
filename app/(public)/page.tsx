@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import Image from "next/image";
 import { ScrollAnimateProvider } from "@/components/public/scroll-animate";
 import { TiltCard } from "@/components/ui/tilt-card";
@@ -150,7 +153,22 @@ function DashboardMockup() {
 }
 
 /* ─────────────────── PAGE ─────────────────── */
+"use client";
+
 export default function HomePage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/dashboard");
+    }
+  }, [status, router, session]);
+
+  if (status === "loading") {
+    return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">Chargement...</div>;
+  }
+
   return (
     <ScrollAnimateProvider>
 
@@ -212,13 +230,24 @@ export default function HomePage() {
                     <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
                   </svg>
                 </Link>
-                <Link
-                  href="/contact"
-                  className="btn-secondary h-[52px] px-8 inline-flex items-center justify-center rounded-2xl glass-dark text-white font-semibold text-[16px] border border-white/10 hover:border-white/20"
-                >
-                  Nous contacter
-                </Link>
-              </div>
+            <Link
+              href="/contact"
+              className="btn-secondary h-[52px] px-8 inline-flex items-center justify-center rounded-2xl glass-dark text-white font-semibold text-[16px] border border-white/10 hover:border-white/20"
+            >
+              Nous contacter
+            </Link>
+            {status !== "authenticated" && (
+              <Link
+                href="/login"
+                className="btn-primary h-[52px] px-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold text-[16px] hover:from-cyan-300 hover:to-teal-300 shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50"
+              >
+                Accéder à mon espace
+                <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+            )}
+          </div>
 
               {/* Trust badges */}
               <div className="mt-4 flex flex-wrap items-center gap-2 justify-center lg:justify-start animate-fade-in">
