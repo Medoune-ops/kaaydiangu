@@ -202,7 +202,7 @@ export function EnregistrementInscription() {
             {nonPayes.length > 0 ? (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
-                  <input type="hidden" value={selectedPaiementId || (selectedPaiementId = nonPayes[0].id)} />
+                  <input type="hidden" value={selectedPaiementId || nonPayes[0]?.id} />
                   <div>
                     <label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Montant Inscription (FCFA)</label>
                     <input

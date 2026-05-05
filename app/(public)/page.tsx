@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -153,7 +154,6 @@ function DashboardMockup() {
 }
 
 /* ─────────────────── PAGE ─────────────────── */
-"use client";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
