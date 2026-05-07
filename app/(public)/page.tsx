@@ -278,12 +278,12 @@ export default function HomePage() {
               <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/15 to-indigo-500/15 blur-[80px] rounded-3xl" />
 
               <TiltCard intensity={8} scale={1.02} className="float-shadow">
-                <div className="relative rounded-2xl overflow-hidden border border-white/[0.12]" style={{ width: "380px" }}>
+                <div className="relative rounded-2xl overflow-hidden border border-white/[0.12]" style={{ width: "300px" }}>
                   <Image
                     src="/images/ecole-facade.jpeg"
                     alt="Façade de l'école IREF"
-                    width={380}
-                    height={320}
+                    width={300}
+                    height={240}
                     className="object-cover"
                     priority
                   />
