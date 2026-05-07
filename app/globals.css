@@ -651,44 +651,56 @@ svg {
 }
 
 /* ═══════════════════════════════════════════ */
-/*  Dashboard — Modern card & layout system   */
+/*  Dashboard — Premium card & layout system  */
 /* ═══════════════════════════════════════════ */
 
-/* Dashboard card with premium shadow */
+/* Dashboard page background with subtle dot grid */
+.dash-bg {
+  background-color: #eef2ff;
+  background-image: radial-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Dashboard card with premium layered shadow */
 .dash-card {
   background: #ffffff;
   border-radius: 1rem;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.08);
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 2px 8px rgba(0, 0, 0, 0.02);
+    0 0 0 1px rgba(255, 255, 255, 0.9) inset,
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 6px 20px rgba(99, 102, 241, 0.05);
   transition:
-    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.25s ease;
+    box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.28s ease;
 }
 .dash-card:hover {
   box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.06),
-    0 1px 4px rgba(0, 0, 0, 0.04);
-  transform: translateY(-1px);
-  border-color: rgba(99, 102, 241, 0.15);
+    0 0 0 1px rgba(255, 255, 255, 0.9) inset,
+    0 8px 28px rgba(99, 102, 241, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+  border-color: rgba(99, 102, 241, 0.2);
 }
 
-/* Dashboard KPI card with accent top */
+/* Dashboard KPI card — accent line + tinted glow */
 .dash-kpi {
   position: relative;
   background: #ffffff;
   border-radius: 1rem;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.08);
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 2px 8px rgba(0, 0, 0, 0.02);
+    0 0 0 1px rgba(255, 255, 255, 0.85) inset,
+    0 2px 6px rgba(0, 0, 0, 0.04),
+    0 6px 20px rgba(99, 102, 241, 0.04);
   overflow: hidden;
   transition:
-    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.28s ease;
 }
+/* Colored top stripe — always visible, subtle */
 .dash-kpi::before {
   content: "";
   position: absolute;
@@ -697,27 +709,48 @@ svg {
   right: 0;
   height: 3px;
   background: var(--kpi-accent, #6366f1);
+  opacity: 0.5;
+  transition: opacity 0.28s ease, height 0.28s ease;
+}
+/* Glow sweep on hover */
+.dash-kpi::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    color-mix(in srgb, var(--kpi-accent, #6366f1) 8%, transparent) 0%,
+    transparent 70%
+  );
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
 }
 .dash-kpi:hover {
   box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.08),
-    0 2px 6px rgba(0, 0, 0, 0.04);
-  transform: translateY(-2px);
+    0 0 0 1px rgba(255, 255, 255, 0.9) inset,
+    0 12px 32px rgba(0, 0, 0, 0.08),
+    0 4px 10px rgba(99, 102, 241, 0.08);
+  transform: translateY(-3px);
+  border-color: rgba(99, 102, 241, 0.18);
 }
 .dash-kpi:hover::before {
   opacity: 1;
+  height: 4px;
+}
+.dash-kpi:hover::after {
+  opacity: 1;
 }
 
-/* Dashboard section card */
+/* Dashboard section card — clean with gradient border */
 .dash-section {
   background: #ffffff;
   border-radius: 1rem;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.08);
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.03),
-    0 1px 6px rgba(0, 0, 0, 0.01);
+    0 0 0 1px rgba(255, 255, 255, 0.9) inset,
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 4px 16px rgba(99, 102, 241, 0.04);
   overflow: hidden;
 }
 
@@ -726,8 +759,10 @@ svg {
   position: relative;
   background: #ffffff;
   border-radius: 1rem;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(99, 102, 241, 0.08);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.9) inset,
+    0 2px 6px rgba(0, 0, 0, 0.03);
   overflow: hidden;
   transition:
     box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -742,31 +777,63 @@ svg {
   right: 0;
   height: 3px;
   background: var(--card-accent, linear-gradient(90deg, #6366f1, #8b5cf6));
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  opacity: 0.45;
+  transition: opacity 0.3s ease, height 0.3s ease;
 }
 .dash-action-card:hover {
   box-shadow:
-    0 8px 30px rgba(0, 0, 0, 0.08),
-    0 2px 8px rgba(0, 0, 0, 0.03);
+    0 0 0 1px rgba(255, 255, 255, 0.9) inset,
+    0 10px 36px rgba(99, 102, 241, 0.1),
+    0 3px 10px rgba(0, 0, 0, 0.04);
   transform: translateY(-3px);
-  border-color: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.22);
 }
 .dash-action-card:hover::before {
   opacity: 1;
+  height: 4px;
 }
 
 /* Spinner */
 .dash-spinner {
   width: 2rem;
   height: 2rem;
-  border: 2.5px solid #e5e7eb;
+  border: 2.5px solid #e0e7ff;
   border-top-color: #6366f1;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* KPI number — gradient text for top stat */
+.dash-kpi-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Dash header gradient border */
+.dash-header {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid transparent;
+  background-clip: padding-box;
+  box-shadow:
+    0 1px 0 0 rgba(99, 102, 241, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Dash page wrapper gradient */
+.dash-page {
+  background: linear-gradient(160deg, #eef2ff 0%, #f8fafc 40%, #f0f9ff 100%);
+  min-height: 100vh;
 }
 
 /* Scrollbar for sidebar */

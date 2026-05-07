@@ -86,45 +86,50 @@ export function DashboardAdmin() {
     {
       label: "Élèves inscrits",
       value: stats.effectifTotal,
-      icon: <Users size={20} />,
+      icon: <Users size={19} />,
       detailKey: "effectif" as DetailView,
-      iconBg: "bg-indigo-50 text-indigo-500",
+      iconGradient: "from-indigo-500 to-violet-600",
+      iconShadow: "shadow-indigo-500/30",
       accent: "#6366f1",
     },
     {
       label: "Recouvrement",
       value: `${stats.tauxRecouvrement}%`,
       sublabel: "mois courant",
-      icon: <Wallet size={20} />,
+      icon: <Wallet size={19} />,
       detailKey: null as DetailView,
-      iconBg: stats.tauxRecouvrement >= 70 ? "bg-emerald-50 text-emerald-500" : "bg-amber-50 text-amber-500",
+      iconGradient: stats.tauxRecouvrement >= 70 ? "from-emerald-400 to-teal-500" : "from-amber-400 to-orange-500",
+      iconShadow: stats.tauxRecouvrement >= 70 ? "shadow-emerald-500/30" : "shadow-amber-500/30",
       accent: stats.tauxRecouvrement >= 70 ? "#22c55e" : "#f59e0b",
     },
     {
       label: "Moyenne école",
       value: stats.moyenneEcole !== null ? `${stats.moyenneEcole}/20` : "N/A",
       sublabel: `Séquence ${stats.sequenceRef}`,
-      icon: <BarChart3 size={20} />,
+      icon: <BarChart3 size={19} />,
       detailKey: null as DetailView,
-      iconBg: "bg-violet-50 text-violet-500",
+      iconGradient: "from-violet-500 to-purple-600",
+      iconShadow: "shadow-violet-500/30",
       accent: "#8b5cf6",
     },
     {
       label: "Absences",
       value: stats.nbAbsences,
       sublabel: "+3 non justifiées",
-      icon: <AlertTriangle size={20} />,
+      icon: <AlertTriangle size={19} />,
       detailKey: "absences" as DetailView,
-      iconBg: stats.nbAbsences > 0 ? "bg-red-50 text-red-500" : "bg-emerald-50 text-emerald-500",
+      iconGradient: stats.nbAbsences > 0 ? "from-red-500 to-rose-600" : "from-emerald-400 to-teal-500",
+      iconShadow: stats.nbAbsences > 0 ? "shadow-red-500/30" : "shadow-emerald-500/30",
       accent: stats.nbAbsences > 0 ? "#ef4444" : "#22c55e",
     },
     {
       label: "Impayés",
       value: stats.nbImpayes,
       sublabel: "en retard",
-      icon: <Clock size={20} />,
+      icon: <Clock size={19} />,
       detailKey: "impayes" as DetailView,
-      iconBg: stats.nbImpayes > 0 ? "bg-orange-50 text-orange-500" : "bg-emerald-50 text-emerald-500",
+      iconGradient: stats.nbImpayes > 0 ? "from-orange-500 to-amber-500" : "from-emerald-400 to-teal-500",
+      iconShadow: stats.nbImpayes > 0 ? "shadow-orange-500/30" : "shadow-emerald-500/30",
       accent: stats.nbImpayes > 0 ? "#f97316" : "#22c55e",
     },
   ];
@@ -138,21 +143,21 @@ export function DashboardAdmin() {
             key={kpi.label}
             onClick={() => kpi.detailKey && setDetail(detail === kpi.detailKey ? null : kpi.detailKey)}
             disabled={!kpi.detailKey}
-            className={`dash-kpi text-left p-5 ${
+            className={`dash-kpi text-left p-5 w-full ${
               kpi.detailKey ? "cursor-pointer" : "cursor-default"
-            } ${detail === kpi.detailKey ? "ring-2 ring-indigo-500/40 !border-indigo-200" : ""}`}
+            } ${detail === kpi.detailKey ? "ring-2 ring-indigo-500/30 !border-indigo-300/50" : ""}`}
             style={{ "--kpi-accent": kpi.accent } as React.CSSProperties}
           >
-            <div className="flex items-center justify-between mb-3">
-              <span className={`w-10 h-10 rounded-xl flex items-center justify-center ${kpi.iconBg}`}>
+            <div className="flex items-center justify-between mb-4">
+              <span className={`w-10 h-10 rounded-xl bg-gradient-to-br ${kpi.iconGradient} flex items-center justify-center text-white shadow-lg ${kpi.iconShadow}`}>
                 {kpi.icon}
               </span>
               {kpi.detailKey && (
-                <ChevronRight size={14} className={`text-neutral-300 transition-transform ${detail === kpi.detailKey ? "rotate-90" : ""}`} />
+                <ChevronRight size={14} className={`text-neutral-300 transition-transform duration-200 ${detail === kpi.detailKey ? "rotate-90 text-indigo-400" : ""}`} />
               )}
             </div>
-            <div className="text-2xl font-bold text-neutral-900 tracking-tight">{kpi.value}</div>
-            <div className="text-sm text-neutral-500 mt-0.5">{kpi.label}</div>
+            <div className="dash-kpi-value">{kpi.value}</div>
+            <div className="text-sm font-medium text-neutral-500 mt-1">{kpi.label}</div>
             {kpi.sublabel && <div className="text-xs text-neutral-400 mt-0.5">{kpi.sublabel}</div>}
           </button>
         ))}
@@ -163,8 +168,8 @@ export function DashboardAdmin() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Effectif par classe */}
           <div className="dash-section">
-            <div className="px-6 py-4 border-b border-neutral-100">
-              <h3 className="text-sm font-semibold text-neutral-900">Effectif par classe</h3>
+            <div className="px-6 py-4 border-b border-indigo-50/80 bg-gradient-to-r from-indigo-50/40 to-transparent">
+              <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">Effectif par classe</h3>
             </div>
             <div className="p-6 space-y-3">
               {stats.classes.map((c) => {
@@ -173,12 +178,12 @@ export function DashboardAdmin() {
                 return (
                   <div key={c.id} className="flex items-center gap-3">
                     <span className="text-sm font-medium text-neutral-500 w-20 shrink-0 truncate">{c.nom}</span>
-                    <div className="flex-1 bg-neutral-100 rounded-full h-7 overflow-hidden">
+                    <div className="flex-1 bg-indigo-50/60 rounded-full h-7 overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 flex items-center justify-end pr-2.5 transition-all duration-700"
+                        className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 flex items-center justify-end pr-2.5 transition-all duration-700 shadow-sm"
                         style={{ width: `${Math.max(pct, 12)}%` }}
                       >
-                        <span className="text-xs font-semibold text-white">{c.effectif}</span>
+                        <span className="text-xs font-bold text-white">{c.effectif}</span>
                       </div>
                     </div>
                   </div>
@@ -189,8 +194,8 @@ export function DashboardAdmin() {
 
           {/* Recouvrement */}
           <div className="dash-section flex flex-col">
-            <div className="px-6 py-4 border-b border-neutral-100">
-              <h3 className="text-sm font-semibold text-neutral-900">Taux de recouvrement</h3>
+            <div className="px-6 py-4 border-b border-violet-50/80 bg-gradient-to-r from-violet-50/40 to-transparent">
+              <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">Taux de recouvrement</h3>
             </div>
             <div className="flex-1 flex flex-col items-center justify-center p-8">
               <div className="relative w-40 h-40">
@@ -337,11 +342,11 @@ function DetailPanel({
 }) {
   return (
     <div className="dash-section animate-in fade-in slide-in-from-top-2 duration-200">
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-neutral-100">
-        <h3 className="text-sm font-semibold text-neutral-900">{title}</h3>
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-indigo-50/80 bg-gradient-to-r from-indigo-50/40 to-transparent">
+        <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">{title}</h3>
         <button
           onClick={onClose}
-          className="w-7 h-7 rounded-lg hover:bg-neutral-100 flex items-center justify-center text-neutral-400 hover:text-neutral-600 transition-colors"
+          className="w-7 h-7 rounded-lg hover:bg-indigo-50 flex items-center justify-center text-neutral-400 hover:text-indigo-500 transition-colors"
         >
           <X size={14} />
         </button>

@@ -18,7 +18,7 @@ export default async function DashboardLayout({
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-[#f8fafc]">
+      <div className="dash-page">
         <Sidebar
           role={session.user.role}
           userName={session.user.name || "Utilisateur"}
@@ -26,7 +26,7 @@ export default async function DashboardLayout({
 
         <div className="lg:pl-[272px]">
           {/* Top header bar */}
-          <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-neutral-200/60">
+          <header className="sticky top-0 z-20 dash-header">
             <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
               {/* Left: spacer for mobile hamburger */}
               <div className="lg:hidden w-10" />
@@ -35,10 +35,12 @@ export default async function DashboardLayout({
               <div className="flex-1" />
 
               {/* Right: notifications */}
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 <NotificationBell />
               </div>
             </div>
+            {/* Gradient accent line under header */}
+            <div className="h-[2px] bg-gradient-to-r from-indigo-500/30 via-violet-500/40 to-indigo-500/10" />
           </header>
 
           <main className="p-4 sm:p-6 lg:p-8">
