@@ -71,7 +71,6 @@ export function GestionEmploiDuTemps({ classes, matieres }: Props) {
   const [formSalle, setFormSalle] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // Matieres filtrees par classe selectionnee
   const matieresClasse = matieres.filter((m) => m.classe.id === classeId);
 
   const loadCreneaux = useCallback(async () => {
@@ -92,9 +91,7 @@ export function GestionEmploiDuTemps({ classes, matieres }: Props) {
   }, [classeId, loadCreneaux]);
 
   function getCreneau(jour: string, debut: string, fin: string) {
-    return creneaux.find(
-      (c) => c.jour === jour && c.heure_debut === debut && c.heure_fin === fin
-    );
+    return creneaux.find((c) => c.jour === jour && c.heure_debut === debut && c.heure_fin === fin);
   }
 
   function openModal(jour: string, debut: string, fin: string) {
@@ -120,10 +117,7 @@ export function GestionEmploiDuTemps({ classes, matieres }: Props) {
           salle: formSalle || null,
         }),
       });
-      if (res.ok) {
-        setModal(null);
-        await loadCreneaux();
-      }
+      if (res.ok) { setModal(null); await loadCreneaux(); }
     } finally {
       setSaving(false);
     }
@@ -133,14 +127,8 @@ export function GestionEmploiDuTemps({ classes, matieres }: Props) {
     if (!modal?.existing) return;
     setSaving(true);
     try {
-      const res = await fetch(
-        `/api/emplois-du-temps?id=${modal.existing.id}`,
-        { method: "DELETE" }
-      );
-      if (res.ok) {
-        setModal(null);
-        await loadCreneaux();
-      }
+      const res = await fetch(`/api/emplois-du-temps?id=${modal.existing.id}`, { method: "DELETE" });
+      if (res.ok) { setModal(null); await loadCreneaux(); }
     } finally {
       setSaving(false);
     }
@@ -148,42 +136,44 @@ export function GestionEmploiDuTemps({ classes, matieres }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* Selecteur de classe */}
-      <div className="max-w-xs">
-        <label className="block text-sm font-medium text-neutral-900 mb-1.5">Classe</label>
-        <select
-          value={classeId}
-          onChange={(e) => setClasseId(e.target.value)}
-          className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-        >
-          <option value="">Choisir une classe</option>
-          {classes.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.nom} ({c.niveau})
-            </option>
-          ))}
-        </select>
+      {/* Sélecteur de classe */}
+      <div className="dash-section overflow-hidden">
+        <div className="dash-section-header">
+          <span className="dash-section-title">Classe</span>
+        </div>
+        <div className="px-6 py-4">
+          <div className="max-w-xs">
+            <label className="dash-label">Sélectionner une classe</label>
+            <select value={classeId} onChange={(e) => setClasseId(e.target.value)} className="dash-input">
+              <option value="">Choisir une classe</option>
+              {classes.map((c) => (
+                <option key={c.id} value={c.id}>{c.nom} ({c.niveau})</option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
 
       {classeId && (
-        <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
+        <div className="dash-section overflow-hidden">
+          <div className="dash-section-header">
+            <span className="dash-section-title">Emploi du temps — {classes.find(c => c.id === classeId)?.nom}</span>
+            <span className="text-xs text-neutral-400">Cliquer sur un créneau pour modifier</span>
+          </div>
           <div className="px-6 py-5 overflow-x-auto">
             {loading ? (
               <div className="flex justify-center py-12">
-                <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
+                <div className="dash-spinner" />
               </div>
             ) : (
               <table className="w-full border-collapse min-w-[800px]">
                 <thead>
                   <tr>
-                    <th className="w-20 p-2 text-sm uppercase tracking-wider font-medium text-neutral-400 border border-neutral-200 bg-neutral-50">
+                    <th className="w-20 p-2 text-xs uppercase tracking-wider font-bold text-indigo-400 border border-indigo-100/40 bg-gradient-to-br from-indigo-50/60 to-transparent">
                       Heure
                     </th>
                     {JOURS.map((j) => (
-                      <th
-                        key={j}
-                        className="p-2 text-sm uppercase tracking-wider font-medium text-neutral-500 border border-neutral-200 bg-neutral-50 min-w-[130px]"
-                      >
+                      <th key={j} className="p-2 text-xs uppercase tracking-wider font-bold text-indigo-500 border border-indigo-100/40 bg-gradient-to-br from-indigo-50/60 to-transparent min-w-[130px]">
                         {JOURS_FR[j]}
                       </th>
                     ))}
@@ -192,10 +182,8 @@ export function GestionEmploiDuTemps({ classes, matieres }: Props) {
                 <tbody>
                   {CRENEAUX.map((slot) => (
                     <tr key={slot.debut}>
-                      <td className="p-2 text-sm text-center font-mono text-neutral-400 border border-neutral-200 bg-neutral-50 whitespace-nowrap">
-                        {slot.debut}
-                        <br />
-                        {slot.fin}
+                      <td className="p-2 text-xs text-center font-mono text-neutral-400 border border-neutral-100 bg-neutral-50/40 whitespace-nowrap">
+                        {slot.debut}<br />{slot.fin}
                       </td>
                       {JOURS.map((jour) => {
                         const c = getCreneau(jour, slot.debut, slot.fin);
@@ -203,30 +191,22 @@ export function GestionEmploiDuTemps({ classes, matieres }: Props) {
                           <td
                             key={jour}
                             onClick={() => openModal(jour, slot.debut, slot.fin)}
-                            className={`border border-neutral-200 p-1.5 cursor-pointer transition-colors align-top ${
+                            className={`border border-neutral-100 p-1.5 cursor-pointer transition-all duration-150 align-top ${
                               c
-                                ? "bg-indigo-50 hover:bg-indigo-100"
-                                : "hover:bg-neutral-50"
+                                ? "bg-gradient-to-br from-indigo-50 to-violet-50/30 hover:from-indigo-100/70"
+                                : "hover:bg-indigo-50/20"
                             }`}
                           >
                             {c ? (
                               <div className="space-y-0.5">
-                                <p className="text-sm font-semibold text-indigo-600 leading-tight">
-                                  {c.matiere.nom}
-                                </p>
+                                <p className="text-xs font-bold text-indigo-600 leading-tight">{c.matiere.nom}</p>
                                 {c.matiere.professeur && (
-                                  <p className="text-xs text-indigo-500">
-                                    {c.matiere.professeur.prenom} {c.matiere.professeur.nom}
-                                  </p>
+                                  <p className="text-[10px] text-indigo-400">{c.matiere.professeur.prenom} {c.matiere.professeur.nom}</p>
                                 )}
-                                {c.salle && (
-                                  <p className="text-xs text-neutral-400">
-                                    Salle {c.salle}
-                                  </p>
-                                )}
+                                {c.salle && <p className="text-[10px] text-neutral-400">Salle {c.salle}</p>}
                               </div>
                             ) : (
-                              <span className="text-xs text-neutral-300">+</span>
+                              <span className="text-xs text-neutral-200 font-light">+</span>
                             )}
                           </td>
                         );
@@ -242,74 +222,46 @@ export function GestionEmploiDuTemps({ classes, matieres }: Props) {
 
       {/* Modal */}
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-xl border border-neutral-200 shadow-xl p-6 w-full max-w-md mx-4 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-neutral-900">
-                {JOURS_FR[modal.jour]} — {modal.heure_debut} a {modal.heure_fin}
-              </h3>
-              <button
-                onClick={() => setModal(null)}
-                className="w-7 h-7 rounded-lg hover:bg-neutral-100 flex items-center justify-center transition-colors"
-              >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl shadow-indigo-500/10 w-full max-w-md overflow-hidden">
+            <div className="dash-section-header !rounded-none">
+              <span className="dash-section-title">{JOURS_FR[modal.jour]} — {modal.heure_debut} à {modal.heure_fin}</span>
+              <button onClick={() => setModal(null)} className="w-7 h-7 rounded-lg hover:bg-indigo-100/60 flex items-center justify-center text-neutral-400 hover:text-indigo-600 transition-colors">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11 3L3 11M3 3L11 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-500" />
+                  <path d="M11 3L3 11M3 3L11 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Matiere & Professeur</label>
-              <select
-                value={formMatiereId}
-                onChange={(e) => setFormMatiereId(e.target.value)}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-              >
-                <option value="">Selectionner</option>
-                {matieresClasse.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.nom}
-                    {m.professeur
-                      ? ` — ${m.professeur.prenom} ${m.professeur.nom}`
-                      : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="dash-label">Matière & Professeur</label>
+                <select value={formMatiereId} onChange={(e) => setFormMatiereId(e.target.value)} className="dash-input">
+                  <option value="">Sélectionner</option>
+                  {matieresClasse.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.nom}{m.professeur ? ` — ${m.professeur.prenom} ${m.professeur.nom}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Salle (optionnel)</label>
-              <input
-                placeholder="Ex: A12"
-                value={formSalle}
-                onChange={(e) => setFormSalle(e.target.value)}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-              />
-            </div>
+              <div>
+                <label className="dash-label">Salle (optionnel)</label>
+                <input placeholder="Ex: A12" value={formSalle} onChange={(e) => setFormSalle(e.target.value)} className="dash-input" />
+              </div>
 
-            <div className="flex gap-2 justify-end pt-2">
-              {modal.existing && (
-                <button
-                  onClick={handleDelete}
-                  disabled={saving}
-                  className="h-9 px-4 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 disabled:opacity-50 transition-colors"
-                >
-                  Supprimer
+              <div className="flex gap-2 justify-end pt-2 border-t border-neutral-100">
+                {modal.existing && (
+                  <button onClick={handleDelete} disabled={saving} className="inline-flex items-center h-9 px-4 text-sm font-semibold rounded-xl bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50 transition-colors">
+                    Supprimer
+                  </button>
+                )}
+                <button onClick={() => setModal(null)} className="dash-btn-secondary">Annuler</button>
+                <button onClick={handleSave} disabled={!formMatiereId || saving} className="dash-btn-primary disabled:opacity-50">
+                  {saving ? "..." : modal.existing ? "Modifier" : "Assigner"}
                 </button>
-              )}
-              <button
-                onClick={() => setModal(null)}
-                className="h-9 px-4 bg-white border border-neutral-200 text-neutral-900 text-sm font-medium rounded-lg hover:bg-neutral-50 transition-colors"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={!formMatiereId || saving}
-                className="h-9 px-4 bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 disabled:opacity-50 transition-colors"
-              >
-                {saving ? "..." : modal.existing ? "Modifier" : "Assigner"}
-              </button>
+              </div>
             </div>
           </div>
         </div>

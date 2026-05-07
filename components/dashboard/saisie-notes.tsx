@@ -180,20 +180,20 @@ export function SaisieNotes({ matieresApiUrl = "/api/professeur/matieres" }: Sai
   return (
     <div className="space-y-6">
       {/* Selecteurs */}
-      <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <h3 className="text-lg font-semibold text-neutral-900">Parametres de l&apos;evaluation</h3>
+      <div className="dash-section overflow-hidden">
+        <div className="dash-section-header">
+          <span className="dash-section-title">Paramètres de l&apos;évaluation</span>
         </div>
         <div className="px-6 py-5">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Matiere <span className="text-red-500">*</span></label>
+              <label className="dash-label">Matière <span className="text-red-400">*</span></label>
               <select
                 value={matiereId}
                 onChange={(e) => setMatiereId(e.target.value)}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                className="dash-input"
               >
-                <option value="">Choisir une matiere</option>
+                <option value="">Choisir une matière</option>
                 {matieres.map((m) => (
                   <option key={m.id} value={m.id}>
                     {m.nom} — {m.classe.nom}
@@ -203,46 +203,44 @@ export function SaisieNotes({ matieresApiUrl = "/api/professeur/matieres" }: Sai
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Type <span className="text-red-500">*</span></label>
+              <label className="dash-label">Type <span className="text-red-400">*</span></label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as typeof type)}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                className="dash-input"
               >
-                <option value="CONTROLE">Controle</option>
+                <option value="CONTROLE">Contrôle</option>
                 <option value="DEVOIR">Devoir</option>
                 <option value="EXAMEN">Examen</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Sequence <span className="text-red-500">*</span></label>
+              <label className="dash-label">Séquence <span className="text-red-400">*</span></label>
               <select
                 value={sequence}
                 onChange={(e) => setSequence(Number(e.target.value))}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                className="dash-input"
               >
                 {[1, 2, 3, 4, 5, 6].map((s) => (
-                  <option key={s} value={s}>
-                    Sequence {s}
-                  </option>
+                  <option key={s} value={s}>Séquence {s}</option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Date</label>
+              <label className="dash-label">Date</label>
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                className="dash-input"
               />
             </div>
 
             <div className="flex items-end">
               {selectedMatiere && (
-                <span className="inline-flex items-center h-9 px-4 bg-neutral-50 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-900">
+                <span className="dash-badge dash-badge-info h-auto py-1.5 px-3">
                   {selectedMatiere.classe.nom} — Coef. {selectedMatiere.coefficient}
                 </span>
               )}
@@ -253,64 +251,56 @@ export function SaisieNotes({ matieresApiUrl = "/api/professeur/matieres" }: Sai
 
       {/* Tableau de saisie */}
       {matiereId && (
-        <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-neutral-900">
-              Saisie des notes — {selectedMatiere?.nom}
-            </h3>
-            {eleves.length > 0 && (
-              <span className="text-sm text-neutral-500">
-                {eleves.length} eleve(s)
-              </span>
-            )}
+        <div className="dash-section overflow-hidden">
+          <div className="dash-section-header">
+            <span className="dash-section-title">Saisie des notes — {selectedMatiere?.nom}</span>
+            {eleves.length > 0 && <span className="dash-count">{eleves.length} élève(s)</span>}
           </div>
           <div className="px-6 py-5">
             {loading ? (
               <div className="flex justify-center py-12">
-                <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
+                <div className="dash-spinner" />
               </div>
             ) : eleves.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <div className="dash-empty">
+                <div className="dash-empty-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                 </div>
-                <p className="text-sm text-neutral-500">Aucun eleve dans cette classe.</p>
+                <p className="text-sm font-medium text-neutral-600">Aucun élève dans cette classe.</p>
               </div>
             ) : (
               <>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-neutral-100">
-                        <th className="text-left px-4 py-3 text-xs uppercase tracking-wider font-medium text-neutral-500 w-8">#</th>
-                        <th className="text-left px-4 py-3 text-xs uppercase tracking-wider font-medium text-neutral-500">Matricule</th>
-                        <th className="text-left px-4 py-3 text-xs uppercase tracking-wider font-medium text-neutral-500">Nom & Prenom</th>
-                        <th className="text-center px-4 py-3 text-xs uppercase tracking-wider font-medium text-neutral-500 w-28">Note / 20</th>
-                        <th className="text-center px-4 py-3 text-xs uppercase tracking-wider font-medium text-neutral-500 w-28">Moyenne</th>
+                      <tr>
+                        <th className="text-left w-8">#</th>
+                        <th className="text-left">Matricule</th>
+                        <th className="text-left">Nom & Prénom</th>
+                        <th className="text-center w-28">Note / 20</th>
+                        <th className="text-center w-28">Moyenne</th>
                       </tr>
                     </thead>
                     <tbody>
                       {eleves.map((eleve, index) => (
-                        <tr key={eleve.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
-                          <td className="px-4 py-2 text-sm text-neutral-400">{index + 1}</td>
-                          <td className="px-4 py-2 font-mono text-xs text-neutral-500">{eleve.matricule}</td>
-                          <td className="px-4 py-2 text-sm font-medium text-neutral-900">
-                            {eleve.nom} {eleve.prenom}
-                          </td>
-                          <td className="px-4 py-2">
+                        <tr key={eleve.id}>
+                          <td className="text-xs text-neutral-400 font-medium">{index + 1}</td>
+                          <td className="font-mono text-xs text-indigo-500 font-semibold">{eleve.matricule}</td>
+                          <td className="font-semibold text-slate-800">{eleve.nom} {eleve.prenom}</td>
+                          <td>
                             <div className="relative">
                               <input
                                 type="number"
                                 min={0}
                                 max={20}
                                 step={0.25}
-                                placeholder="--"
+                                placeholder="—"
                                 value={notesInput[eleve.id]?.valeur ?? ""}
                                 onChange={(e) => handleNoteChange(eleve.id, e.target.value)}
-                                className={`w-24 h-9 mx-auto block bg-neutral-50 border rounded-lg px-3 text-sm text-center text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 ${
+                                className={`w-24 mx-auto block text-center dash-input ${
                                   notesInput[eleve.id]?.valeur !== "" && (Number(notesInput[eleve.id]?.valeur) < 0 || Number(notesInput[eleve.id]?.valeur) > 20)
-                                    ? "border-red-400 bg-red-50"
-                                    : "border-neutral-200"
+                                    ? "!border-red-400 !bg-red-50"
+                                    : ""
                                 }`}
                               />
                               {notesInput[eleve.id]?.valeur !== "" && (Number(notesInput[eleve.id]?.valeur) < 0 || Number(notesInput[eleve.id]?.valeur) > 20) && (
@@ -318,19 +308,13 @@ export function SaisieNotes({ matieresApiUrl = "/api/professeur/matieres" }: Sai
                               )}
                             </div>
                           </td>
-                          <td className="px-4 py-2 text-center">
+                          <td className="text-center">
                             {eleve.moyenne !== null ? (
-                              <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${
-                                  eleve.moyenne >= 10
-                                    ? "bg-indigo-50 text-indigo-600"
-                                    : "bg-red-50 text-red-600"
-                                }`}
-                              >
+                              <span className={`dash-badge ${eleve.moyenne >= 10 ? "dash-badge-info" : "dash-badge-danger"}`}>
                                 {eleve.moyenne.toFixed(2)}
                               </span>
                             ) : (
-                              <span className="text-sm text-neutral-400">—</span>
+                              <span className="text-slate-400 text-xs">—</span>
                             )}
                           </td>
                         </tr>
@@ -340,33 +324,17 @@ export function SaisieNotes({ matieresApiUrl = "/api/professeur/matieres" }: Sai
                 </div>
 
                 {message && (
-                  <p
-                    className={`mt-4 text-sm px-4 py-2 rounded-lg ${
-                      message.type === "success"
-                        ? "bg-green-50 text-green-700"
-                        : "bg-red-50 text-red-700"
-                    }`}
-                  >
+                  <div className={`mt-4 text-sm px-4 py-2.5 rounded-xl font-medium ${message.type === "success" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
                     {message.text}
-                  </p>
+                  </div>
                 )}
 
-                <div className="flex justify-end mt-6 gap-3">
-                  <button
-                    onClick={loadEleves}
-                    disabled={saving}
-                    className="h-9 px-4 bg-white border border-neutral-200 text-neutral-900 text-sm font-medium rounded-lg hover:bg-neutral-50 disabled:opacity-50 transition-colors"
-                  >
+                <div className="flex justify-end mt-5 gap-3">
+                  <button onClick={loadEleves} disabled={saving} className="dash-btn-secondary">
                     Recharger
                   </button>
-                  <button
-                    onClick={handleSubmit}
-                    disabled={saving}
-                    className="h-9 px-4 bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 disabled:opacity-50 transition-colors inline-flex items-center gap-2"
-                  >
-                    {saving && (
-                      <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />
-                    )}
+                  <button onClick={handleSubmit} disabled={saving} className="dash-btn-primary">
+                    {saving && <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />}
                     {saving ? "Enregistrement..." : "Enregistrer les notes"}
                   </button>
                 </div>

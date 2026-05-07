@@ -19,11 +19,11 @@ const CATEGORIES = [
   { value: "AUTRE", label: "Autre" },
 ];
 
-const CAT_COLORS: Record<string, string> = {
-  SALAIRE: "bg-indigo-50 text-indigo-700",
-  FOURNITURE: "bg-neutral-50 text-neutral-700",
-  MAINTENANCE: "bg-orange-50 text-orange-700",
-  AUTRE: "bg-neutral-50 text-neutral-500",
+const CAT_BADGE: Record<string, string> = {
+  SALAIRE: "dash-badge dash-badge-info",
+  FOURNITURE: "dash-badge dash-badge-neutral",
+  MAINTENANCE: "dash-badge dash-badge-orange",
+  AUTRE: "dash-badge dash-badge-neutral",
 };
 
 export function GestionDepenses() {
@@ -114,51 +114,51 @@ export function GestionDepenses() {
   return (
     <div className="space-y-6">
       {/* Formulaire */}
-      <div className="bg-white rounded-xl border border-neutral-200">
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <h3 className="text-lg font-semibold text-neutral-900">Nouvelle depense</h3>
+      <div className="dash-section">
+        <div className="dash-section-header">
+          <span className="dash-section-title">Nouvelle dépense</span>
         </div>
-        <div className="px-6 py-4">
+        <div className="px-6 py-5">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-900 mb-1.5">Libelle <span className="text-red-500">*</span></label>
+                <label className="dash-label">Libellé <span className="text-red-400">*</span></label>
                 <input
                   value={libelle}
                   onChange={(e) => setLibelle(e.target.value)}
                   placeholder="Ex: Salaire enseignants mars"
-                  className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="dash-input"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-900 mb-1.5">Montant (FCFA) <span className="text-red-500">*</span></label>
+                <label className="dash-label">Montant (FCFA) <span className="text-red-400">*</span></label>
                 <input
                   type="number"
                   min="1"
                   value={montant}
                   onChange={(e) => setMontant(e.target.value)}
                   placeholder="Ex: 150000"
-                  className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="dash-input"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-900 mb-1.5">Date</label>
+                <label className="dash-label">Date</label>
                 <input
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="dash-input"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-900 mb-1.5">Categorie</label>
+                <label className="dash-label">Catégorie</label>
                 <select
                   value={categorie}
                   onChange={(e) => setCategorie(e.target.value)}
-                  className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="dash-input"
                   required
                 >
                   {CATEGORIES.map((c) => (
@@ -167,28 +167,18 @@ export function GestionDepenses() {
                 </select>
               </div>
             </div>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-2"
-            >
+            <button type="submit" disabled={submitting} className="dash-btn-primary">
               {submitting && (
                 <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />
               )}
-              {submitting ? "Enregistrement..." : "Enregistrer la depense"}
+              {submitting ? "Enregistrement..." : "Enregistrer la dépense"}
             </button>
             {message && (
-              <div
-                className={`text-sm px-4 py-2.5 rounded-lg flex items-center gap-2 ${
-                  message.includes("enregistree")
-                    ? "bg-green-50 text-green-700 border border-green-200"
-                    : "bg-red-50 text-red-700 border border-red-200"
-                }`}
-              >
+              <div className={`text-sm px-4 py-2.5 rounded-xl flex items-center gap-2 font-medium ${message.includes("enregistree") ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
                 {message.includes("enregistree") ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 )}
                 {message}
               </div>
@@ -198,126 +188,118 @@ export function GestionDepenses() {
       </div>
 
       {/* Liste */}
-      <div className="bg-white rounded-xl border border-neutral-200">
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <h3 className="text-lg font-semibold text-neutral-900">
-              Liste des depenses
-              {!loading && (
-                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-neutral-100 text-neutral-500">
-                  {depensesFiltrees.length} resultat(s)
-                </span>
-              )}
-            </h3>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="relative">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
-                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-                </svg>
-                <input
-                  type="text"
-                  data-search-input
-                  value={recherche}
-                  onChange={(e) => setRecherche(e.target.value)}
-                  placeholder="Rechercher une depense..."
-                  className="h-9 w-56 bg-neutral-50 border border-neutral-200 rounded-lg pl-9 pr-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                />
-              </div>
-              <select
-                value={filtreMois}
-                onChange={(e) => setFiltreMois(e.target.value)}
-                className="h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-              >
-                {[
-                  "Janvier","Fevrier","Mars","Avril","Mai","Juin",
-                  "Juillet","Aout","Septembre","Octobre","Novembre","Decembre",
-                ].map((m, i) => (
-                  <option key={i} value={String(i + 1)}>{m}</option>
-                ))}
-              </select>
+      <div className="dash-section">
+        <div className="dash-section-header">
+          <div className="flex items-center gap-3">
+            <span className="dash-section-title">Liste des dépenses</span>
+            {!loading && <span className="dash-count">{depensesFiltrees.length} résultat(s)</span>}
+          </div>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400/70">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+              </svg>
               <input
-                type="number"
-                value={filtreAnnee}
-                onChange={(e) => setFiltreAnnee(e.target.value)}
-                className="w-24 h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                type="text"
+                data-search-input
+                value={recherche}
+                onChange={(e) => setRecherche(e.target.value)}
+                placeholder="Rechercher..."
+                className="dash-input w-44 pl-9"
               />
-              <select
-                value={filtreCategorie}
-                onChange={(e) => setFiltreCategorie(e.target.value)}
-                className="h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-              >
-                <option value="">Toutes categories</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c.value} value={c.value}>{c.label}</option>
-                ))}
-              </select>
-              {(recherche || filtreCategorie) && (
-                <button
-                  onClick={() => { setRecherche(""); setFiltreCategorie(""); }}
-                  className="h-9 px-3 text-sm text-neutral-500 hover:text-neutral-700 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
-                >
-                  Reinitialiser
-                </button>
-              )}
             </div>
+            <select
+              value={filtreMois}
+              onChange={(e) => setFiltreMois(e.target.value)}
+              className="dash-input w-auto px-3"
+            >
+              {[
+                "Janvier","Février","Mars","Avril","Mai","Juin",
+                "Juillet","Août","Septembre","Octobre","Novembre","Décembre",
+              ].map((m, i) => (
+                <option key={i} value={String(i + 1)}>{m}</option>
+              ))}
+            </select>
+            <input
+              type="number"
+              value={filtreAnnee}
+              onChange={(e) => setFiltreAnnee(e.target.value)}
+              className="dash-input w-24"
+            />
+            <select
+              value={filtreCategorie}
+              onChange={(e) => setFiltreCategorie(e.target.value)}
+              className="dash-input w-auto px-3"
+            >
+              <option value="">Toutes catégories</option>
+              {CATEGORIES.map((c) => (
+                <option key={c.value} value={c.value}>{c.label}</option>
+              ))}
+            </select>
+            {(recherche || filtreCategorie) && (
+              <button
+                onClick={() => { setRecherche(""); setFiltreCategorie(""); }}
+                className="dash-btn-secondary text-xs"
+              >
+                Réinitialiser
+              </button>
+            )}
           </div>
         </div>
-        <div className="px-6 py-4">
+        <div className="px-6 py-5">
           {loading ? (
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
-              <p className="text-sm text-neutral-500">Chargement...</p>
+            <div className="flex items-center gap-3 justify-center py-8">
+              <div className="dash-spinner" />
+              <p className="text-sm text-slate-500">Chargement...</p>
             </div>
           ) : depensesFiltrees.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>
+            <div className="dash-empty">
+              <div className="dash-empty-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>
               </div>
-              <p className="text-sm text-neutral-500">Aucune depense pour cette periode.</p>
-              <p className="text-xs text-neutral-400 mt-1">Utilisez le formulaire ci-dessus pour enregistrer une depense.</p>
+              <p className="text-sm font-medium text-neutral-600">Aucune dépense pour cette période</p>
+              <p className="text-xs text-neutral-400 mt-1">Utilisez le formulaire ci-dessus pour enregistrer une dépense.</p>
             </div>
           ) : (
             <>
-              <div className="mb-4 bg-neutral-50 border border-neutral-200 rounded-lg p-3 text-center">
-                <p className="text-sm text-neutral-500">Total de la periode</p>
-                <p className="text-xl font-bold text-neutral-900">
-                  {totalFiltre.toLocaleString("fr-FR")} FCFA
-                </p>
+              <div className="dash-total-box mb-5">
+                <p>Total de la période</p>
+                <p>{totalFiltre.toLocaleString("fr-FR")} FCFA</p>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-neutral-100">
-                      <th className="text-left px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Date</th>
-                      <th className="text-left px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Libelle</th>
-                      <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Categorie</th>
-                      <th className="text-right px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Montant</th>
-                      <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Par</th>
-                      <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500 w-16"></th>
+                    <tr>
+                      <th className="text-left">Date</th>
+                      <th className="text-left">Libellé</th>
+                      <th className="text-center">Catégorie</th>
+                      <th className="text-right">Montant</th>
+                      <th className="text-center">Par</th>
+                      <th className="text-center w-16"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {depensesFiltrees.map((d) => (
-                      <tr key={d.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
-                        <td className="px-3 py-2 text-sm text-neutral-500">
+                      <tr key={d.id}>
+                        <td className="text-xs text-slate-500">
                           {new Date(d.date).toLocaleDateString("fr-FR")}
                         </td>
-                        <td className="px-3 py-2 text-sm font-medium text-neutral-900">{d.libelle}</td>
-                        <td className="px-3 py-2 text-center">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium ${CAT_COLORS[d.categorie] || "bg-neutral-50 text-neutral-500"}`}>
+                        <td className="font-semibold text-slate-800">{d.libelle}</td>
+                        <td className="text-center">
+                          <span className={CAT_BADGE[d.categorie] || "dash-badge dash-badge-neutral"}>
                             {CATEGORIES.find((c) => c.value === d.categorie)?.label || d.categorie}
                           </span>
                         </td>
-                        <td className="px-3 py-2 text-right text-sm font-medium text-neutral-900">
+                        <td className="text-right font-bold text-slate-800">
                           {d.montant.toLocaleString("fr-FR")} FCFA
                         </td>
-                        <td className="px-3 py-2 text-center text-sm text-neutral-500">
+                        <td className="text-center text-xs text-slate-500">
                           {d.enregistre_par.prenom} {d.enregistre_par.nom}
                         </td>
-                        <td className="px-3 py-2 text-center">
+                        <td className="text-center">
                           <button
                             onClick={() => handleDelete(d.id)}
-                            className="h-9 px-4 bg-red-600 text-white text-sm rounded-lg font-medium hover:bg-red-700 transition-colors"
+                            className="inline-flex items-center h-8 px-3 bg-gradient-to-r from-red-500 to-rose-600 text-white text-xs rounded-lg font-semibold shadow-sm shadow-red-500/20 hover:shadow-red-500/35 hover:-translate-y-px transition-all"
                           >
                             Suppr.
                           </button>

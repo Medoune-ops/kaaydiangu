@@ -126,108 +126,88 @@ export function DashboardEleve() {
     <div className="space-y-4">
       {/* KPI CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="dash-kpi p-3.5 text-center" style={{ "--kpi-accent": "#6366f1" } as React.CSSProperties}>
-          <div className="w-8 h-8 mx-auto rounded-lg bg-indigo-50 flex items-center justify-center mb-1.5">
-            <BarChart3 size={16} className="text-indigo-500" />
+        <div className="dash-kpi p-4 text-center" style={{ "--kpi-accent": "#6366f1" } as React.CSSProperties}>
+          <div className="w-9 h-9 mx-auto rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mb-2.5 shadow-lg shadow-indigo-500/30">
+            <BarChart3 size={16} className="text-white" />
           </div>
-          <p className="text-[10px] text-indigo-500 uppercase tracking-wider font-semibold">Moyenne</p>
-          <p className="text-2xl font-bold text-neutral-900 mt-0.5 tracking-tight">
-            {data.moyenneGenerale !== null ? `${data.moyenneGenerale.toFixed(2)}` : "--"}
+          <p className="text-[10px] text-indigo-500 uppercase tracking-wider font-bold">Moyenne</p>
+          <p className="dash-kpi-value text-2xl mt-1">
+            {data.moyenneGenerale !== null ? data.moyenneGenerale.toFixed(2) : "—"}
           </p>
-          <p className="text-xs text-neutral-400">/20 — Séq. {data.sequence}</p>
+          <p className="text-xs text-neutral-400 mt-0.5">/20 — Séq. {data.sequence}</p>
         </div>
 
-        <div className="dash-kpi p-3.5 text-center" style={{ "--kpi-accent": "#f59e0b" } as React.CSSProperties}>
-          <div className="w-8 h-8 mx-auto rounded-lg bg-amber-50 flex items-center justify-center mb-1.5">
-            <Star size={16} className="text-amber-500" />
+        <div className="dash-kpi p-4 text-center" style={{ "--kpi-accent": "#f59e0b" } as React.CSSProperties}>
+          <div className="w-9 h-9 mx-auto rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mb-2.5 shadow-lg shadow-amber-500/30">
+            <Star size={16} className="text-white" />
           </div>
-          <p className="text-[10px] text-amber-500 uppercase tracking-wider font-semibold">Rang</p>
-          <p className="text-2xl font-bold text-neutral-900 mt-0.5 tracking-tight">
-            {data.rang}
-            <span className="text-sm font-medium text-neutral-400">{data.rang === 1 ? "er" : "e"}</span>
+          <p className="text-[10px] text-amber-500 uppercase tracking-wider font-bold">Rang</p>
+          <p className="dash-kpi-value text-2xl mt-1">
+            {data.rang}<span className="text-sm font-semibold text-neutral-400">{data.rang === 1 ? "er" : "e"}</span>
           </p>
-          <p className="text-xs text-neutral-400">sur {data.totalEleves} élèves</p>
+          <p className="text-xs text-neutral-400 mt-0.5">sur {data.totalEleves} élèves</p>
         </div>
 
-        <div className="dash-kpi p-3.5 text-center" style={{ "--kpi-accent": data.moisRestants > 0 ? "#ef4444" : "#22c55e" } as React.CSSProperties}>
-          <div className={`w-8 h-8 mx-auto rounded-lg flex items-center justify-center mb-1.5 ${data.moisRestants > 0 ? "bg-red-50" : "bg-emerald-50"}`}>
-            <Wallet size={16} className={data.moisRestants > 0 ? "text-red-500" : "text-emerald-500"} />
+        <div className="dash-kpi p-4 text-center" style={{ "--kpi-accent": data.moisRestants > 0 ? "#ef4444" : "#22c55e" } as React.CSSProperties}>
+          <div className={`w-9 h-9 mx-auto rounded-xl bg-gradient-to-br flex items-center justify-center mb-2.5 shadow-lg ${data.moisRestants > 0 ? "from-red-500 to-rose-600 shadow-red-500/30" : "from-emerald-400 to-teal-500 shadow-emerald-500/30"}`}>
+            <Wallet size={16} className="text-white" />
           </div>
-          <p className={`text-[10px] uppercase tracking-wider font-semibold ${data.moisRestants > 0 ? "text-red-500" : "text-emerald-500"}`}>
+          <p className={`text-[10px] uppercase tracking-wider font-bold ${data.moisRestants > 0 ? "text-red-500" : "text-emerald-500"}`}>
             Mois restants
           </p>
-          <p className={`text-2xl font-bold mt-0.5 tracking-tight ${data.moisRestants > 0 ? "text-red-600" : "text-emerald-600"}`}>
-            {data.moisRestants}
-          </p>
-          <p className="text-xs text-neutral-400">sur {data.paiements.length} mensualités</p>
+          <p className="dash-kpi-value text-2xl mt-1">{data.moisRestants}</p>
+          <p className="text-xs text-neutral-400 mt-0.5">sur {data.paiements.length} mensualités</p>
         </div>
 
-        <div className="dash-kpi p-3.5 text-center" style={{ "--kpi-accent": data.absencesNonJustifiees > 0 ? "#ef4444" : "#94a3b8" } as React.CSSProperties}>
-          <div className={`w-8 h-8 mx-auto rounded-lg flex items-center justify-center mb-1.5 ${data.absencesNonJustifiees > 0 ? "bg-red-50" : "bg-neutral-100"}`}>
-            <Calendar size={16} className={data.absencesNonJustifiees > 0 ? "text-red-500" : "text-neutral-400"} />
+        <div className="dash-kpi p-4 text-center" style={{ "--kpi-accent": data.absencesNonJustifiees > 0 ? "#ef4444" : "#94a3b8" } as React.CSSProperties}>
+          <div className={`w-9 h-9 mx-auto rounded-xl bg-gradient-to-br flex items-center justify-center mb-2.5 shadow-lg ${data.absencesNonJustifiees > 0 ? "from-red-500 to-rose-600 shadow-red-500/30" : "from-slate-400 to-slate-500 shadow-slate-400/30"}`}>
+            <Calendar size={16} className="text-white" />
           </div>
-          <p className="text-[10px] text-neutral-500 uppercase tracking-wider font-semibold">Absences</p>
-          <p className="text-2xl font-bold text-neutral-900 mt-0.5 tracking-tight">{data.totalAbsences}</p>
-          <p className="text-xs text-neutral-400">
-            {data.totalHeures}h — {data.absencesNonJustifiees} non justifiée(s)
-          </p>
+          <p className="text-[10px] text-neutral-500 uppercase tracking-wider font-bold">Absences</p>
+          <p className="dash-kpi-value text-2xl mt-1">{data.totalAbsences}</p>
+          <p className="text-xs text-neutral-400 mt-0.5">{data.totalHeures}h — {data.absencesNonJustifiees} non just.</p>
         </div>
       </div>
 
       {/* MES NOTES */}
       <div className="dash-section">
-        <div className="px-5 py-3 border-b border-neutral-100">
-          <h2 className="text-sm font-semibold text-neutral-900">
-            Mes notes — Séquence {data.sequence}
-          </h2>
+        <div className="dash-section-header">
+          <span className="dash-section-title">Mes notes — Séquence {data.sequence}</span>
         </div>
         <div className="p-4">
           {data.matieres.length === 0 ? (
-            <div className="text-center py-6">
-              <div className="w-10 h-10 mx-auto rounded-lg bg-neutral-100 flex items-center justify-center mb-2">
-                <BarChart3 size={18} className="text-neutral-400" />
+            <div className="dash-empty">
+              <div className="dash-empty-icon">
+                <BarChart3 size={18} />
               </div>
-              <p className="text-sm text-neutral-500">Aucune note disponible pour le moment.</p>
+              <p className="text-sm font-medium text-neutral-600">Aucune note disponible pour le moment.</p>
               <p className="text-xs text-neutral-400 mt-1">Les notes apparaîtront ici une fois saisies par vos professeurs.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-neutral-100">
-                    <th className="text-left px-4 py-2.5 text-xs uppercase tracking-wider font-semibold text-neutral-400">Matière</th>
-                    <th className="text-center px-4 py-2.5 text-xs uppercase tracking-wider font-semibold text-neutral-400 w-14">Coef.</th>
-                    <th className="text-center px-4 py-2.5 text-xs uppercase tracking-wider font-semibold text-neutral-400">Notes</th>
-                    <th className="text-center px-4 py-2.5 text-xs uppercase tracking-wider font-semibold text-neutral-400 w-20">Moyenne</th>
+                  <tr>
+                    <th className="text-left">Matière</th>
+                    <th className="text-center w-14">Coef.</th>
+                    <th className="text-center">Notes</th>
+                    <th className="text-center w-20">Moyenne</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {data.matieres.map((m, i) => (
-                    <tr
-                      key={m.nom}
-                      className={`border-b border-neutral-50 hover:bg-neutral-50/70 transition-colors ${i % 2 ? "bg-neutral-50/30" : ""}`}
-                    >
-                      <td className="px-4 py-2.5 text-sm font-medium text-neutral-900">{m.nom}</td>
-                      <td className="px-4 py-2.5 text-center text-sm text-neutral-400">{m.coefficient}</td>
-                      <td className="px-4 py-2.5 text-center text-sm text-neutral-500">
-                        {m.notes.length > 0
-                          ? m.notes.map((n) => n.valeur.toFixed(1)).join(" / ")
-                          : "—"}
+                  {data.matieres.map((m) => (
+                    <tr key={m.nom}>
+                      <td className="font-semibold text-slate-800">{m.nom}</td>
+                      <td className="text-center text-slate-500">{m.coefficient}</td>
+                      <td className="text-center text-slate-600 font-mono text-xs">
+                        {m.notes.length > 0 ? m.notes.map((n) => n.valeur.toFixed(1)).join(" / ") : "—"}
                       </td>
-                      <td className="px-4 py-2.5 text-center">
+                      <td className="text-center">
                         {m.moyenne !== null ? (
-                          <span
-                            className={`inline-block px-2.5 py-0.5 rounded-md text-sm font-semibold ${
-                              m.moyenne >= 10
-                                ? "bg-indigo-50 text-indigo-600"
-                                : "bg-red-50 text-red-600"
-                            }`}
-                          >
+                          <span className={`dash-badge ${m.moyenne >= 10 ? "dash-badge-info" : "dash-badge-danger"}`}>
                             {m.moyenne.toFixed(2)}
                           </span>
-                        ) : (
-                          "—"
-                        )}
+                        ) : "—"}
                       </td>
                     </tr>
                   ))}
@@ -236,11 +216,11 @@ export function DashboardEleve() {
             </div>
           )}
           {data.moyenneGenerale !== null && (
-            <div className="mt-3 bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-100 rounded-lg p-3 flex items-center justify-between">
-              <span className="text-sm font-medium text-indigo-600">
+            <div className="mt-4 dash-selected-item p-3.5 flex items-center justify-between">
+              <span className="text-sm font-semibold text-indigo-700">
                 Moyenne générale pondérée
               </span>
-              <span className="text-xl font-bold text-indigo-700 tracking-tight">
+              <span className="text-xl font-extrabold text-indigo-800 tracking-tight">
                 {data.moyenneGenerale.toFixed(2)} / 20
               </span>
             </div>
@@ -305,8 +285,8 @@ export function DashboardEleve() {
 
       {/* MON EMPLOI DU TEMPS */}
       <div className="dash-section">
-        <div className="px-5 py-3 border-b border-neutral-100">
-          <h2 className="text-sm font-semibold text-neutral-900">Mon emploi du temps</h2>
+        <div className="dash-section-header">
+          <span className="dash-section-title">Mon emploi du temps</span>
         </div>
         <div>
           <EmploiDuTempsViewer classeId={data.eleve.classe.id} />
@@ -315,11 +295,11 @@ export function DashboardEleve() {
 
       {/* MES NOTIFICATIONS */}
       <div className="dash-section">
-        <div className="px-5 py-3 border-b border-neutral-100 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-neutral-900">Notifications</h2>
+        <div className="dash-section-header">
+          <div className="flex items-center gap-2.5">
+            <span className="dash-section-title">Notifications</span>
             {nonLues > 0 && (
-              <span className="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[11px] font-bold bg-red-500 text-white">
+              <span className="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-sm shadow-red-500/30">
                 {nonLues}
               </span>
             )}
@@ -327,11 +307,11 @@ export function DashboardEleve() {
         </div>
         <div className="p-4">
           {data.notifications.length === 0 ? (
-            <div className="text-center py-6">
-              <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
-                <Bell size={22} className="text-neutral-400" />
+            <div className="dash-empty">
+              <div className="dash-empty-icon">
+                <Bell size={20} />
               </div>
-              <p className="text-sm text-neutral-500">Aucune notification pour le moment.</p>
+              <p className="text-sm font-medium text-neutral-600">Aucune notification pour le moment.</p>
             </div>
           ) : (
             <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -339,23 +319,23 @@ export function DashboardEleve() {
                 <div
                   key={n.id}
                   className={`rounded-xl border p-3.5 transition-all duration-200 ${
-                    n.lu ? "bg-white border-neutral-100" : "bg-indigo-50/50 border-indigo-200"
+                    n.lu
+                      ? "bg-white border-neutral-100"
+                      : "bg-gradient-to-r from-indigo-50/60 to-violet-50/30 border-indigo-200/60"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm text-neutral-900 truncate">{n.titre}</span>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-sm text-slate-800 truncate">{n.titre}</span>
                         {n.type && (
-                          <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold bg-neutral-100 text-neutral-500 border border-neutral-200">
-                            {n.type}
-                          </span>
+                          <span className="dash-badge dash-badge-neutral">{n.type}</span>
                         )}
                         {!n.lu && (
-                          <span className="w-2 h-2 rounded-full bg-indigo-500 shrink-0" />
+                          <span className="w-2 h-2 rounded-full bg-indigo-500 shrink-0 shadow-sm shadow-indigo-500/50" />
                         )}
                       </div>
-                      <p className="text-sm text-neutral-500 mt-1 line-clamp-2">{n.message}</p>
+                      <p className="text-sm text-slate-500 mt-1 line-clamp-2">{n.message}</p>
                       <div className="flex items-center gap-1.5 mt-1.5 text-xs text-neutral-400">
                         <Clock size={11} />
                         <span>
@@ -372,7 +352,7 @@ export function DashboardEleve() {
                     {!n.lu && (
                       <button
                         onClick={() => marquerLu(n.id)}
-                        className="text-xs text-indigo-500 hover:text-indigo-700 font-medium shrink-0 px-2 py-1 rounded-md hover:bg-indigo-50 transition-colors"
+                        className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold shrink-0 px-2.5 py-1 rounded-lg hover:bg-indigo-100 transition-colors"
                       >
                         Lu
                       </button>

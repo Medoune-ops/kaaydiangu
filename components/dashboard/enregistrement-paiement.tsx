@@ -155,60 +155,56 @@ export function EnregistrementPaiement() {
   return (
     <div className="space-y-6">
       {/* Recherche eleve */}
-      <div className="bg-white rounded-xl border border-neutral-200">
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <h3 className="text-lg font-semibold text-neutral-900">Rechercher un eleve</h3>
+      <div className="dash-section">
+        <div className="dash-section-header">
+          <span className="dash-section-title">Rechercher un élève</span>
         </div>
-        <div className="px-6 py-4 space-y-3">
+        <div className="px-6 py-5 space-y-3">
           <div className="relative">
-            <div className="flex gap-3">
-              <div className="relative flex-1">
-                <input
-                  placeholder="Commencez a taper un nom, prenom ou matricule..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && rechercher(query)}
-                  className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg pl-10 pr-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                />
-                <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                {searching && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <div className="w-4 h-4 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
-                  </div>
-                )}
-              </div>
+            <div className="relative">
+              <input
+                placeholder="Commencez à taper un nom, prénom ou matricule..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && rechercher(query)}
+                className="dash-input pl-10"
+              />
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400/70" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              {searching && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  <div className="w-4 h-4 border-2 border-indigo-200 rounded-full animate-spin border-t-indigo-500" />
+                </div>
+              )}
             </div>
             {query.trim().length > 0 && query.trim().length < 2 && (
-              <p className="text-xs text-neutral-400 mt-1">Tapez au moins 2 caracteres...</p>
+              <p className="text-xs text-indigo-400 mt-1.5">Tapez au moins 2 caractères...</p>
             )}
           </div>
 
           {resultats.length > 0 && (
-            <div className="border border-neutral-200 rounded-lg divide-y divide-neutral-100">
+            <div className="dash-search-results">
               {resultats.map((e) => (
                 <button
                   key={e.id}
                   onClick={() => selectEleve(e)}
-                  className="w-full text-left px-4 py-3 hover:bg-neutral-50 transition-colors flex items-center justify-between"
+                  className="flex items-center justify-between"
                 >
                   <div>
-                    <span className="font-medium text-sm text-neutral-900">{e.prenom} {e.nom}</span>
-                    <span className="text-neutral-400 text-sm ml-2">-- {e.matricule}</span>
+                    <span className="font-semibold text-slate-800">{e.prenom} {e.nom}</span>
+                    <span className="text-slate-400 text-xs ml-2 font-mono">{e.matricule}</span>
                   </div>
-                  <span className="text-sm text-neutral-500 bg-neutral-50 border border-neutral-200 rounded-md px-2 py-0.5">{e.classe.nom}</span>
+                  <span className="dash-badge dash-badge-info">{e.classe.nom}</span>
                 </button>
               ))}
             </div>
           )}
 
           {selectedEleve && (
-            <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 flex items-center justify-between">
+            <div className="dash-selected-item p-4 flex items-center justify-between">
               <div>
-                <p className="font-semibold text-sm text-neutral-900">
-                  {selectedEleve.prenom} {selectedEleve.nom}
-                </p>
-                <p className="text-sm text-indigo-600">
-                  {selectedEleve.matricule} -- {selectedEleve.classe.nom}
+                <p className="font-bold text-slate-800">{selectedEleve.prenom} {selectedEleve.nom}</p>
+                <p className="text-sm text-indigo-600 font-medium mt-0.5">
+                  <span className="font-mono">{selectedEleve.matricule}</span> — {selectedEleve.classe.nom}
                 </p>
               </div>
               <button
@@ -218,7 +214,7 @@ export function EnregistrementPaiement() {
                   setMessage("");
                   setLastRecu(null);
                 }}
-                className="h-9 px-4 text-sm font-medium text-neutral-900 border border-neutral-200 rounded-lg hover:bg-neutral-100 transition-colors"
+                className="dash-btn-secondary text-xs"
               >
                 Changer
               </button>
@@ -229,75 +225,65 @@ export function EnregistrementPaiement() {
 
       {/* Formulaire de paiement */}
       {selectedEleve && !loadingPaiements && (
-        <div className="bg-white rounded-xl border border-neutral-200">
-          <div className="px-6 py-4 border-b border-neutral-100">
-            <h3 className="text-lg font-semibold text-neutral-900">Enregistrer un paiement</h3>
+        <div className="dash-section">
+          <div className="dash-section-header">
+            <span className="dash-section-title">Enregistrer un paiement</span>
           </div>
-          <div className="px-6 py-4">
+          <div className="px-6 py-5">
             {nonPayes.length === 0 ? (
-              <div className="text-center py-6">
-                <div className="w-12 h-12 mx-auto rounded-xl bg-green-50 flex items-center justify-center mb-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <div className="dash-empty">
+                <div className="dash-empty-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <p className="text-sm text-green-600 font-medium">
-                  Tous les mois sont payes pour cet eleve.
-                </p>
+                <p className="text-sm font-medium text-emerald-700">Tous les mois sont payés pour cet élève.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900 mb-1.5">Mois a payer <span className="text-red-500">*</span></label>
+                    <label className="dash-label">Mois à payer <span className="text-red-400">*</span></label>
                     <select
                       value={selectedPaiementId}
                       onChange={(e) => setSelectedPaiementId(e.target.value)}
-                      className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                      className="dash-input"
                       required
                     >
-                      <option value="">Selectionner...</option>
+                      <option value="">Sélectionner...</option>
                       {nonPayes.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {MOIS_NOMS[p.mois]} {p.annee}
-                        </option>
+                        <option key={p.id} value={p.id}>{MOIS_NOMS[p.mois]} {p.annee}</option>
                       ))}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900 mb-1.5">Montant (FCFA) <span className="text-red-500">*</span></label>
+                    <label className="dash-label">Montant (FCFA) <span className="text-red-400">*</span></label>
                     <input
                       type="number"
                       min="1"
                       value={montant}
                       onChange={(e) => setMontant(e.target.value)}
                       placeholder="Ex: 25000"
-                      className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                      className="dash-input"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-neutral-900 mb-1.5">Mode de paiement <span className="text-red-500">*</span></label>
+                    <label className="dash-label">Mode de paiement <span className="text-red-400">*</span></label>
                     <select
                       value={mode}
                       onChange={(e) => setMode(e.target.value)}
-                      className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                      className="dash-input"
                       required
                     >
-                      <option value="ESPECES">Especes</option>
+                      <option value="ESPECES">Espèces</option>
                       <option value="MOBILE_MONEY">Mobile Money</option>
                       <option value="VIREMENT">Virement</option>
                     </select>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-2"
-                  >
-                    {submitting && (
-                      <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />
-                    )}
+                <div className="flex items-center gap-3 flex-wrap">
+                  <button type="submit" disabled={submitting} className="dash-btn-primary">
+                    {submitting && <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />}
                     {submitting ? "Enregistrement..." : "Valider le paiement"}
                   </button>
                   {lastRecu && (
@@ -306,33 +292,27 @@ export function EnregistrementPaiement() {
                         href={`/api/paiements/recu?paiement_id=${lastRecu.paiement_id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-indigo-500 hover:underline font-medium"
+                        className="text-sm text-indigo-600 hover:text-indigo-700 font-semibold underline underline-offset-2"
                       >
-                        Telecharger le recu
+                        Télécharger le reçu
                       </a>
                       <button
                         type="button"
                         onClick={() => imprimerRecu(lastRecu.paiement_id)}
-                        className="h-9 px-4 text-sm font-medium text-neutral-900 border border-neutral-200 rounded-lg hover:bg-neutral-100 transition-colors"
+                        className="dash-btn-secondary text-sm"
                       >
-                        Imprimer le recu
+                        Imprimer le reçu
                       </button>
                     </>
                   )}
                 </div>
 
                 {message && (
-                  <div
-                    className={`text-sm px-4 py-2.5 rounded-lg flex items-center gap-2 ${
-                      message.includes("enregistre")
-                        ? "bg-green-50 text-green-700 border border-green-200"
-                        : "bg-red-50 text-red-700 border border-red-200"
-                    }`}
-                  >
+                  <div className={`text-sm px-4 py-2.5 rounded-xl flex items-center gap-2 font-medium ${message.includes("enregistre") ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
                     {message.includes("enregistre") ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                     ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     )}
                     {message}
                   </div>
@@ -352,70 +332,64 @@ export function EnregistrementPaiement() {
 
       {/* Historique des paiements */}
       {selectedEleve && payes.length > 0 && (
-        <div className="bg-white rounded-xl border border-neutral-200">
-          <div className="px-6 py-4 border-b border-neutral-100">
-            <h3 className="text-lg font-semibold text-neutral-900">Historique des paiements</h3>
+        <div className="dash-section">
+          <div className="dash-section-header">
+            <span className="dash-section-title">Historique des paiements</span>
+            <span className="dash-count">{payes.length} paiement(s)</span>
           </div>
-          <div className="px-6 py-4">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-neutral-100">
-                    <th className="text-left px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Mois</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Montant</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Mode</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Date</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Recu</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Actions</th>
-                  </tr>
-                </thead>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr>
+                  <th className="text-left">Mois</th>
+                  <th className="text-center">Montant</th>
+                  <th className="text-center">Mode</th>
+                  <th className="text-center">Date</th>
+                  <th className="text-center">Reçu</th>
+                  <th className="text-center">Actions</th>
+                </tr>
+              </thead>
                 <tbody>
                   {payes.map((p) => (
-                    <tr key={p.id} className="border-b border-neutral-100 last:border-0">
-                      <td className="px-3 py-2 text-sm text-neutral-900">
-                        {MOIS_NOMS[p.mois]} {p.annee}
-                      </td>
-                      <td className="px-3 py-2 text-center text-sm font-medium text-neutral-900">
+                    <tr key={p.id}>
+                      <td className="font-semibold text-slate-800">{MOIS_NOMS[p.mois]} {p.annee}</td>
+                      <td className="text-center font-bold text-slate-800">
                         {p.montant.toLocaleString("fr-FR")} FCFA
                       </td>
-                      <td className="px-3 py-2 text-center">
-                        <span className="text-sm text-neutral-500 bg-neutral-50 border border-neutral-200 rounded-md px-2 py-0.5">
-                          {p.mode?.replace("_", " ") || "--"}
-                        </span>
+                      <td className="text-center">
+                        <span className="dash-badge dash-badge-neutral">{p.mode?.replace("_", " ") || "—"}</span>
                       </td>
-                      <td className="px-3 py-2 text-center text-sm text-neutral-500">
-                        {p.date_paiement
-                          ? new Date(p.date_paiement).toLocaleDateString("fr-FR")
-                          : "--"}
+                      <td className="text-center text-xs text-slate-500">
+                        {p.date_paiement ? new Date(p.date_paiement).toLocaleDateString("fr-FR") : "—"}
                       </td>
-                      <td className="px-3 py-2 text-center">
+                      <td className="text-center">
                         {p.recu_numero ? (
                           <a
                             href={`/api/paiements/recu?paiement_id=${p.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-indigo-500 hover:underline text-sm"
+                            className="text-indigo-600 hover:text-indigo-700 font-semibold text-xs underline underline-offset-2"
                           >
                             {p.recu_numero}
                           </a>
                         ) : (
-                          <span className="text-sm text-neutral-400">--</span>
+                          <span className="text-slate-400 text-xs">—</span>
                         )}
                       </td>
-                      <td className="px-3 py-2 text-center">
+                      <td className="text-center">
                         {p.recu_numero && (
                           <div className="flex items-center justify-center gap-2">
                             <a
                               href={`/api/paiements/recu?paiement_id=${p.id}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-indigo-500 hover:underline text-sm"
+                              className="dash-btn-secondary text-xs"
                             >
                               PDF
                             </a>
                             <button
                               onClick={() => imprimerRecu(p.id)}
-                              className="text-sm text-neutral-500 hover:text-neutral-900 hover:underline"
+                              className="dash-btn-secondary text-xs"
                             >
                               Imprimer
                             </button>
@@ -426,7 +400,6 @@ export function EnregistrementPaiement() {
                   ))}
                 </tbody>
               </table>
-            </div>
           </div>
         </div>
       )}

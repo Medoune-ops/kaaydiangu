@@ -33,11 +33,11 @@ const ROLE_LABELS: Record<string, string> = {
   PROFESSEUR: "Professeur",
 };
 
-const ROLE_COLORS: Record<string, string> = {
-  SUPER_ADMIN: "bg-indigo-50 text-indigo-600",
-  COMPTABLE: "bg-sky-50 text-sky-600",
-  CENSEUR: "bg-emerald-50 text-emerald-600",
-  PROFESSEUR: "bg-amber-50 text-amber-600",
+const ROLE_BADGE: Record<string, string> = {
+  SUPER_ADMIN: "dash-badge dash-badge-info",
+  COMPTABLE: "dash-badge dash-badge-neutral",
+  CENSEUR: "dash-badge dash-badge-success",
+  PROFESSEUR: "dash-badge dash-badge-warning",
 };
 
 export function GestionEquipe() {
@@ -53,79 +53,52 @@ export function GestionEquipe() {
   const fetchUsers = useCallback(() => {
     fetch("/api/admin/users")
       .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data)) setUsers(data);
-      })
+      .then((data) => { if (Array.isArray(data)) setUsers(data); })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
   const showMsg = (type: "success" | "error", text: string) => {
     setMessage({ type, text });
     setTimeout(() => setMessage(null), 5000);
-    toast({ type, title: type === "success" ? "Succes" : "Erreur", description: text });
+    toast({ type, title: type === "success" ? "Succès" : "Erreur", description: text });
   };
 
-  const handleAction = async (
-    userId: string,
-    action: string,
-    extra?: Record<string, unknown>
-  ) => {
+  const handleAction = async (userId: string, action: string, extra?: Record<string, unknown>) => {
     const res = await fetch("/api/admin/users", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId, action, ...extra }),
     });
     const data = await res.json();
-    if (!res.ok) {
-      showMsg("error", data.error || "Erreur");
-      return null;
-    }
+    if (!res.ok) { showMsg("error", data.error || "Erreur"); return null; }
     fetchUsers();
     return data;
   };
 
   const handleToggleActif = async (user: UserInfo) => {
     const result = await handleAction(user.id, "TOGGLE_ACTIF");
-    if (result) {
-      showMsg(
-        "success",
-        `Compte de ${user.prenom} ${user.nom} ${result.actif ? "active" : "desactive"}`
-      );
-    }
+    if (result) showMsg("success", `Compte de ${user.prenom} ${user.nom} ${result.actif ? "activé" : "désactivé"}`);
   };
 
   const handleChangeRole = async (user: UserInfo, newRole: string) => {
     const result = await handleAction(user.id, "CHANGER_ROLE", { role: newRole });
-    if (result) {
-      showMsg("success", `Role de ${user.prenom} ${user.nom} change en ${ROLE_LABELS[newRole]}`);
-    }
+    if (result) showMsg("success", `Rôle de ${user.prenom} ${user.nom} changé en ${ROLE_LABELS[newRole]}`);
   };
 
   const handleResetPassword = async (user: UserInfo) => {
-    if (!confirm(`Reinitialiser le mot de passe de ${user.prenom} ${user.nom} ?`)) return;
+    if (!confirm(`Réinitialiser le mot de passe de ${user.prenom} ${user.nom} ?`)) return;
     const result = await handleAction(user.id, "RESET_PASSWORD");
-    if (result) {
-      showMsg(
-        "success",
-        `Nouveau mot de passe : ${result.nouveau_mot_de_passe}`
-      );
-    }
+    if (result) showMsg("success", `Nouveau mot de passe : ${result.nouveau_mot_de_passe}`);
   };
 
   const filteredUsers = users.filter((u) => {
     if (filter !== "TOUS" && u.role !== filter) return false;
     if (recherche) {
       const q = recherche.toLowerCase();
-      return (
-        u.nom.toLowerCase().includes(q) ||
-        u.prenom.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q)
-      );
+      return u.nom.toLowerCase().includes(q) || u.prenom.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
     }
     return true;
   });
@@ -133,7 +106,7 @@ export function GestionEquipe() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
+        <div className="dash-spinner" />
       </div>
     );
   }
@@ -141,96 +114,75 @@ export function GestionEquipe() {
   return (
     <div className="space-y-4">
       {message && (
-        <div
-          className={`px-4 py-3 rounded-xl text-sm font-medium ${
-            message.type === "success"
-              ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-              : "bg-red-50 text-red-700 border border-red-100"
-          }`}
-        >
+        <div className={`px-4 py-3 rounded-xl text-sm font-medium ${message.type === "success" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
           {message.text}
         </div>
       )}
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="relative">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-            </svg>
-            <input
-              type="text"
-              data-search-input
-              value={recherche}
-              onChange={(e) => setRecherche(e.target.value)}
-              placeholder="Rechercher un utilisateur..."
-              className="h-9 w-56 bg-white border border-neutral-200 rounded-lg pl-9 pr-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-            />
+      {/* Barre de recherche / actions */}
+      <div className="dash-section overflow-hidden">
+        <div className="dash-section-header">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400/70">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+              </svg>
+              <input
+                type="text"
+                data-search-input
+                value={recherche}
+                onChange={(e) => setRecherche(e.target.value)}
+                placeholder="Rechercher un utilisateur..."
+                className="dash-input pl-9 w-56"
+              />
+            </div>
+            <select value={filter} onChange={(e) => setFilter(e.target.value)} className="dash-input w-auto px-3">
+              <option value="TOUS">Tous les rôles</option>
+              <option value="CENSEUR">Censeurs</option>
+              <option value="COMPTABLE">Comptables</option>
+              <option value="PROFESSEUR">Professeurs</option>
+              <option value="SUPER_ADMIN">Super Admins</option>
+            </select>
+            {(recherche || filter !== "TOUS") && (
+              <button onClick={() => { setRecherche(""); setFilter("TOUS"); }} className="dash-btn-secondary text-xs">
+                Réinitialiser
+              </button>
+            )}
+            <span className="dash-count">{filteredUsers.length} utilisateur(s)</span>
           </div>
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="h-9 bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm text-neutral-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-          >
-            <option value="TOUS">Tous les roles</option>
-            <option value="CENSEUR">Censeurs</option>
-            <option value="COMPTABLE">Comptables</option>
-            <option value="PROFESSEUR">Professeurs</option>
-            <option value="SUPER_ADMIN">Super Admins</option>
-          </select>
-          {(recherche || filter !== "TOUS") && (
-            <button
-              onClick={() => { setRecherche(""); setFilter("TOUS"); }}
-              className="h-9 px-3 text-sm text-neutral-500 hover:text-neutral-700 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
-            >
-              Reinitialiser
-            </button>
-          )}
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-neutral-100 text-neutral-500">{filteredUsers.length} utilisateur(s)</span>
+          <button onClick={() => setShowCreate(true)} className="dash-btn-primary">
+            + Nouveau compte
+          </button>
         </div>
-        <button
-          onClick={() => setShowCreate(true)}
-          className="h-9 px-4 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-600 transition-colors"
-        >
-          + Nouveau compte
-        </button>
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
+      <div className="dash-section overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full">
             <thead>
-              <tr className="border-b border-neutral-100 text-left">
-                <th className="py-2.5 px-4 text-sm font-medium text-neutral-400 uppercase tracking-wider">Nom</th>
-                <th className="py-2.5 px-4 text-sm font-medium text-neutral-400 uppercase tracking-wider">Email</th>
-                <th className="py-2.5 px-4 text-sm font-medium text-neutral-400 uppercase tracking-wider">Role</th>
-                <th className="py-2.5 px-4 text-sm font-medium text-neutral-400 uppercase tracking-wider">Statut</th>
-                <th className="py-2.5 px-4 text-sm font-medium text-neutral-400 uppercase tracking-wider">Matieres</th>
-                <th className="py-2.5 px-4 text-right text-sm font-medium text-neutral-400 uppercase tracking-wider">Actions</th>
+              <tr>
+                <th className="text-left">Nom</th>
+                <th className="text-left">Email</th>
+                <th className="text-left">Rôle</th>
+                <th className="text-left">Statut</th>
+                <th className="text-left">Matières</th>
+                <th className="text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredUsers.map((user) => (
-                <tr
-                  key={user.id}
-                  className={`border-b border-neutral-50 hover:bg-neutral-50/50 ${!user.actif ? "opacity-50" : ""}`}
-                >
-                  <td className="py-2.5 px-4 text-sm font-medium text-neutral-900">
-                    {user.prenom} {user.nom}
-                  </td>
-                  <td className="py-2.5 px-4 text-sm text-neutral-500">{user.email}</td>
-                  <td className="py-2.5 px-4">
+                <tr key={user.id} className={!user.actif ? "opacity-50" : ""}>
+                  <td className="font-semibold text-slate-800">{user.prenom} {user.nom}</td>
+                  <td className="text-sm text-slate-500">{user.email}</td>
+                  <td>
                     {user.role === "SUPER_ADMIN" ? (
-                      <span className={`px-2 py-0.5 rounded-md text-sm font-medium ${ROLE_COLORS[user.role]}`}>
-                        {ROLE_LABELS[user.role]}
-                      </span>
+                      <span className={ROLE_BADGE[user.role]}>{ROLE_LABELS[user.role]}</span>
                     ) : (
                       <select
                         value={user.role}
                         onChange={(e) => handleChangeRole(user, e.target.value)}
-                        className={`px-2 py-0.5 rounded-md text-sm font-medium border-0 cursor-pointer ${ROLE_COLORS[user.role]}`}
+                        className={`${ROLE_BADGE[user.role]} border-0 cursor-pointer bg-transparent text-inherit font-[inherit] text-[0.71rem]`}
                       >
                         <option value="COMPTABLE">Comptable</option>
                         <option value="CENSEUR">Censeur</option>
@@ -238,69 +190,47 @@ export function GestionEquipe() {
                       </select>
                     )}
                   </td>
-                  <td className="py-2.5 px-4">
-                    <span
-                      className={`px-2 py-0.5 rounded-md text-sm font-medium ${
-                        user.actif
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "bg-red-50 text-red-600"
-                      }`}
-                    >
+                  <td>
+                    <span className={`dash-badge ${user.actif ? "dash-badge-success" : "dash-badge-danger"}`}>
                       {user.actif ? "Actif" : "Inactif"}
                     </span>
                   </td>
-                  <td className="py-2.5 px-4">
+                  <td>
                     {user.role === "PROFESSEUR" ? (
                       user.matieres.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
                           {user.matieres.slice(0, 3).map((m) => (
-                            <span
-                              key={m.id}
-                              className="bg-neutral-50 text-neutral-600 px-2 py-0.5 rounded-md text-xs"
-                              title={`${m.nom} — ${m.classe.nom}`}
-                            >
-                              {m.nom} ({m.classe.nom})
+                            <span key={m.id} className="dash-badge dash-badge-neutral" title={`${m.nom} — ${m.classe.nom}`}>
+                              {m.nom}
                             </span>
                           ))}
                           {user.matieres.length > 3 && (
-                            <span className="text-xs text-neutral-400">
-                              +{user.matieres.length - 3}
-                            </span>
+                            <span className="text-xs text-neutral-400">+{user.matieres.length - 3}</span>
                           )}
                         </div>
                       ) : (
-                        <span className="text-xs text-neutral-400 italic">Aucune matiere</span>
+                        <span className="text-xs text-neutral-400 italic">Aucune matière</span>
                       )
                     ) : (
                       <span className="text-xs text-neutral-300">—</span>
                     )}
                   </td>
-                  <td className="py-2.5 px-4 text-right">
+                  <td className="text-right">
                     {user.role !== "SUPER_ADMIN" && (
                       <div className="flex items-center justify-end gap-1">
                         {user.role === "PROFESSEUR" && (
-                          <button
-                            onClick={() => setAssignProf(user)}
-                            className="px-2 py-1 text-xs font-medium text-amber-600 hover:bg-amber-50 rounded-md transition-colors"
-                          >
-                            Matieres
+                          <button onClick={() => setAssignProf(user)} className="px-2.5 py-1 text-xs font-semibold text-amber-600 hover:bg-amber-50 rounded-lg transition-colors">
+                            Matières
                           </button>
                         )}
-                        <button
-                          onClick={() => handleResetPassword(user)}
-                          className="px-2 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-50 rounded-md transition-colors"
-                        >
+                        <button onClick={() => handleResetPassword(user)} className="px-2.5 py-1 text-xs font-semibold text-neutral-500 hover:bg-neutral-100 rounded-lg transition-colors">
                           MDP
                         </button>
                         <button
                           onClick={() => handleToggleActif(user)}
-                          className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${
-                            user.actif
-                              ? "text-red-600 hover:bg-red-50"
-                              : "text-emerald-600 hover:bg-emerald-50"
-                          }`}
+                          className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors ${user.actif ? "text-red-600 hover:bg-red-50" : "text-emerald-600 hover:bg-emerald-50"}`}
                         >
-                          {user.actif ? "Desactiver" : "Activer"}
+                          {user.actif ? "Désactiver" : "Activer"}
                         </button>
                       </div>
                     )}
@@ -310,7 +240,7 @@ export function GestionEquipe() {
               {filteredUsers.length === 0 && (
                 <tr>
                   <td colSpan={6} className="py-8 text-center text-sm text-neutral-400">
-                    Aucun utilisateur trouve.
+                    Aucun utilisateur trouvé.
                   </td>
                 </tr>
               )}
@@ -322,11 +252,7 @@ export function GestionEquipe() {
       {showCreate && (
         <CreateUserModal
           onClose={() => setShowCreate(false)}
-          onCreated={(msg) => {
-            showMsg("success", msg);
-            fetchUsers();
-            setShowCreate(false);
-          }}
+          onCreated={(msg) => { showMsg("success", msg); fetchUsers(); setShowCreate(false); }}
         />
       )}
 
@@ -334,26 +260,16 @@ export function GestionEquipe() {
         <AssignMatieresModal
           prof={assignProf}
           onClose={() => setAssignProf(null)}
-          onSaved={() => {
-            showMsg("success", `Matieres mises a jour pour ${assignProf.prenom} ${assignProf.nom}`);
-            fetchUsers();
-            setAssignProf(null);
-          }}
+          onSaved={() => { showMsg("success", `Matières mises à jour pour ${assignProf.prenom} ${assignProf.nom}`); fetchUsers(); setAssignProf(null); }}
         />
       )}
     </div>
   );
 }
 
-// ─── Modal creation de compte ───
+// ─── Modal création de compte ───
 
-function CreateUserModal({
-  onClose,
-  onCreated,
-}: {
-  onClose: () => void;
-  onCreated: (msg: string) => void;
-}) {
+function CreateUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: (msg: string) => void }) {
   const [form, setForm] = useState({ nom: "", prenom: "", email: "", role: "PROFESSEUR" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -362,104 +278,56 @@ function CreateUserModal({
     e.preventDefault();
     setSaving(true);
     setError("");
-
     const res = await fetch("/api/admin/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
-
     const data = await res.json();
     setSaving(false);
-
-    if (!res.ok) {
-      setError(data.error || "Erreur lors de la creation");
-      return;
-    }
-
-    onCreated(
-      `Compte cree pour ${data.prenom} ${data.nom} (${data.email}). Mot de passe provisoire : ${data.mot_de_passe_provisoire}`
-    );
+    if (!res.ok) { setError(data.error || "Erreur lors de la création"); return; }
+    onCreated(`Compte créé pour ${data.prenom} ${data.nom} (${data.email}). Mot de passe provisoire : ${data.mot_de_passe_provisoire}`);
   };
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl border border-neutral-200 shadow-lg w-full max-w-md">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
-          <h3 className="text-lg font-semibold text-neutral-900">Nouveau compte</h3>
-          <button onClick={onClose} className="w-7 h-7 rounded-lg hover:bg-neutral-100 flex items-center justify-center text-neutral-400 hover:text-neutral-600 transition-colors">
+      <div className="bg-white rounded-2xl shadow-2xl shadow-indigo-500/10 w-full max-w-md overflow-hidden">
+        <div className="dash-section-header !rounded-none">
+          <span className="dash-section-title">Nouveau compte</span>
+          <button onClick={onClose} className="w-7 h-7 rounded-lg hover:bg-indigo-100/60 flex items-center justify-center text-neutral-400 hover:text-indigo-600 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          {error && (
-            <div className="bg-red-50 text-red-600 border border-red-100 px-3 py-2 rounded-lg text-sm">{error}</div>
-          )}
+          {error && <div className="bg-red-50 text-red-600 border border-red-200 px-3 py-2 rounded-xl text-sm">{error}</div>}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Prenom <span className="text-red-500">*</span></label>
-              <input
-                type="text"
-                required
-                value={form.prenom}
-                onChange={(e) => setForm({ ...form, prenom: e.target.value })}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-              />
+              <label className="dash-label">Prénom <span className="text-red-400">*</span></label>
+              <input type="text" required value={form.prenom} onChange={(e) => setForm({ ...form, prenom: e.target.value })} className="dash-input" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1.5">Nom <span className="text-red-500">*</span></label>
-              <input
-                type="text"
-                required
-                value={form.nom}
-                onChange={(e) => setForm({ ...form, nom: e.target.value })}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-              />
+              <label className="dash-label">Nom <span className="text-red-400">*</span></label>
+              <input type="text" required value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })} className="dash-input" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1.5">Email <span className="text-red-500">*</span></label>
-            <input
-              type="email"
-              required
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-              placeholder="exemple@ecole.sn"
-            />
+            <label className="dash-label">Email <span className="text-red-400">*</span></label>
+            <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="exemple@ecole.sn" className="dash-input" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1.5">Role</label>
-            <select
-              value={form.role}
-              onChange={(e) => setForm({ ...form, role: e.target.value })}
-              className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-            >
+            <label className="dash-label">Rôle</label>
+            <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="dash-input">
               <option value="PROFESSEUR">Professeur</option>
               <option value="CENSEUR">Censeur</option>
               <option value="COMPTABLE">Comptable</option>
             </select>
           </div>
-          <p className="text-xs text-neutral-400">
-            Un mot de passe provisoire sera genere automatiquement.
-          </p>
-          <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="h-9 px-4 text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
-            >
-              Annuler
-            </button>
-            <button
-              type="submit"
-              disabled={saving}
-              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 disabled:opacity-50 transition-colors inline-flex items-center gap-2"
-            >
-              {saving && (
-                <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />
-              )}
-              {saving ? "Creation..." : "Creer le compte"}
+          <p className="text-xs text-neutral-400">Un mot de passe provisoire sera généré automatiquement.</p>
+          <div className="flex justify-end gap-2 pt-2 border-t border-neutral-100">
+            <button type="button" onClick={onClose} className="dash-btn-secondary">Annuler</button>
+            <button type="submit" disabled={saving} className="dash-btn-primary inline-flex items-center gap-2">
+              {saving && <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />}
+              {saving ? "Création..." : "Créer le compte"}
             </button>
           </div>
         </form>
@@ -468,17 +336,9 @@ function CreateUserModal({
   );
 }
 
-// ─── Modal assignation des matieres a un professeur ───
+// ─── Modal assignation des matières ───
 
-function AssignMatieresModal({
-  prof,
-  onClose,
-  onSaved,
-}: {
-  prof: UserInfo;
-  onClose: () => void;
-  onSaved: () => void;
-}) {
+function AssignMatieresModal({ prof, onClose, onSaved }: { prof: UserInfo; onClose: () => void; onSaved: () => void }) {
   const [classes, setClasses] = useState<ClasseMatiere[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -506,8 +366,7 @@ function AssignMatieresModal({
   const toggle = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
   };
@@ -517,11 +376,7 @@ function AssignMatieresModal({
     const res = await fetch("/api/admin/users", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user_id: prof.id,
-        action: "ASSIGNER_MATIERES",
-        matiere_ids: Array.from(selected),
-      }),
+      body: JSON.stringify({ user_id: prof.id, action: "ASSIGNER_MATIERES", matiere_ids: Array.from(selected) }),
     });
     setSaving(false);
     if (res.ok) onSaved();
@@ -529,44 +384,34 @@ function AssignMatieresModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl border border-neutral-200 shadow-lg w-full max-w-lg max-h-[80vh] flex flex-col">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
+      <div className="bg-white rounded-2xl shadow-2xl shadow-indigo-500/10 w-full max-w-lg max-h-[80vh] flex flex-col overflow-hidden">
+        <div className="dash-section-header !rounded-none shrink-0">
           <div>
-            <h3 className="text-lg font-semibold text-neutral-900">Assigner des matieres</h3>
-            <p className="text-sm text-neutral-500">
-              {prof.prenom} {prof.nom}
-            </p>
+            <span className="dash-section-title">Assigner des matières</span>
+            <p className="text-xs text-neutral-500 mt-0.5">{prof.prenom} {prof.nom}</p>
           </div>
-          <button onClick={onClose} className="w-7 h-7 rounded-lg hover:bg-neutral-100 flex items-center justify-center text-neutral-400 hover:text-neutral-600 transition-colors">
+          <button onClick={onClose} className="w-7 h-7 rounded-lg hover:bg-indigo-100/60 flex items-center justify-center text-neutral-400 hover:text-indigo-600 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
           {loading ? (
-            <div className="flex justify-center py-8">
-              <div className="w-6 h-6 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
-            </div>
+            <div className="flex justify-center py-8"><div className="dash-spinner" /></div>
           ) : classes.length === 0 ? (
-            <p className="text-sm text-neutral-400 text-center py-4">Aucune classe trouvee.</p>
+            <p className="text-sm text-neutral-400 text-center py-4">Aucune classe trouvée.</p>
           ) : (
             classes.map((classe) => (
               <div key={classe.id}>
-                <h4 className="text-sm font-medium text-neutral-900 mb-2">{classe.nom}</h4>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-500 mb-2">{classe.nom}</h4>
                 <div className="space-y-1 ml-2">
                   {classe.matieres.length === 0 ? (
-                    <p className="text-sm text-neutral-400 italic">Aucune matiere</p>
+                    <p className="text-sm text-neutral-400 italic">Aucune matière</p>
                   ) : (
                     classe.matieres.map((m) => {
-                      const isOtherProf =
-                        m.professeur_id && m.professeur_id !== prof.id;
+                      const isOtherProf = m.professeur_id && m.professeur_id !== prof.id;
                       return (
-                        <label
-                          key={m.id}
-                          className={`flex items-center gap-2 text-sm p-1.5 rounded-lg hover:bg-neutral-50 ${
-                            isOtherProf ? "opacity-40" : ""
-                          }`}
-                        >
+                        <label key={m.id} className={`flex items-center gap-2 text-sm p-2 rounded-lg hover:bg-indigo-50/40 transition-colors cursor-pointer ${isOtherProf ? "opacity-40" : ""}`}>
                           <input
                             type="checkbox"
                             checked={selected.has(m.id)}
@@ -575,9 +420,7 @@ function AssignMatieresModal({
                             className="rounded border-neutral-300 text-indigo-500 focus:ring-indigo-500/20"
                           />
                           <span className="text-neutral-700">{m.nom}</span>
-                          {isOtherProf && (
-                            <span className="text-xs text-neutral-400">(autre prof)</span>
-                          )}
+                          {isOtherProf && <span className="text-xs text-neutral-400">(autre prof)</span>}
                         </label>
                       );
                     })
@@ -588,22 +431,11 @@ function AssignMatieresModal({
           )}
         </div>
 
-        <div className="border-t border-neutral-100 px-5 py-3 flex items-center justify-between">
-          <span className="text-sm text-neutral-400">
-            {selected.size} matiere(s) selectionnee(s)
-          </span>
+        <div className="border-t border-neutral-100 px-5 py-3 flex items-center justify-between shrink-0">
+          <span className="dash-count">{selected.size} matière(s)</span>
           <div className="flex gap-2">
-            <button
-              onClick={onClose}
-              className="h-9 px-4 text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
-            >
-              Annuler
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 disabled:opacity-50 transition-colors"
-            >
+            <button onClick={onClose} className="dash-btn-secondary">Annuler</button>
+            <button onClick={handleSave} disabled={saving} className="dash-btn-primary">
               {saving ? "Enregistrement..." : "Enregistrer"}
             </button>
           </div>
