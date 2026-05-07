@@ -10,7 +10,6 @@ import {
   Settings,
   Shield,
   PenLine,
-  FileText,
   Calendar,
   Clock,
   Wallet,
@@ -261,7 +260,7 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
             </span>
           </div>
           <button
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={() => signOut({ callbackUrl: "/deconnecte" })}
             className="p-1.5 rounded-md text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 shrink-0"
             title="Déconnexion"
           >

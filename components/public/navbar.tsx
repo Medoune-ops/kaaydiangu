@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 
 const links = [
@@ -17,7 +17,6 @@ const links = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -32,12 +31,11 @@ export function Navbar() {
   }, [onScroll]);
 
   // Close mobile menu on route change
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setOpen(false); }, [pathname]);
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" });
+    await signOut({ callbackUrl: "/deconnecte" });
   };
 
   return (
