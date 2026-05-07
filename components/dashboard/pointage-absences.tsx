@@ -137,45 +137,43 @@ export function PointageAbsences() {
   return (
     <div className="space-y-6">
       {/* Selecteurs */}
-      <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <h3 className="text-lg font-semibold text-neutral-900">Parametres du cours</h3>
+      <div className="dash-section overflow-hidden">
+        <div className="dash-section-header">
+          <span className="dash-section-title">Paramètres du cours</span>
         </div>
         <div className="px-6 py-5">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Matiere / Classe <span className="text-red-500">*</span></label>
+              <label className="dash-label">Matière / Classe <span className="text-red-400">*</span></label>
               <select
                 value={matiereId}
                 onChange={(e) => setMatiereId(e.target.value)}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                className="dash-input"
               >
                 <option value="">Choisir</option>
                 {matieres.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.nom} — {m.classe.nom}
-                  </option>
+                  <option key={m.id} value={m.id}>{m.nom} — {m.classe.nom}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Date <span className="text-red-500">*</span></label>
+              <label className="dash-label">Date <span className="text-red-400">*</span></label>
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                className="dash-input"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Duree (heures)</label>
+              <label className="dash-label">Durée (heures)</label>
               <input
                 type="number"
                 min={1}
                 max={4}
                 value={duree}
                 onChange={(e) => setDuree(Number(e.target.value))}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                className="dash-input"
               />
             </div>
           </div>
@@ -184,39 +182,37 @@ export function PointageAbsences() {
 
       {/* Liste des eleves */}
       {matiereId && (
-        <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-neutral-900">
+        <div className="dash-section overflow-hidden">
+          <div className="dash-section-header">
+            <span className="dash-section-title">
               Pointage — {selectedMatiere?.nom} ({selectedMatiere?.classe.nom})
-            </h3>
+            </span>
             {nbAbsents > 0 && (
-              <span className="text-sm font-medium text-red-600">
-                {nbAbsents} absent(s)
-              </span>
+              <span className="dash-badge dash-badge-danger">{nbAbsents} absent(s)</span>
             )}
           </div>
           <div className="px-6 py-5">
             {loading ? (
               <div className="flex justify-center py-12">
-                <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
+                <div className="dash-spinner" />
               </div>
             ) : eleves.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="w-12 h-12 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center mb-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <div className="dash-empty">
+                <div className="dash-empty-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                 </div>
-                <p className="text-sm text-neutral-500">Aucun eleve dans cette classe.</p>
+                <p className="text-sm font-medium text-neutral-600">Aucun élève dans cette classe.</p>
               </div>
             ) : (
               <>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-neutral-100">
-                        <th className="text-center px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500 w-16">Absent</th>
-                        <th className="text-left px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Matricule</th>
-                        <th className="text-left px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Nom & Prenom</th>
-                        <th className="text-left px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Motif</th>
+                      <tr>
+                        <th className="text-center w-16">Absent</th>
+                        <th className="text-left">Matricule</th>
+                        <th className="text-left">Nom & Prénom</th>
+                        <th className="text-left">Motif</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -225,8 +221,8 @@ export function PointageAbsences() {
                         return (
                           <tr
                             key={eleve.id}
-                            className={`border-b border-neutral-100 last:border-0 transition-colors ${
-                              input?.absent ? "bg-red-50" : "hover:bg-neutral-50"
+                            className={`transition-colors ${
+                              input?.absent ? "!bg-red-50/60" : ""
                             }`}
                           >
                             <td className="px-4 py-2 text-center">
@@ -259,24 +255,18 @@ export function PointageAbsences() {
                 </div>
 
                 {message && (
-                  <p
-                    className={`mt-4 text-sm px-4 py-2 rounded-lg ${
-                      message.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
-                    }`}
-                  >
+                  <div className={`mt-4 text-sm px-4 py-2.5 rounded-xl font-medium ${message.type === "success" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
                     {message.text}
-                  </p>
+                  </div>
                 )}
 
-                <div className="flex justify-end mt-6">
+                <div className="flex justify-end mt-5">
                   <button
                     onClick={handleSubmit}
                     disabled={saving || nbAbsents === 0}
-                    className="h-9 px-4 bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 disabled:opacity-50 transition-colors inline-flex items-center gap-2"
+                    className="dash-btn-primary"
                   >
-                    {saving && (
-                      <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />
-                    )}
+                    {saving && <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />}
                     {saving ? "Enregistrement..." : `Enregistrer ${nbAbsents} absence(s)`}
                   </button>
                 </div>

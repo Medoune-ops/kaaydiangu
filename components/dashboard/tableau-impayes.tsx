@@ -25,28 +25,12 @@ type NiveauRetard = "tous" | "leger" | "moyen" | "critique";
 
 function badgeRetard(jours: number) {
   if (jours >= 90)
-    return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium bg-red-50 text-red-700">
-        Critique ({jours}j)
-      </span>
-    );
+    return <span className="dash-badge dash-badge-danger">Critique ({jours}j)</span>;
   if (jours >= 60)
-    return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium bg-orange-50 text-orange-700">
-        Moyen ({jours}j)
-      </span>
-    );
+    return <span className="dash-badge dash-badge-orange">Moyen ({jours}j)</span>;
   if (jours >= 30)
-    return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium bg-yellow-50 text-yellow-700">
-        Leger ({jours}j)
-      </span>
-    );
-  return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-medium bg-neutral-50 text-neutral-500">
-      {jours}j
-    </span>
-  );
+    return <span className="dash-badge dash-badge-warning">Léger ({jours}j)</span>;
+  return <span className="dash-badge dash-badge-neutral">{jours}j</span>;
 }
 
 export function TableauImpayes() {
@@ -83,7 +67,6 @@ export function TableauImpayes() {
     charger(filtreClasse || undefined);
   }, [filtreClasse]);
 
-  // Filtrage par niveau de retard + recherche
   const filteredEleves = eleves.filter((e) => {
     if (filtreRetard === "leger" && !(e.jours_retard >= 30 && e.jours_retard < 60)) return false;
     if (filtreRetard === "moyen" && !(e.jours_retard >= 60 && e.jours_retard < 90)) return false;
@@ -129,9 +112,7 @@ export function TableauImpayes() {
     setMessage("");
     const result = await envoyerRappel([id]);
     if (result) {
-      setMessage(
-        `Rappel envoye : ${result.notifications} notification(s), ${result.emails_envoyes} email(s).`
-      );
+      setMessage(`Rappel envoyé : ${result.notifications} notification(s), ${result.emails_envoyes} email(s).`);
     } else {
       setMessage("Erreur lors de l'envoi.");
     }
@@ -145,7 +126,7 @@ export function TableauImpayes() {
     const result = await envoyerRappel(Array.from(selected));
     if (result) {
       setMessage(
-        `Rappels envoyes a ${result.total} eleve(s) : ${result.notifications} notification(s), ${result.emails_envoyes} email(s)${result.emails_echoues > 0 ? `, ${result.emails_echoues} echec(s)` : ""}.`
+        `Rappels envoyés à ${result.total} élève(s) : ${result.notifications} notification(s), ${result.emails_envoyes} email(s)${result.emails_echoues > 0 ? `, ${result.emails_echoues} échec(s)` : ""}.`
       );
       setSelected(new Set());
     } else {
@@ -154,230 +135,186 @@ export function TableauImpayes() {
     setSending(false);
   }
 
-  // Stats
   const totalImpayes = eleves.length;
   const critique = eleves.filter((e) => e.jours_retard >= 90).length;
   const moyen = eleves.filter((e) => e.jours_retard >= 60 && e.jours_retard < 90).length;
   const leger = eleves.filter((e) => e.jours_retard >= 30 && e.jours_retard < 60).length;
 
   return (
-    <div className="space-y-6">
-      {/* Stats */}
+    <div className="space-y-5">
+      {/* Stats KPI */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div
-          className="bg-white rounded-xl border border-neutral-200 cursor-pointer hover:border-neutral-300 transition-colors"
-          onClick={() => setFiltreRetard("tous")}
-        >
-          <div className="pt-4 pb-4 text-center">
-            <p className="text-sm text-neutral-500">Total impayes</p>
-            <p className="text-3xl font-bold text-neutral-900">{totalImpayes}</p>
-          </div>
-        </div>
-        <div
-          className="bg-white rounded-xl border border-neutral-200 cursor-pointer hover:border-neutral-300 transition-colors"
-          onClick={() => setFiltreRetard("critique")}
-        >
-          <div className="pt-4 pb-4 text-center">
-            <p className="text-sm text-red-600">Critique (+90j)</p>
-            <p className="text-3xl font-bold text-red-700">{critique}</p>
-          </div>
-        </div>
-        <div
-          className="bg-white rounded-xl border border-neutral-200 cursor-pointer hover:border-neutral-300 transition-colors"
-          onClick={() => setFiltreRetard("moyen")}
-        >
-          <div className="pt-4 pb-4 text-center">
-            <p className="text-sm text-orange-600">Moyen (60-89j)</p>
-            <p className="text-3xl font-bold text-orange-600">{moyen}</p>
-          </div>
-        </div>
-        <div
-          className="bg-white rounded-xl border border-neutral-200 cursor-pointer hover:border-neutral-300 transition-colors"
-          onClick={() => setFiltreRetard("leger")}
-        >
-          <div className="pt-4 pb-4 text-center">
-            <p className="text-sm text-yellow-600">Leger (30-59j)</p>
-            <p className="text-3xl font-bold text-yellow-600">{leger}</p>
-          </div>
-        </div>
+        {[
+          { label: "Total impayés", value: totalImpayes, accent: "#6366f1", gradient: "from-indigo-500 to-violet-600", shadow: "shadow-indigo-500/30", filter: "tous" as NiveauRetard },
+          { label: "Critique +90j", value: critique, accent: "#ef4444", gradient: "from-red-500 to-rose-600", shadow: "shadow-red-500/30", filter: "critique" as NiveauRetard },
+          { label: "Moyen 60-89j", value: moyen, accent: "#f97316", gradient: "from-orange-500 to-amber-500", shadow: "shadow-orange-500/30", filter: "moyen" as NiveauRetard },
+          { label: "Léger 30-59j", value: leger, accent: "#f59e0b", gradient: "from-amber-400 to-yellow-500", shadow: "shadow-amber-400/30", filter: "leger" as NiveauRetard },
+        ].map((s) => (
+          <button
+            key={s.label}
+            onClick={() => setFiltreRetard(filtreRetard === s.filter ? "tous" : s.filter)}
+            className={`dash-kpi p-4 text-center w-full cursor-pointer ${filtreRetard === s.filter ? "ring-2 ring-indigo-400/30 !border-indigo-300/50" : ""}`}
+            style={{ "--kpi-accent": s.accent } as React.CSSProperties}
+          >
+            <div className={`w-9 h-9 mx-auto rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center shadow-lg ${s.shadow} mb-3`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <p className="dash-kpi-value">{s.value}</p>
+            <p className="text-xs font-medium text-neutral-500 mt-1">{s.label}</p>
+          </button>
+        ))}
       </div>
 
-      {/* Filtres + actions */}
-      <div className="bg-white rounded-xl border border-neutral-200">
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <h3 className="text-lg font-semibold text-neutral-900">
-              Liste des impayes
-              {!loading && filteredEleves.length > 0 && (
-                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-neutral-100 text-neutral-500">
-                  {filteredEleves.length} resultat(s)
-                </span>
-              )}
-            </h3>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="relative">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
-                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-                </svg>
-                <input
-                  type="text"
-                  data-search-input
-                  value={recherche}
-                  onChange={(e) => setRecherche(e.target.value)}
-                  placeholder="Rechercher un eleve..."
-                  className="h-9 w-56 bg-white border border-neutral-200 rounded-lg pl-9 pr-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                />
-              </div>
-              <select
-                value={filtreClasse}
-                onChange={(e) => setFiltreClasse(e.target.value)}
-                className="h-9 bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-              >
-                <option value="">Toutes les classes</option>
-                {classes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nom} ({c.niveau})
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={filtreRetard}
-                onChange={(e) => setFiltreRetard(e.target.value as NiveauRetard)}
-                className="h-9 bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-              >
-                <option value="tous">Tous les niveaux</option>
-                <option value="leger">Leger (30-59j)</option>
-                <option value="moyen">Moyen (60-89j)</option>
-                <option value="critique">Critique (+90j)</option>
-              </select>
-
-              {(recherche || filtreClasse || filtreRetard !== "tous") && (
-                <button
-                  onClick={() => { setRecherche(""); setFiltreClasse(""); setFiltreRetard("tous"); }}
-                  className="h-9 px-3 text-sm text-neutral-500 hover:text-neutral-700 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
-                >
-                  Reinitialiser
-                </button>
-              )}
-
-              <button
-                onClick={rappelGroupe}
-                disabled={sending || selected.size === 0}
-                className="h-9 px-4 bg-red-600 text-white text-sm rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {sending
-                  ? "Envoi..."
-                  : `Envoyer rappels (${selected.size})`}
-              </button>
+      {/* Liste + filtres */}
+      <div className="dash-section">
+        <div className="dash-section-header">
+          <div className="flex items-center gap-3">
+            <span className="dash-section-title">Liste des impayés</span>
+            {!loading && <span className="dash-count">{filteredEleves.length} résultat(s)</span>}
+          </div>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400/70">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+              </svg>
+              <input
+                type="text"
+                data-search-input
+                value={recherche}
+                onChange={(e) => setRecherche(e.target.value)}
+                placeholder="Rechercher..."
+                className="dash-input w-48 pl-9"
+              />
             </div>
+            <select
+              value={filtreClasse}
+              onChange={(e) => setFiltreClasse(e.target.value)}
+              className="dash-input w-auto px-3"
+            >
+              <option value="">Toutes les classes</option>
+              {classes.map((c) => (
+                <option key={c.id} value={c.id}>{c.nom} ({c.niveau})</option>
+              ))}
+            </select>
+            <select
+              value={filtreRetard}
+              onChange={(e) => setFiltreRetard(e.target.value as NiveauRetard)}
+              className="dash-input w-auto px-3"
+            >
+              <option value="tous">Tous niveaux</option>
+              <option value="leger">Léger (30-59j)</option>
+              <option value="moyen">Moyen (60-89j)</option>
+              <option value="critique">Critique (+90j)</option>
+            </select>
+            {(recherche || filtreClasse || filtreRetard !== "tous") && (
+              <button
+                onClick={() => { setRecherche(""); setFiltreClasse(""); setFiltreRetard("tous"); }}
+                className="dash-btn-secondary text-xs"
+              >
+                Réinitialiser
+              </button>
+            )}
+            <button
+              onClick={rappelGroupe}
+              disabled={sending || selected.size === 0}
+              className="inline-flex items-center gap-2 h-[2.25rem] px-4 bg-gradient-to-r from-red-500 to-rose-600 text-white text-sm rounded-[0.625rem] font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-red-500/25 hover:shadow-red-500/40 hover:-translate-y-px"
+            >
+              {sending ? "Envoi..." : `Rappels (${selected.size})`}
+            </button>
           </div>
         </div>
+
         <div className="px-6 py-4">
           {message && (
-            <p
-              className={`text-sm mb-4 ${
-                message.includes("Erreur") ? "text-red-600" : "text-green-600"
-              }`}
-            >
+            <div className={`text-sm mb-4 px-4 py-2.5 rounded-xl font-medium ${message.includes("Erreur") ? "bg-red-50 text-red-700 border border-red-200" : "bg-emerald-50 text-emerald-700 border border-emerald-200"}`}>
               {message}
-            </p>
+            </div>
           )}
 
           {loading ? (
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
-              <p className="text-sm text-neutral-500">Chargement...</p>
+            <div className="flex items-center gap-3 py-8 justify-center">
+              <div className="dash-spinner" />
+              <p className="text-sm text-slate-500">Chargement...</p>
             </div>
           ) : filteredEleves.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-12 h-12 mx-auto rounded-xl bg-green-50 flex items-center justify-center mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <div className="dash-empty">
+              <div className="dash-empty-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
-              <p className="text-sm text-neutral-500">Aucun eleve en retard de paiement pour ces criteres.</p>
-              <p className="text-xs text-neutral-400 mt-1">Tous les paiements sont a jour.</p>
+              <p className="text-sm font-medium text-neutral-600">Aucun impayé pour ces critères</p>
+              <p className="text-xs text-neutral-400 mt-1">Tous les paiements sont à jour.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[800px]">
                 <thead>
-                  <tr className="border-b border-neutral-100">
-                    <th className="px-3 py-2 text-center w-10">
+                  <tr>
+                    <th className="text-center w-10">
                       <input
                         type="checkbox"
                         checked={selected.size === filteredEleves.length && filteredEleves.length > 0}
                         onChange={toggleAll}
-                        className="rounded"
+                        className="rounded accent-indigo-500"
                       />
                     </th>
-                    <th className="text-left px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Eleve</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Matricule</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Classe</th>
-                    <th className="text-left px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Mois impaye(s)</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Retard</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Contact</th>
-                    <th className="text-center px-3 py-2 text-sm uppercase tracking-wider font-medium text-neutral-500">Action</th>
+                    <th className="text-left">Élève</th>
+                    <th className="text-center">Matricule</th>
+                    <th className="text-center">Classe</th>
+                    <th className="text-left">Mois impayé(s)</th>
+                    <th className="text-center">Retard</th>
+                    <th className="text-center">Contact</th>
+                    <th className="text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredEleves.map((e) => (
-                    <tr key={e.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
-                      <td className="px-3 py-2 text-center">
+                    <tr key={e.id}>
+                      <td className="text-center">
                         <input
                           type="checkbox"
                           checked={selected.has(e.id)}
                           onChange={() => toggleOne(e.id)}
-                          className="rounded"
+                          className="rounded accent-indigo-500"
                         />
                       </td>
-                      <td className="px-3 py-2 text-sm font-medium text-neutral-900">
-                        {e.prenom} {e.nom}
+                      <td className="font-semibold text-slate-800">{e.prenom} {e.nom}</td>
+                      <td className="text-center font-mono text-xs text-indigo-500 font-semibold">{e.matricule}</td>
+                      <td className="text-center">
+                        <span className="dash-badge dash-badge-info">{e.classe.nom}</span>
                       </td>
-                      <td className="px-3 py-2 text-center font-mono text-sm text-neutral-500">
-                        {e.matricule}
-                      </td>
-                      <td className="px-3 py-2 text-center">
-                        <span className="text-sm text-neutral-500 bg-neutral-50 border border-neutral-200 rounded-md px-2 py-0.5">
-                          {e.classe.nom}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2">
+                      <td>
                         <div className="flex flex-wrap gap-1">
                           {e.mois_impayes.map((m) => (
-                            <span key={m} className="text-sm text-neutral-500 bg-neutral-50 rounded-md px-2 py-0.5">
-                              {m}
-                            </span>
+                            <span key={m} className="dash-badge dash-badge-warning">{m}</span>
                           ))}
                         </div>
                       </td>
-                      <td className="px-3 py-2 text-center">
-                        {badgeRetard(e.jours_retard)}
-                      </td>
-                      <td className="px-3 py-2 text-center">
-                        <div className="flex flex-col items-center gap-0.5 text-sm text-neutral-500">
+                      <td className="text-center">{badgeRetard(e.jours_retard)}</td>
+                      <td className="text-center">
+                        <div className="flex flex-col items-center gap-0.5 text-xs">
                           {e.email_parent && (
-                            <span title={e.email_parent}>
-                              Email
-                            </span>
+                            <span className="text-indigo-500 font-medium">Email</span>
                           )}
                           {e.telephone_parent && (
                             <a
                               href={`https://wa.me/${e.telephone_parent.replace(/\s/g, "")}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-green-600 hover:underline"
+                              className="text-emerald-600 hover:text-emerald-700 font-medium"
                             >
                               WhatsApp
                             </a>
                           )}
-                          {!e.email_parent && !e.telephone_parent && <span className="text-neutral-400">--</span>}
+                          {!e.email_parent && !e.telephone_parent && (
+                            <span className="text-neutral-400">—</span>
+                          )}
                         </div>
                       </td>
-                      <td className="px-3 py-2 text-center">
+                      <td className="text-center">
                         <button
                           disabled={sendingId === e.id}
                           onClick={() => rappelIndividuel(e.id)}
-                          className="h-9 px-4 text-sm font-medium text-neutral-900 border border-neutral-200 rounded-lg hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          className="dash-btn-secondary text-xs disabled:opacity-50"
                         >
                           {sendingId === e.id ? "..." : "Rappel"}
                         </button>

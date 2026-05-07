@@ -49,7 +49,6 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
   const [recherche, setRecherche] = useState("");
   const [filtreJustifiee, setFiltreJustifiee] = useState<"tous" | "justifiee" | "non_justifiee">("tous");
 
-  // Formulaire d'ajout
   const [showForm, setShowForm] = useState(false);
   const [formEleves, setFormEleves] = useState<{ id: string; nom: string; prenom: string; matricule: string }[]>([]);
   const [formClasseId, setFormClasseId] = useState("");
@@ -60,7 +59,6 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
   const [formMotif, setFormMotif] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Charger les élèves quand une classe est sélectionnée dans le formulaire
   useEffect(() => {
     if (!formClasseId) {
       setFormEleves([]);
@@ -85,7 +83,6 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
       if (classeId) params.set("classe_id", classeId);
       if (dateDebut) params.set("date_debut", dateDebut);
       if (dateFin) params.set("date_fin", dateFin);
-
       const res = await fetch(`/api/absences?${params}`);
       const data = await res.json();
       if (Array.isArray(data)) setAbsences(data);
@@ -170,16 +167,16 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
   return (
     <div className="space-y-6">
       {/* Filtres */}
-      <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
+      <div className="dash-section overflow-hidden">
+        <div className="dash-section-header">
+          <span className="dash-section-title">Filtres</span>
+          {!loading && <span className="dash-count">{absencesFiltrees.length} résultat(s)</span>}
+        </div>
         <div className="px-6 py-5">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Classe</label>
-              <select
-                value={classeId}
-                onChange={(e) => setClasseId(e.target.value)}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-              >
+              <label className="dash-label">Classe</label>
+              <select value={classeId} onChange={(e) => setClasseId(e.target.value)} className="dash-input">
                 <option value="">Toutes les classes</option>
                 {classes.map((c) => (
                   <option key={c.id} value={c.id}>{c.nom} ({c.niveau})</option>
@@ -187,39 +184,29 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Date debut</label>
-              <input
-                type="date"
-                value={dateDebut}
-                onChange={(e) => setDateDebut(e.target.value)}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-              />
+              <label className="dash-label">Date début</label>
+              <input type="date" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} className="dash-input" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Date fin</label>
-              <input
-                type="date"
-                value={dateFin}
-                onChange={(e) => setDateFin(e.target.value)}
-                className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-              />
+              <label className="dash-label">Date fin</label>
+              <input type="date" value={dateFin} onChange={(e) => setDateFin(e.target.value)} className="dash-input" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-1.5">Statut</label>
+              <label className="dash-label">Statut</label>
               <select
                 value={filtreJustifiee}
                 onChange={(e) => setFiltreJustifiee(e.target.value as "tous" | "justifiee" | "non_justifiee")}
-                className="w-full h-9 bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                className="dash-input"
               >
                 <option value="tous">Toutes</option>
-                <option value="justifiee">Justifiees</option>
-                <option value="non_justifiee">Non justifiees</option>
+                <option value="justifiee">Justifiées</option>
+                <option value="non_justifiee">Non justifiées</option>
               </select>
             </div>
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <div className="relative">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400/70">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
               </svg>
               <input
@@ -227,119 +214,96 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
                 data-search-input
                 value={recherche}
                 onChange={(e) => setRecherche(e.target.value)}
-                placeholder="Rechercher un eleve, une matiere..."
-                className="h-9 w-72 bg-white border border-neutral-200 rounded-lg pl-9 pr-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                placeholder="Rechercher un élève, une matière..."
+                className="dash-input pl-9 w-72"
               />
             </div>
             {(classeId || dateDebut || dateFin || recherche || filtreJustifiee !== "tous") && (
               <button
                 onClick={() => { setClasseId(""); setDateDebut(""); setDateFin(""); setRecherche(""); setFiltreJustifiee("tous"); }}
-                className="h-9 px-3 text-sm text-neutral-500 hover:text-neutral-700 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+                className="dash-btn-secondary text-xs"
               >
-                Reinitialiser
+                Réinitialiser
               </button>
-            )}
-            {!loading && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-neutral-100 text-neutral-500">
-                {absencesFiltrees.length} resultat(s)
-              </span>
             )}
           </div>
         </div>
       </div>
 
-      {/* Onglets */}
+      {/* Onglets + bouton */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex gap-2">
           <button
             onClick={() => setTab("liste")}
-            className={`h-9 px-4 text-sm font-medium rounded-lg transition-colors ${
-              tab === "liste"
-                ? "bg-indigo-500 text-white hover:bg-indigo-600"
-                : "bg-white border border-neutral-200 text-neutral-900 hover:bg-neutral-50"
-            }`}
+            className={tab === "liste" ? "dash-btn-primary" : "dash-btn-secondary"}
           >
-            Liste des absences ({absencesFiltrees.length})
+            Liste ({absencesFiltrees.length})
           </button>
           <button
             onClick={() => setTab("alertes")}
-            className={`h-9 px-4 text-sm font-medium rounded-lg transition-colors inline-flex items-center gap-2 ${
-              tab === "alertes"
-                ? "bg-indigo-500 text-white hover:bg-indigo-600"
-                : "bg-white border border-neutral-200 text-neutral-900 hover:bg-neutral-50"
-            }`}
+            className={`${tab === "alertes" ? "dash-btn-primary" : "dash-btn-secondary"} inline-flex items-center gap-2`}
           >
             Alertes
             {alertes.length > 0 && (
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-xs font-medium bg-red-50 text-red-600">
+              <span className="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[10px] font-bold bg-red-500 text-white">
                 {alertes.length}
               </span>
             )}
           </button>
         </div>
-        
-        <button
-          onClick={() => setShowForm(true)}
-          className="h-9 px-4 inline-flex items-center gap-2 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        <button onClick={() => setShowForm(true)} className="dash-btn-primary inline-flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Signaler une absence
         </button>
       </div>
 
       {tab === "liste" && (
-        <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
+        <div className="dash-section overflow-hidden">
           <div className="px-6 py-5">
             {loading ? (
               <div className="flex justify-center py-12">
-                <div className="w-8 h-8 border-2 border-neutral-200 rounded-full animate-spin border-t-indigo-500" />
+                <div className="dash-spinner" />
               </div>
             ) : absencesFiltrees.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="w-12 h-12 mx-auto rounded-xl bg-green-50 flex items-center justify-center mb-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <div className="dash-empty">
+                <div className="dash-empty-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <p className="text-sm text-neutral-500">Aucune absence trouvee pour ces criteres.</p>
+                <p className="text-sm font-medium text-neutral-600">Aucune absence pour ces critères.</p>
                 <p className="text-xs text-neutral-400 mt-1">Modifiez les filtres pour affiner votre recherche.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-neutral-100">
-                      <th className="text-left px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Date</th>
-                      <th className="text-left px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Eleve</th>
-                      <th className="text-left px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Classe</th>
-                      <th className="text-left px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Matiere</th>
-                      <th className="text-center px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Heures</th>
-                      <th className="text-left px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Motif</th>
-                      <th className="text-center px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Statut</th>
+                    <tr>
+                      <th className="text-left">Date</th>
+                      <th className="text-left">Élève</th>
+                      <th className="text-left">Classe</th>
+                      <th className="text-left">Matière</th>
+                      <th className="text-center">Heures</th>
+                      <th className="text-left">Motif</th>
+                      <th className="text-center">Statut</th>
                     </tr>
                   </thead>
                   <tbody>
                     {absencesFiltrees.map((a) => (
-                      <tr key={a.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
-                        <td className="px-4 py-2 text-sm text-neutral-500">
-                          {new Date(a.date).toLocaleDateString("fr-FR")}
+                      <tr key={a.id}>
+                        <td className="text-xs text-slate-500">{new Date(a.date).toLocaleDateString("fr-FR")}</td>
+                        <td>
+                          <span className="text-sm font-semibold text-slate-800">{a.eleve.nom} {a.eleve.prenom}</span>
+                          <span className="block text-xs text-indigo-500 font-mono">{a.eleve.matricule}</span>
                         </td>
-                        <td className="px-4 py-2">
-                          <span className="text-sm font-medium text-neutral-900">{a.eleve.nom} {a.eleve.prenom}</span>
-                          <span className="block text-xs text-neutral-400 font-mono">{a.eleve.matricule}</span>
+                        <td className="text-sm text-slate-500">{a.eleve.classe.nom}</td>
+                        <td className="text-sm text-slate-600 font-medium">{a.matiere.nom}</td>
+                        <td className="text-center">
+                          <span className="dash-badge dash-badge-neutral">{a.duree_heures}h</span>
                         </td>
-                        <td className="px-4 py-2 text-sm text-neutral-500">{a.eleve.classe.nom}</td>
-                        <td className="px-4 py-2 text-sm text-neutral-500">{a.matiere.nom}</td>
-                        <td className="px-4 py-2 text-center text-sm text-neutral-500">{a.duree_heures}h</td>
-                        <td className="px-4 py-2 text-sm text-neutral-400">{a.motif || "—"}</td>
-                        <td className="px-4 py-2 text-center">
-                          <button onClick={() => toggleJustifiee(a)} className="cursor-pointer">
-                            <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
-                                a.justifiee
-                                  ? "bg-indigo-50 text-indigo-600"
-                                  : "bg-red-50 text-red-600"
-                              }`}
-                            >
-                              {a.justifiee ? "Justifiee" : "Non justifiee"}
+                        <td className="text-sm text-slate-400">{a.motif || "—"}</td>
+                        <td className="text-center">
+                          <button onClick={() => toggleJustifiee(a)}>
+                            <span className={`dash-badge ${a.justifiee ? "dash-badge-info" : "dash-badge-danger"}`}>
+                              {a.justifiee ? "Justifiée" : "Non justifiée"}
                             </span>
                           </button>
                         </td>
@@ -354,66 +318,57 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
       )}
 
       {tab === "alertes" && (
-        <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-neutral-900">
-              Eleves ayant depasse le seuil d&apos;absences
-            </h3>
+        <div className="dash-section overflow-hidden">
+          <div className="dash-section-header">
+            <span className="dash-section-title">Élèves ayant dépassé le seuil d&apos;absences</span>
             <div className="flex items-center gap-2">
-              <label className="text-sm text-neutral-500 whitespace-nowrap">Seuil :</label>
+              <label className="dash-label !mb-0 whitespace-nowrap">Seuil :</label>
               <input
                 type="number"
                 min={1}
                 value={seuil}
                 onChange={(e) => setSeuil(Number(e.target.value))}
-                className="w-20 h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                className="dash-input w-20"
               />
             </div>
           </div>
           <div className="px-6 py-5">
             {!classeId ? (
-              <div className="text-center py-12 text-sm text-neutral-500">
-                Selectionnez une classe pour voir les alertes
+              <div className="dash-empty">
+                <p className="text-sm font-medium text-neutral-600">Sélectionnez une classe pour voir les alertes.</p>
               </div>
             ) : alertes.length === 0 ? (
-              <div className="text-center py-12 text-sm text-green-600">
-                Aucun eleve n&apos;a depasse le seuil de {seuil} absences
+              <div className="dash-empty">
+                <div className="dash-empty-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <p className="text-sm font-medium text-emerald-600">Aucun élève n&apos;a dépassé le seuil de {seuil} absences.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-neutral-100">
-                      <th className="text-left px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Matricule</th>
-                      <th className="text-left px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Nom & Prenom</th>
-                      <th className="text-center px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Total absences</th>
-                      <th className="text-center px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Heures cumulees</th>
-                      <th className="text-center px-4 py-3 text-sm uppercase tracking-wider font-medium text-neutral-500">Non justifiees</th>
+                    <tr>
+                      <th className="text-left">Matricule</th>
+                      <th className="text-left">Nom & Prénom</th>
+                      <th className="text-center">Total absences</th>
+                      <th className="text-center">Heures cumulées</th>
+                      <th className="text-center">Non justifiées</th>
                     </tr>
                   </thead>
                   <tbody>
                     {alertes
                       .sort((a, b) => b.totalAbsences - a.totalAbsences)
                       .map((s) => (
-                        <tr key={s.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
-                          <td className="px-4 py-2 font-mono text-sm text-neutral-500">{s.matricule}</td>
-                          <td className="px-4 py-2 text-sm font-medium text-neutral-900">
-                            {s.nom} {s.prenom}
+                        <tr key={s.id}>
+                          <td className="font-mono text-xs text-indigo-500 font-semibold">{s.matricule}</td>
+                          <td className="font-semibold text-slate-800">{s.nom} {s.prenom}</td>
+                          <td className="text-center">
+                            <span className="dash-badge dash-badge-danger">{s.totalAbsences}</span>
                           </td>
-                          <td className="px-4 py-2 text-center">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-red-50 text-red-600">
-                              {s.totalAbsences}
-                            </span>
-                          </td>
-                          <td className="px-4 py-2 text-center text-sm text-neutral-500">{s.totalHeures}h</td>
-                          <td className="px-4 py-2 text-center">
-                            <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
-                                s.nonJustifiees > 0
-                                  ? "bg-red-50 text-red-600"
-                                  : "bg-neutral-50 text-neutral-500"
-                              }`}
-                            >
+                          <td className="text-center text-sm text-slate-500">{s.totalHeures}h</td>
+                          <td className="text-center">
+                            <span className={`dash-badge ${s.nonJustifiees > 0 ? "dash-badge-danger" : "dash-badge-neutral"}`}>
                               {s.nonJustifiees}
                             </span>
                           </td>
@@ -427,30 +382,26 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
         </div>
       )}
 
-      {/* Modal d'ajout d'absence */}
+      {/* Modal ajout d'absence */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-neutral-900">Signaler une absence</h3>
-              <button onClick={() => setShowForm(false)} className="text-neutral-400 hover:text-neutral-600">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          <div className="bg-white rounded-2xl shadow-2xl shadow-indigo-500/10 w-full max-w-lg overflow-hidden">
+            <div className="dash-section-header !rounded-none">
+              <span className="dash-section-title">Signaler une absence</span>
+              <button onClick={() => setShowForm(false)} className="w-7 h-7 rounded-lg hover:bg-indigo-100/60 flex items-center justify-center text-neutral-400 hover:text-indigo-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
-            
+
             <form onSubmit={handleSubmitAbsence} className="p-6 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-900 mb-1.5">Classe <span className="text-red-500">*</span></label>
+                  <label className="dash-label">Classe <span className="text-red-400">*</span></label>
                   <select
                     required
                     value={formClasseId}
-                    onChange={(e) => {
-                      setFormClasseId(e.target.value);
-                      setFormMatiereId("");
-                      setFormEleveId("");
-                    }}
-                    className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                    onChange={(e) => { setFormClasseId(e.target.value); setFormMatiereId(""); setFormEleveId(""); }}
+                    className="dash-input"
                   >
                     <option value="">Sélectionner</option>
                     {classes.map((c) => (
@@ -459,13 +410,13 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-900 mb-1.5">Matière <span className="text-red-500">*</span></label>
+                  <label className="dash-label">Matière <span className="text-red-400">*</span></label>
                   <select
                     required
                     disabled={!formClasseId}
                     value={formMatiereId}
                     onChange={(e) => setFormMatiereId(e.target.value)}
-                    className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 disabled:opacity-50"
+                    className="dash-input disabled:opacity-50"
                   >
                     <option value="">Sélectionner</option>
                     {classes.find(c => c.id === formClasseId)?.matieres?.map((m) => (
@@ -476,13 +427,13 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-900 mb-1.5">Élève absent <span className="text-red-500">*</span></label>
+                <label className="dash-label">Élève absent <span className="text-red-400">*</span></label>
                 <select
                   required
                   disabled={!formClasseId || formEleves.length === 0}
                   value={formEleveId}
                   onChange={(e) => setFormEleveId(e.target.value)}
-                  className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 disabled:opacity-50"
+                  className="dash-input disabled:opacity-50"
                 >
                   <option value="">Sélectionner un élève</option>
                   {formEleves.map((e) => (
@@ -493,53 +444,32 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-900 mb-1.5">Date <span className="text-red-500">*</span></label>
-                  <input
-                    type="date"
-                    required
-                    value={formDate}
-                    onChange={(e) => setFormDate(e.target.value)}
-                    className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                  />
+                  <label className="dash-label">Date <span className="text-red-400">*</span></label>
+                  <input type="date" required value={formDate} onChange={(e) => setFormDate(e.target.value)} className="dash-input" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-900 mb-1.5">Durée (heures) <span className="text-red-500">*</span></label>
-                  <input
-                    type="number"
-                    required
-                    min={1}
-                    max={8}
-                    value={formDuree}
-                    onChange={(e) => setFormDuree(Number(e.target.value))}
-                    className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                  />
+                  <label className="dash-label">Durée (heures) <span className="text-red-400">*</span></label>
+                  <input type="number" required min={1} max={8} value={formDuree} onChange={(e) => setFormDuree(Number(e.target.value))} className="dash-input" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-900 mb-1.5">Motif (optionnel)</label>
+                <label className="dash-label">Motif (optionnel)</label>
                 <input
                   type="text"
                   value={formMotif}
                   onChange={(e) => setFormMotif(e.target.value)}
                   placeholder="Ex: Maladie, retard..."
-                  className="w-full h-10 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  className="dash-input"
                 />
               </div>
 
               <div className="pt-4 flex items-center justify-end gap-3 border-t border-neutral-100">
-                <button
-                  type="button"
-                  onClick={() => setShowForm(false)}
-                  className="h-10 px-4 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors"
-                >
+                <button type="button" onClick={() => setShowForm(false)} className="dash-btn-secondary">
                   Annuler
                 </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="h-10 px-6 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+                <button type="submit" disabled={submitting} className="dash-btn-primary">
+                  {submitting && <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />}
                   {submitting ? "Enregistrement..." : "Enregistrer"}
                 </button>
               </div>
