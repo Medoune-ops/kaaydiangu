@@ -172,9 +172,9 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
   };
 
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-[#0f172a]">
+    <div className="flex flex-col h-full bg-[#0a0f1e]">
       {/* Top accent line */}
-      <div className="h-[2px] bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500 opacity-80" />
+      <div className="h-[2px] bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500" />
 
       {/* Logo */}
       <div className="px-5 pt-5 pb-4">
@@ -226,16 +226,19 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className={`relative flex items-center gap-3 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-150 group/nav ${
+                    className={`relative flex items-center gap-3 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-200 group/nav ${
                       active
-                        ? "bg-indigo-500/[0.12] text-white"
-                        : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-200"
+                        ? "bg-indigo-500/[0.15] text-white shadow-sm"
+                        : "text-slate-400 hover:bg-white/[0.05] hover:text-slate-200"
                     }`}
                   >
                     {active && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-indigo-400 shadow-lg shadow-indigo-500/50" />
+                      <>
+                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
+                        <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-indigo-500/[0.12] to-transparent pointer-events-none" />
+                      </>
                     )}
-                    <span className={`shrink-0 transition-colors duration-150 ${active ? "text-indigo-400" : "text-slate-500 group-hover/nav:text-slate-400"}`}>
+                    <span className={`shrink-0 transition-colors duration-200 ${active ? "text-indigo-400" : "text-slate-600 group-hover/nav:text-slate-300"}`}>
                       {item.icon}
                     </span>
                     <span className="flex-1 truncate">{item.label}</span>

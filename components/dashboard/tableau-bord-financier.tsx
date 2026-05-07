@@ -81,44 +81,44 @@ export function TableauBordFinancier() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="dash-kpi p-5" style={{ "--kpi-accent": "#22c55e" } as React.CSSProperties}>
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-              <TrendingUp size={20} className="text-emerald-500" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+              <TrendingUp size={19} className="text-white" />
             </div>
           </div>
           <p className="text-xs text-emerald-600 uppercase tracking-wider font-semibold">Recettes du mois</p>
-          <p className="text-2xl font-bold text-emerald-700 mt-1 tracking-tight">{formatFCFA(data.recettes_mois)}</p>
+          <p className="dash-kpi-value text-2xl mt-1">{formatFCFA(data.recettes_mois)}</p>
         </div>
 
         <div className="dash-kpi p-5" style={{ "--kpi-accent": "#ef4444" } as React.CSSProperties}>
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
-              <TrendingDown size={20} className="text-red-500" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-500/30">
+              <TrendingDown size={19} className="text-white" />
             </div>
           </div>
           <p className="text-xs text-red-600 uppercase tracking-wider font-semibold">Dépenses du mois</p>
-          <p className="text-2xl font-bold text-red-700 mt-1 tracking-tight">{formatFCFA(data.depenses_mois)}</p>
+          <p className="dash-kpi-value text-2xl mt-1">{formatFCFA(data.depenses_mois)}</p>
         </div>
 
         <div className="dash-kpi p-5" style={{ "--kpi-accent": data.solde_net >= 0 ? "#22c55e" : "#ef4444" } as React.CSSProperties}>
           <div className="flex items-center gap-3 mb-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${data.solde_net >= 0 ? "bg-emerald-50" : "bg-red-50"}`}>
-              <Wallet size={20} className={data.solde_net >= 0 ? "text-emerald-500" : "text-red-500"} />
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg ${data.solde_net >= 0 ? "from-emerald-400 to-teal-500 shadow-emerald-500/30" : "from-red-500 to-rose-600 shadow-red-500/30"}`}>
+              <Wallet size={19} className="text-white" />
             </div>
           </div>
           <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Solde net</p>
-          <p className={`text-2xl font-bold mt-1 tracking-tight ${data.solde_net >= 0 ? "text-emerald-700" : "text-red-700"}`}>
+          <p className="dash-kpi-value text-2xl mt-1">
             {data.solde_net >= 0 ? "+" : ""}{formatFCFA(data.solde_net)}
           </p>
         </div>
 
         <div className="dash-kpi p-5" style={{ "--kpi-accent": "#6366f1" } as React.CSSProperties}>
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-              <Clock size={20} className="text-indigo-500" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+              <Clock size={19} className="text-white" />
             </div>
           </div>
           <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Recouvrement</p>
-          <p className="text-2xl font-bold text-indigo-600 mt-1 tracking-tight">{data.taux_recouvrement}%</p>
+          <p className="dash-kpi-value text-2xl mt-1">{data.taux_recouvrement}%</p>
           <p className="text-xs text-neutral-400 mt-0.5">
             {data.mensualites_payees}/{data.mensualites_total} mensualités
           </p>
@@ -127,11 +127,11 @@ export function TableauBordFinancier() {
 
       {/* Jauge recouvrement */}
       <div className="dash-section">
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <h3 className="text-sm font-semibold text-neutral-900">Recouvrement du mois</h3>
+        <div className="px-6 py-4 border-b border-indigo-50/80 bg-gradient-to-r from-indigo-50/40 to-transparent">
+          <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">Recouvrement du mois</h3>
         </div>
         <div className="px-6 py-5">
-          <div className="w-full bg-neutral-100 rounded-full h-7 overflow-hidden">
+          <div className="w-full bg-indigo-50/60 rounded-full h-7 overflow-hidden">
             <div
               className={`h-7 rounded-full flex items-center justify-center text-sm font-bold text-white transition-all duration-700 ${
                 data.taux_recouvrement >= 80
@@ -155,8 +155,8 @@ export function TableauBordFinancier() {
 
       {/* Graphique barres 12 mois */}
       <div className="dash-section">
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <h3 className="text-sm font-semibold text-neutral-900">Recettes vs Dépenses — 12 derniers mois</h3>
+        <div className="px-6 py-4 border-b border-emerald-50/80 bg-gradient-to-r from-emerald-50/40 to-transparent">
+          <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">Recettes vs Dépenses — 12 derniers mois</h3>
         </div>
         <div className="px-6 py-5">
           <div className="flex items-center gap-6 text-sm mb-5">
@@ -209,8 +209,8 @@ export function TableauBordFinancier() {
 
       {/* Export */}
       <div className="dash-section">
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <h3 className="text-sm font-semibold text-neutral-900">Exports</h3>
+        <div className="px-6 py-4 border-b border-indigo-50/80 bg-gradient-to-r from-indigo-50/40 to-transparent">
+          <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">Exports</h3>
         </div>
         <div className="px-6 py-5">
           <div className="flex flex-wrap items-end gap-4">
