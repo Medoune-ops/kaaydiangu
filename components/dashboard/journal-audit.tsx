@@ -86,9 +86,8 @@ export function JournalAudit() {
     setLoading(false);
   }, [page, filterAction, filterAuteur, dateDebut, dateFin, search]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -214,8 +213,8 @@ export function JournalAudit() {
             {data.total} entree(s) — page {data.page}/{data.pages}
           </div>
 
-          <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden overflow-x-auto">
+            <table className="w-full text-sm min-w-[640px]">
               <thead>
                 <tr className="border-b border-neutral-100 text-left">
                   <th className="py-2.5 px-4 text-sm font-medium text-neutral-400 uppercase tracking-wider">Date</th>

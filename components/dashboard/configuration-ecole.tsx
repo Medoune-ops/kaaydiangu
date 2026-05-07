@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import NextImage from "next/image";
 
 // ─── TYPES ───
 
@@ -50,9 +51,8 @@ export function ConfigurationEcole() {
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const showMsg = (type: "success" | "error", text: string) => {
     setMessage({ type, text });
@@ -221,7 +221,7 @@ function SectionInfos({
       <div className="flex items-center gap-4">
         <div className="w-16 h-16 rounded-xl border border-dashed border-neutral-300 flex items-center justify-center overflow-hidden bg-neutral-50">
           {ecole.logo ? (
-            <img src={ecole.logo} alt="Logo" className="w-full h-full object-cover" />
+            <NextImage src={ecole.logo} alt="Logo" width={64} height={64} className="w-full h-full object-cover" />
           ) : (
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" strokeWidth="1.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
           )}
@@ -543,7 +543,7 @@ function ClasseModal({
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className={labelCls}>Nom</label>
               <input
@@ -635,6 +635,7 @@ function SectionTarifs({
   useEffect(() => {
     const t: Record<string, number> = {};
     for (const c of classes) t[c.id] = c.montant_scolarite;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTarifs(t);
   }, [classes]);
 

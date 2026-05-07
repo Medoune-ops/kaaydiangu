@@ -439,7 +439,7 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
             </div>
             
             <form onSubmit={handleSubmitAbsence} className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-neutral-900 mb-1.5">Classe <span className="text-red-500">*</span></label>
                   <select
@@ -491,7 +491,7 @@ export function VueAbsences({ classes }: { classes: Classe[] }) {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-neutral-900 mb-1.5">Date <span className="text-red-500">*</span></label>
                   <input

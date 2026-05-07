@@ -242,7 +242,7 @@ export function EleveForm({ classes, fraisInscriptionDefaut = 0 }: EleveFormProp
           {/* Identite */}
           <div className="space-y-4">
             <h3 className="font-semibold text-base text-neutral-900">Identite de l&apos;eleve</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="nom" className="block text-sm font-medium text-neutral-900 mb-1">Nom <span className="text-red-500">*</span></label>
                 <input
@@ -267,7 +267,7 @@ export function EleveForm({ classes, fraisInscriptionDefaut = 0 }: EleveFormProp
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="date_naissance" className="block text-sm font-medium text-neutral-900 mb-1">Date de naissance</label>
                 <input
@@ -325,7 +325,7 @@ export function EleveForm({ classes, fraisInscriptionDefaut = 0 }: EleveFormProp
                 className="w-full h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="telephone_parent" className="block text-sm font-medium text-neutral-900 mb-1">Telephone parent</label>
                 <input
