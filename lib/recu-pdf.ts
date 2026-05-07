@@ -195,32 +195,29 @@ export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
   doc.setFontSize(9);
   doc.text(data.paiement.enregistre_par, lx, sy + 5);
 
-  // QR Code pour accès rapide (Position test en haut à droite)
+  // QR Code centré en bas du reçu
   try {
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
     const loginUrl = `${baseUrl}/eleve/${data.paiement.id}`;
-    
-    // Position en haut à droite, sous l'en-tête bleu
-    const qrx = pw - 35;
-    const qry = 42;
-    
-    const qrDataUrl = await QRCode.toDataURL(loginUrl, { 
-      margin: 1, 
-      width: 100 
+
+    const qrx = (pw - 22) / 2;
+    const qry = 167;
+
+    const qrDataUrl = await QRCode.toDataURL(loginUrl, {
+      margin: 1,
+      width: 100,
     });
-    
-    // Utilisation de JPEG pour compatibilité maximale
+
     doc.addImage(qrDataUrl, "JPEG", qrx, qry, 22, 22);
-    
+
     doc.setFontSize(6);
     doc.setTextColor(150, 150, 150);
     doc.setFont("helvetica", "italic");
-    doc.text("Espace Élève", qrx + 11, qry + 25, { align: "center" });
+    doc.text("Espace Élève", pw / 2, qry + 25, { align: "center" });
   } catch (e) {
     console.error("Erreur génération QR Code:", e);
-    // Fallback visuel très visible en haut
-    const qrx = pw - 35;
-    const qry = 42;
+    const qrx = (pw - 22) / 2;
+    const qry = 167;
     doc.setDrawColor(255, 0, 0);
     doc.rect(qrx, qry, 22, 22);
     doc.text("QR-ERR", qrx + 2, qry + 5);
