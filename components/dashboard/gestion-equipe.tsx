@@ -395,7 +395,7 @@ function CreateUserModal({
           {error && (
             <div className="bg-red-50 text-red-600 border border-red-100 px-3 py-2 rounded-lg text-sm">{error}</div>
           )}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-1.5">Prenom <span className="text-red-500">*</span></label>
               <input
