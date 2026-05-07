@@ -24,176 +24,85 @@ const testimonials = [
   { quote: "J'apprécie les outils mis à disposition et l'esprit d'équipe au sein de l'établissement. Une école qui fait grandir.",      name: "M. Samba Ba",  role: "Prof. Mathématiques",  init: "SB", from: "from-teal-500/25",   to: "to-cyan-500/25",   border: "border-teal-500/20",   ic: "text-teal-300"   },
 ];
 
-const chartBars = [30, 55, 40, 78, 52, 88, 62, 72, 47, 92, 68, 95];
-
-/* ─────────────────── DASHBOARD MOCKUP ─────────────────── */
-function DashboardMockup() {
-  return (
-    <div className="rounded-2xl overflow-hidden glass-dark border border-white/[0.12] scan-line" style={{ width: "470px" }}>
-      {/* Browser chrome */}
-      <div className="flex items-center gap-1.5 px-4 py-3 bg-black/30 border-b border-white/[0.06] shrink-0">
-        <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
-        <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
-        <div className="flex-1 mx-3 h-5 rounded-md bg-white/[0.05] flex items-center gap-1.5 px-2.5">
-          <div className="relative flex-shrink-0">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-400/80" />
-            <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-green-400/40 ping-ring" />
-          </div>
-          <span className="text-[9px] text-white/25 font-mono tracking-tight">app.monecole.sn/dashboard</span>
-        </div>
-      </div>
-
-      <div className="flex" style={{ height: "310px" }}>
-        {/* Mini sidebar */}
-        <div className="w-12 bg-black/25 border-r border-white/[0.06] flex flex-col items-center py-3 gap-1.5 flex-shrink-0">
-          {/* Logo */}
-          <div className="relative mb-2">
-            <div className="absolute inset-0 bg-indigo-500 rounded-lg blur-md opacity-50" />
-            <div className="relative w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
-              </svg>
-            </div>
-          </div>
-          {/* Nav items */}
-          {[
-            { active: true,  color: "bg-indigo-400" },
-            { active: false, color: "bg-white/15" },
-            { active: false, color: "bg-white/15" },
-            { active: false, color: "bg-white/15" },
-            { active: false, color: "bg-white/10" },
-          ].map((item, i) => (
-            <div key={i} className={`w-8 h-7 rounded-lg flex items-center justify-center ${item.active ? "bg-indigo-500/20" : ""}`}>
-              <div className={`w-3 h-3 rounded-sm ${item.color}`} />
-            </div>
-          ))}
-        </div>
-
-        {/* Main content */}
-        <div className="flex-1 p-3 space-y-2.5 overflow-hidden">
-          {/* Greeting + avatar */}
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-[9px] text-white/30">Tableau de bord</div>
-              <div className="text-[13px] font-bold text-white leading-tight">Bonjour, Admin 👋</div>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="relative">
-                <div className="w-2 h-2 rounded-full bg-cyan-400 absolute -top-0.5 -right-0.5 z-10" />
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500/40 to-violet-500/40 border border-indigo-400/30 flex items-center justify-center text-[8px] text-indigo-300 font-bold">AD</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Stats row */}
-          <div className="grid grid-cols-3 gap-1.5">
-            <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-2">
-              <div className="text-[8px] text-white/35 mb-0.5">Élèves</div>
-              <div className="text-[14px] font-bold text-cyan-300 leading-none">1 247</div>
-              <div className="mt-1.5 h-0.5 bg-white/10 rounded-full overflow-hidden">
-                <div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-cyan-400" style={{ width: "82%" }} />
-              </div>
-            </div>
-            <div className="bg-teal-500/10 border border-teal-500/20 rounded-xl p-2">
-              <div className="text-[8px] text-white/35 mb-0.5">Réussite</div>
-              <div className="text-[14px] font-bold text-teal-300 leading-none">94%</div>
-              <div className="mt-1.5 h-0.5 bg-white/10 rounded-full overflow-hidden">
-                <div className="h-full rounded-full bg-gradient-to-r from-teal-500 to-teal-400" style={{ width: "94%" }} />
-              </div>
-            </div>
-            <div className="bg-violet-500/10 border border-violet-500/20 rounded-xl p-2">
-              <div className="text-[8px] text-white/35 mb-0.5">Classes</div>
-              <div className="text-[14px] font-bold text-violet-300 leading-none">12</div>
-              <div className="mt-1.5 h-0.5 bg-white/10 rounded-full overflow-hidden">
-                <div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-violet-400" style={{ width: "60%" }} />
-              </div>
-            </div>
-          </div>
-
-          {/* Chart */}
-          <div className="bg-white/[0.025] border border-white/[0.05] rounded-xl p-2.5">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[8px] text-white/30 font-medium">Paiements — Fév 2026</span>
-              <span className="text-[8px] font-bold text-teal-400 bg-teal-400/10 px-1.5 py-0.5 rounded-md">↑ 12%</span>
-            </div>
-            <div className="flex items-end gap-0.5" style={{ height: "46px" }}>
-              {chartBars.map((h, i) => (
-                <div
-                  key={i}
-                  className="flex-1 rounded-sm"
-                  style={{
-                    height: `${h}%`,
-                    background: `linear-gradient(to top, rgba(6,182,212,${0.5 + h/200}), rgba(6,182,212,0.15))`,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Activity feed */}
-          <div>
-            <div className="text-[8px] text-white/20 uppercase tracking-widest mb-1.5 font-semibold">Activité récente</div>
-            <div className="space-y-1.5">
-              {[
-                { text: "Paiement · Awa Diallo · 12 000 FCFA",  dot: "#22d3ee", bg: "rgba(6,182,212,0.1)" },
-                { text: "Note saisie · Mathématiques 6e A",      dot: "#2dd4bf", bg: "rgba(20,184,166,0.1)" },
-                { text: "Nouvel élève inscrit · Moussa Fall",    dot: "#a78bfa", bg: "rgba(139,92,246,0.1)" },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-1.5 rounded-lg px-2 py-1" style={{ background: item.bg }}>
-                  <div className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: item.dot }} />
-                  <span className="text-[9px] text-white/45 truncate">{item.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ─────────────────── PAGE ─────────────────── */
 
 export default function HomePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  /* Auth redirect */
   useEffect(() => {
     if (status === "authenticated") {
       router.push("/dashboard");
     }
   }, [status, router, session]);
 
+  /* Parallax scroll — met à jour --scroll-y pour les classes parallax-* */
+  useEffect(() => {
+    const el = document.documentElement;
+    const onScroll = () => el.style.setProperty("--scroll-y", String(window.scrollY));
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   if (status === "loading") {
-    return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">Chargement...</div>;
+    return (
+      <div className="min-h-screen bg-[#020c1b] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-cyan-500/30 border-t-cyan-400 animate-spin" />
+      </div>
+    );
   }
 
   return (
     <ScrollAnimateProvider>
 
       {/* ══════════════════════════════════════════════════════ */}
-      {/*  HERO — Split 2 colonnes + Dashboard 3D flottant      */}
+      {/*  HERO — Cinématographique full viewport               */}
       {/* ══════════════════════════════════════════════════════ */}
-      <section className="relative min-h-[45vh] flex items-center overflow-hidden bg-[#020c1b] hero-spotlight">
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-[#020c1b]">
 
-        {/* Aurora blobs */}
-        <div className="absolute -top-[30%] -left-[15%] w-[800px] h-[800px] rounded-full bg-cyan-500/[0.18] blur-[200px] animate-aurora pointer-events-none" />
-        <div className="absolute -bottom-[25%] -right-[10%] w-[700px] h-[700px] rounded-full bg-teal-400/[0.15] blur-[190px] animate-aurora-slow pointer-events-none" />
-        <div className="absolute top-[30%] right-[25%] w-[400px] h-[400px] rounded-full bg-indigo-500/[0.12] blur-[150px] animate-aurora-mid pointer-events-none" />
+        {/* BG — façade avec Ken Burns */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-[-8%] kenburns-1">
+            <Image
+              src="/images/ecole-facade.jpeg"
+              alt=""
+              fill
+              className="object-cover"
+              style={{ opacity: 0.42 }}
+              priority
+            />
+          </div>
+        </div>
 
-        {/* Textures */}
-        <div className="absolute inset-0 dot-grid opacity-65" />
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
+        {/* Film grain cinématique */}
+        <div className="film-grain z-[1]" />
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8 relative z-10 w-full">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-8 xl:gap-16">
+        {/* Overlay directionnel gauche-lourd */}
+        <div className="cine-overlay absolute inset-0 z-[2]" />
 
-            {/* ── LEFT — Text content ── */}
+        {/* Vignette haut */}
+        <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#020c1b] to-transparent z-[3] pointer-events-none" />
+
+        {/* Vignette bas */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#020c1b] to-transparent z-[3] pointer-events-none" />
+
+        {/* Dot grid */}
+        <div className="absolute inset-0 dot-grid opacity-20 z-[3] pointer-events-none" />
+
+        {/* Aurora */}
+        <div className="absolute top-[5%] -left-[10%] w-[700px] h-[700px] rounded-full bg-cyan-500/[0.09] blur-[200px] animate-aurora z-[2] pointer-events-none" />
+        <div className="absolute bottom-[10%] right-[5%] w-[500px] h-[500px] rounded-full bg-indigo-500/[0.07] blur-[180px] animate-aurora-mid z-[2] pointer-events-none" />
+
+        {/* Contenu */}
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 w-full min-h-screen flex items-center">
+          <div className="flex flex-col lg:flex-row items-center gap-14 lg:gap-20 w-full py-32 lg:py-0">
+
+            {/* ── GAUCHE : texte ── */}
             <div className="flex-1 text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
 
-              {/* Badge with conic animated border */}
-              <div className="animate-slide-up inline-flex items-center gap-2.5 px-5 py-2 rounded-full conic-border mb-4">
+              {/* Badge animé */}
+              <div className="animate-slide-up inline-flex items-center gap-2.5 px-5 py-2 rounded-full conic-border mb-5">
                 <div className="relative">
                   <div className="w-2 h-2 rounded-full bg-cyan-400 ping-ring" />
                 </div>
@@ -202,9 +111,9 @@ export default function HomePage() {
                 <span className="text-xs text-white/35 font-medium">Places limitées</span>
               </div>
 
-              {/* Headline */}
+              {/* Titre */}
               <h1
-                className="animate-slide-up-delay-1 text-[clamp(2.4rem,5.5vw,4.2rem)] font-extrabold tracking-[-0.045em] leading-[1.05] text-white mb-0"
+                className="animate-slide-up-delay-1 text-[clamp(2.6rem,5.5vw,4.4rem)] font-extrabold tracking-[-0.045em] leading-[1.05] text-white mb-0"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
                 Bienvenue à
@@ -212,15 +121,15 @@ export default function HomePage() {
                 <span className="text-shimmer">IREF</span>
               </h1>
 
-              {/* Subtitle */}
-              <p className="animate-slide-up-delay-2 mt-3 text-[15px] text-white/50 leading-relaxed max-w-lg mx-auto lg:mx-0">
+              {/* Sous-titre */}
+              <p className="animate-slide-up-delay-2 mt-4 text-[15px] text-white/50 leading-relaxed max-w-lg mx-auto lg:mx-0">
                 Depuis plus de{" "}
                 <span className="text-white/80 font-semibold">15 ans</span>,
                 nous formons les esprits brillants de demain grâce à un enseignement d&apos;excellence et un encadrement rigoureux.
               </p>
 
               {/* CTAs */}
-              <div className="animate-slide-up-delay-3 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mt-5">
+              <div className="animate-slide-up-delay-3 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mt-6">
                 <Link
                   href="/nos-classes"
                   className="group btn-primary h-[52px] px-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold text-[16px] hover:from-cyan-300 hover:to-teal-300 shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-shadow duration-300"
@@ -230,27 +139,27 @@ export default function HomePage() {
                     <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
                   </svg>
                 </Link>
-            <Link
-              href="/contact"
-              className="btn-secondary h-[52px] px-8 inline-flex items-center justify-center rounded-2xl glass-dark text-white font-semibold text-[16px] border border-white/10 hover:border-white/20"
-            >
-              Nous contacter
-            </Link>
-            {status !== "authenticated" && (
-              <Link
-                href="/login"
-                className="btn-primary h-[52px] px-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold text-[16px] hover:from-cyan-300 hover:to-teal-300 shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50"
-              >
-                Accéder à mon espace
-                <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-            )}
-          </div>
+                <Link
+                  href="/contact"
+                  className="btn-secondary h-[52px] px-8 inline-flex items-center justify-center rounded-2xl glass-dark text-white font-semibold text-[16px] border border-white/10 hover:border-white/20"
+                >
+                  Nous contacter
+                </Link>
+                {status !== "authenticated" && (
+                  <Link
+                    href="/login"
+                    className="btn-primary h-[52px] px-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold text-[16px] hover:from-cyan-300 hover:to-teal-300 shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50"
+                  >
+                    Accéder à mon espace
+                    <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </Link>
+                )}
+              </div>
 
               {/* Trust badges */}
-              <div className="mt-4 flex flex-wrap items-center gap-2 justify-center lg:justify-start animate-fade-in">
+              <div className="mt-5 flex flex-wrap items-center gap-2 justify-center lg:justify-start animate-fade-in">
                 <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl glass-dark border border-white/[0.07] animate-float-gentle">
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
@@ -272,28 +181,36 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* ── RIGHT — Photo de l'école ── */}
-            <div className="hidden lg:flex flex-shrink-0 items-center justify-center relative">
-              {/* Glow behind image */}
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/15 to-indigo-500/15 blur-[80px] rounded-3xl" />
+            {/* ── DROITE : composite profondeur 3 couches ── */}
+            <div className="hidden lg:block relative flex-shrink-0" style={{ width: "400px", height: "460px" }}>
 
-              <TiltCard intensity={8} scale={1.02} className="float-shadow">
-                <div className="relative rounded-2xl overflow-hidden border border-white/[0.12]" style={{ width: "300px" }}>
-                  <Image
-                    src="/images/ecole-facade.jpeg"
-                    alt="Façade de l'école IREF"
-                    width={300}
-                    height={240}
-                    className="object-cover"
-                    priority
-                  />
-                  {/* Overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#020c1b]/60 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
+              {/* Halo ambiant */}
+              <div className="absolute inset-[-20%] bg-gradient-to-br from-cyan-500/8 to-indigo-500/6 blur-[120px] rounded-full pointer-events-none" />
+
+              {/* Couche 1 — Arrière-plan (flou, pale) */}
+              <div className="absolute top-0 right-0 parallax-bg" style={{ zIndex: 1 }}>
+                <div className="relative w-[200px] h-[145px] rounded-2xl overflow-hidden" style={{ filter: "blur(1.5px)" }}>
+                  <div className="absolute inset-[-12%] kenburns-2">
+                    <Image src="/images/salle-maternelle-3.jpeg" alt="" fill className="object-cover" style={{ opacity: 0.45 }} />
+                  </div>
+                  <div className="absolute inset-0 bg-[#020c1b]/55" />
+                  <div className="absolute inset-0 border border-white/[0.07] rounded-2xl" />
+                </div>
+              </div>
+
+              {/* Couche 2 — Plan médian (image principale) */}
+              <div className="absolute left-0 top-[50px] parallax-mid" style={{ zIndex: 2 }}>
+                <div className="relative w-[265px] h-[370px] rounded-3xl overflow-hidden depth-card">
+                  <div className="absolute inset-[-10%] kenburns-3">
+                    <Image src="/images/salle-classe-1.jpeg" alt="Salle de classe IREF" fill className="object-cover" />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#020c1b]/92 via-[#020c1b]/30 to-[#020c1b]/08" />
+                  {/* Badge bas */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
                     <div className="glass-dark px-4 py-3 border border-white/10 rounded-xl">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-teal-400 flex items-center justify-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#020c1b" strokeWidth="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-teal-400 flex items-center justify-center shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#020c1b" strokeWidth="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
                         </div>
                         <div>
                           <div className="text-white font-bold text-sm">I.R.E.F — IREF</div>
@@ -303,10 +220,23 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
-              </TiltCard>
+              </div>
 
-              {/* Floating stat bubble */}
-              <div className="absolute -top-4 -right-6 glass-dark px-3.5 py-2.5 border border-white/10 animate-float-gentle-2 z-20 rounded-xl">
+              {/* Couche 3 — Premier plan (accent) */}
+              <div className="absolute right-[8px] bottom-[45px] parallax-fg" style={{ zIndex: 3 }}>
+                <div className="relative w-[168px] h-[126px] rounded-2xl overflow-hidden depth-card border border-cyan-500/22">
+                  <div className="absolute inset-[-12%] kenburns-1">
+                    <Image src="/images/salle-classe-2.jpeg" alt="" fill className="object-cover" />
+                  </div>
+                  <div className="absolute inset-0 bg-[#020c1b]/35" />
+                  <div className="absolute top-2.5 left-2.5">
+                    <span className="text-[9px] text-cyan-300 bg-cyan-500/14 border border-cyan-500/22 px-2 py-0.5 rounded-full font-medium backdrop-blur-sm">Primaire</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bulle flottante haut — taux réussite */}
+              <div className="absolute -top-4 -right-6 glass-dark px-3.5 py-2.5 border border-white/10 animate-float-gentle-2 rounded-xl" style={{ zIndex: 4 }}>
                 <div className="flex items-center gap-2">
                   <div className="relative">
                     <div className="w-2 h-2 rounded-full bg-teal-400" />
@@ -319,8 +249,8 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Floating students bubble */}
-              <div className="absolute -bottom-4 -left-6 glass-dark px-3.5 py-2.5 border border-cyan-500/20 animate-float-gentle-3 z-20 rounded-xl">
+              {/* Bulle flottante bas — élèves */}
+              <div className="absolute -bottom-4 -left-6 glass-dark px-3.5 py-2.5 border border-cyan-500/20 animate-float-gentle-3 rounded-xl" style={{ zIndex: 4 }}>
                 <div className="text-[9px] text-white/40 mb-0.5">Élèves inscrits</div>
                 <div className="text-[15px] font-extrabold text-transparent bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text">1 200+</div>
               </div>
@@ -328,16 +258,13 @@ export default function HomePage() {
 
           </div>
         </div>
-
-        {/* Fade to next section */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#020c1b] to-transparent pointer-events-none" />
       </section>
 
 
       {/* ══════════════════════════════════════════════════════ */}
-      {/*  NOS ATOUTS — TiltCard + photos école                */}
+      {/*  NOS ATOUTS — Transition diagonale + marquee          */}
       {/* ══════════════════════════════════════════════════════ */}
-      <section className="py-28 bg-white relative overflow-hidden section-lazy">
+      <section className="bg-white relative overflow-hidden clip-angle-top section-lazy">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-cyan-400/[0.04] blur-[150px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-indigo-400/[0.03] blur-[120px] rounded-full pointer-events-none" />
 
@@ -356,28 +283,16 @@ export default function HomePage() {
           </div>
 
           <div className="relative w-full overflow-hidden flex scroll-animate py-4">
-            {/* Dégradés pour fondre les bords */}
             <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-white to-transparent z-20 pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-white to-transparent z-20 pointer-events-none" />
 
             <div className="flex w-max animate-marquee gap-6">
               {[...strengths, ...strengths].map((item, i) => (
                 <div key={`${item.title}-${i}`} className={`shrink-0 ${item.span ? 'w-[500px] md:w-[650px]' : 'w-[300px] md:w-[380px]'}`}>
-                  <TiltCard
-                    intensity={5}
-                    glare={true}
-                  >
+                  <TiltCard intensity={5} glare={true}>
                     <div className="group h-full cursor-default rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 relative" style={{ minHeight: "350px" }}>
-                      {/* Photo en fond */}
-                      <Image
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                      {/* Overlay gradient sombre */}
+                      <Image src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 group-hover:from-black/85 group-hover:via-black/50 transition-all duration-500" />
-                      {/* Texte au-dessus */}
                       <div className="absolute inset-0 flex flex-col justify-end p-6 z-10">
                         <h3 className="text-[20px] font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
                           {item.title}
@@ -391,17 +306,23 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+
+        {/* Padding bas compensé */}
+        <div className="pb-28" />
       </section>
 
 
       {/* ══════════════════════════════════════════════════════ */}
-      {/*  TÉMOIGNAGES — Dark glassmorphism + TiltCard          */}
+      {/*  TÉMOIGNAGES — Transition diagonale + glassmorphism   */}
       {/* ══════════════════════════════════════════════════════ */}
-      <section className="py-28 bg-[#020c1b] relative overflow-hidden section-lazy">
+      <section className="bg-[#020c1b] relative overflow-hidden clip-angle-both section-lazy">
         <div className="absolute top-[5%] right-[8%] w-[500px] h-[500px] rounded-full bg-teal-500/[0.12] blur-[170px] animate-aurora-slow pointer-events-none" />
         <div className="absolute bottom-[5%] left-[5%] w-[400px] h-[400px] rounded-full bg-cyan-500/[0.10] blur-[150px] animate-aurora-mid pointer-events-none" />
         <div className="absolute inset-0 dot-grid opacity-45" />
         <div className="gradient-line absolute top-0 left-[8%] right-[8%]" />
+
+        {/* Film grain léger */}
+        <div className="film-grain z-[1] opacity-60" />
 
         <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
           <div className="text-center mb-20 scroll-animate">
@@ -416,15 +337,9 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
-              <TiltCard
-                key={t.name}
-                intensity={6}
-                className={`scroll-animate scroll-animate-delay-${i + 1}`}
-              >
+              <TiltCard key={t.name} intensity={6} className={`scroll-animate scroll-animate-delay-${i + 1}`}>
                 <div className="glass-dark p-8 h-full flex flex-col cursor-default">
-                  {/* Giant quote */}
                   <div className="text-6xl leading-none text-cyan-500/20 font-serif mb-3 select-none">&ldquo;</div>
-                  {/* Stars */}
                   <div className="flex gap-1 mb-4">
                     {[...Array(5)].map((_, j) => (
                       <svg key={j} width="15" height="15" viewBox="0 0 24 24" fill="currentColor" className="text-yellow-400">
@@ -433,7 +348,6 @@ export default function HomePage() {
                     ))}
                   </div>
                   <p className="text-white/60 leading-relaxed text-[15px] flex-1">{t.quote}</p>
-                  {/* Author */}
                   <div className="flex items-center gap-3 pt-6 mt-6 border-t border-white/[0.08]">
                     <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${t.from} ${t.to} border ${t.border} flex items-center justify-center ${t.ic} font-bold text-sm shrink-0`}>
                       {t.init}
@@ -454,12 +368,11 @@ export default function HomePage() {
 
 
       {/* ══════════════════════════════════════════════════════ */}
-      {/*  CTA                                                  */}
+      {/*  CTA — Transition diagonale + fond gradient           */}
       {/* ══════════════════════════════════════════════════════ */}
-      <section className="py-32 bg-gradient-to-br from-cyan-600 via-cyan-500 to-teal-500 relative overflow-hidden section-lazy">
+      <section className="py-32 bg-gradient-to-br from-cyan-600 via-cyan-500 to-teal-500 relative overflow-hidden clip-angle-top section-lazy">
         <div className="absolute inset-0 dot-grid opacity-20" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-white/[0.08] blur-[160px] rounded-full animate-glow-pulse" />
-        {/* Decorative circles */}
         <div className="absolute top-8 left-8 w-28 h-28 rounded-full border border-white/15" />
         <div className="absolute top-12 left-12 w-16 h-16 rounded-full border border-white/10" />
         <div className="absolute bottom-8 right-8 w-20 h-20 rounded-full border border-white/12" />
