@@ -46,6 +46,7 @@ export function GestionEquipe() {
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [assignProf, setAssignProf] = useState<UserInfo | null>(null);
+  const [changePassword, setChangePassword] = useState<UserInfo | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [filter, setFilter] = useState<string>("TOUS");
   const [recherche, setRecherche] = useState("");
@@ -86,12 +87,6 @@ export function GestionEquipe() {
   const handleChangeRole = async (user: UserInfo, newRole: string) => {
     const result = await handleAction(user.id, "CHANGER_ROLE", { role: newRole });
     if (result) showMsg("success", `Rôle de ${user.prenom} ${user.nom} changé en ${ROLE_LABELS[newRole]}`);
-  };
-
-  const handleResetPassword = async (user: UserInfo) => {
-    if (!confirm(`Réinitialiser le mot de passe de ${user.prenom} ${user.nom} ?`)) return;
-    const result = await handleAction(user.id, "RESET_PASSWORD");
-    if (result) showMsg("success", `Nouveau mot de passe : ${result.nouveau_mot_de_passe}`);
   };
 
   const filteredUsers = users.filter((u) => {
@@ -223,7 +218,7 @@ export function GestionEquipe() {
                             Matières
                           </button>
                         )}
-                        <button onClick={() => handleResetPassword(user)} className="px-2.5 py-1 text-xs font-semibold text-neutral-500 hover:bg-neutral-100 rounded-lg transition-colors">
+                        <button onClick={() => setChangePassword(user)} className="px-2.5 py-1 text-xs font-semibold text-neutral-500 hover:bg-neutral-100 rounded-lg transition-colors">
                           MDP
                         </button>
                         <button
@@ -263,6 +258,14 @@ export function GestionEquipe() {
           onSaved={() => { showMsg("success", `Matières mises à jour pour ${assignProf.prenom} ${assignProf.nom}`); fetchUsers(); setAssignProf(null); }}
         />
       )}
+
+      {changePassword && (
+        <ChangePasswordModal
+          user={changePassword}
+          onClose={() => setChangePassword(null)}
+          onSaved={() => { showMsg("success", `Mot de passe de ${changePassword.prenom} ${changePassword.nom} modifié`); setChangePassword(null); }}
+        />
+      )}
     </div>
   );
 }
@@ -270,23 +273,28 @@ export function GestionEquipe() {
 // ─── Modal création de compte ───
 
 function CreateUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: (msg: string) => void }) {
-  const [form, setForm] = useState({ nom: "", prenom: "", email: "", role: "PROFESSEUR" });
+  const [form, setForm] = useState({ nom: "", prenom: "", email: "", role: "PROFESSEUR", mot_de_passe: "", confirmer: "" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (form.mot_de_passe.length < 6) { setError("Le mot de passe doit faire au moins 6 caractères"); return; }
+    if (form.mot_de_passe !== form.confirmer) { setError("Les mots de passe ne correspondent pas"); return; }
     setSaving(true);
     setError("");
+    const { confirmer, ...payload } = form;
+    void confirmer;
     const res = await fetch("/api/admin/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
     const data = await res.json();
     setSaving(false);
     if (!res.ok) { setError(data.error || "Erreur lors de la création"); return; }
-    onCreated(`Compte créé pour ${data.prenom} ${data.nom} (${data.email}). Mot de passe provisoire : ${data.mot_de_passe_provisoire}`);
+    onCreated(`Compte créé — ${data.prenom} ${data.nom} (${data.email})`);
   };
 
   return (
@@ -322,12 +330,127 @@ function CreateUserModal({ onClose, onCreated }: { onClose: () => void; onCreate
               <option value="COMPTABLE">Comptable</option>
             </select>
           </div>
-          <p className="text-xs text-neutral-400">Un mot de passe provisoire sera généré automatiquement.</p>
+          <div>
+            <label className="dash-label">Mot de passe <span className="text-red-400">*</span></label>
+            <div className="relative">
+              <input
+                type={showPwd ? "text" : "password"}
+                required
+                minLength={6}
+                value={form.mot_de_passe}
+                onChange={(e) => setForm({ ...form, mot_de_passe: e.target.value })}
+                placeholder="Minimum 6 caractères"
+                className="dash-input pr-10"
+              />
+              <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-indigo-500 transition-colors">
+                {showPwd
+                  ? <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  : <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                }
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="dash-label">Confirmer le mot de passe <span className="text-red-400">*</span></label>
+            <input
+              type={showPwd ? "text" : "password"}
+              required
+              value={form.confirmer}
+              onChange={(e) => setForm({ ...form, confirmer: e.target.value })}
+              placeholder="Répéter le mot de passe"
+              className="dash-input"
+            />
+          </div>
           <div className="flex justify-end gap-2 pt-2 border-t border-neutral-100">
             <button type="button" onClick={onClose} className="dash-btn-secondary">Annuler</button>
             <button type="submit" disabled={saving} className="dash-btn-primary inline-flex items-center gap-2">
               {saving && <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />}
               {saving ? "Création..." : "Créer le compte"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ─── Modal changement de mot de passe ───
+
+function ChangePasswordModal({ user, onClose, onSaved }: { user: UserInfo; onClose: () => void; onSaved: () => void }) {
+  const [nouveau, setNouveau] = useState("");
+  const [confirmer, setConfirmer] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (nouveau.length < 6) { setError("Le mot de passe doit faire au moins 6 caractères"); return; }
+    if (nouveau !== confirmer) { setError("Les mots de passe ne correspondent pas"); return; }
+    setSaving(true);
+    setError("");
+    const res = await fetch("/api/admin/users", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: user.id, action: "SET_PASSWORD", nouveau_mot_de_passe: nouveau }),
+    });
+    const data = await res.json();
+    setSaving(false);
+    if (!res.ok) { setError(data.error || "Erreur"); return; }
+    onSaved();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl shadow-indigo-500/10 w-full max-w-sm overflow-hidden">
+        <div className="dash-section-header !rounded-none">
+          <div>
+            <span className="dash-section-title">Modifier le mot de passe</span>
+            <p className="text-xs text-neutral-500 mt-0.5">{user.prenom} {user.nom}</p>
+          </div>
+          <button onClick={onClose} className="w-7 h-7 rounded-lg hover:bg-indigo-100/60 flex items-center justify-center text-neutral-400 hover:text-indigo-600 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+          {error && <div className="bg-red-50 text-red-600 border border-red-200 px-3 py-2 rounded-xl text-sm">{error}</div>}
+          <div>
+            <label className="dash-label">Nouveau mot de passe <span className="text-red-400">*</span></label>
+            <div className="relative">
+              <input
+                type={showPwd ? "text" : "password"}
+                required
+                minLength={6}
+                value={nouveau}
+                onChange={(e) => setNouveau(e.target.value)}
+                placeholder="Minimum 6 caractères"
+                className="dash-input pr-10"
+                autoFocus
+              />
+              <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-indigo-500 transition-colors">
+                {showPwd
+                  ? <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  : <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                }
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="dash-label">Confirmer <span className="text-red-400">*</span></label>
+            <input
+              type={showPwd ? "text" : "password"}
+              required
+              value={confirmer}
+              onChange={(e) => setConfirmer(e.target.value)}
+              placeholder="Répéter le mot de passe"
+              className="dash-input"
+            />
+          </div>
+          <div className="flex justify-end gap-2 pt-2 border-t border-neutral-100">
+            <button type="button" onClick={onClose} className="dash-btn-secondary">Annuler</button>
+            <button type="submit" disabled={saving} className="dash-btn-primary inline-flex items-center gap-2">
+              {saving && <div className="w-4 h-4 border-2 border-white/30 rounded-full animate-spin border-t-white" />}
+              {saving ? "Enregistrement..." : "Enregistrer"}
             </button>
           </div>
         </form>

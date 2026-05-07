@@ -65,6 +65,7 @@ export const userSchema = z.object({
   nom: z.string().min(1, "Nom requis"),
   email: z.string().email("Email invalide"),
   role: z.enum(["COMPTABLE", "CENSEUR", "PROFESSEUR"]),
+  mot_de_passe: z.string().min(6, "Mot de passe minimum 6 caractères").optional(),
 });
 
 // Cours — POST /api/cours
