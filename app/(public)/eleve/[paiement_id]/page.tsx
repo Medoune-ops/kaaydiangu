@@ -174,7 +174,7 @@ export default async function ElevePublicPage({
             <p className="text-xs text-neutral-400 mb-0.5">Reçu</p>
             {paiement.recu_numero ? (
               <a
-                href={`/api/paiements/recu?paiement_id=${paiement.id}&print=1`}
+                href={`/api/eleve/public/${paiement.id}/recu?print=1`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-sm font-medium text-indigo-500 hover:underline"
@@ -360,7 +360,7 @@ export default async function ElevePublicPage({
                       <td className="px-3 py-2 text-center">
                         {p.recu_numero ? (
                           <a
-                            href={`/api/paiements/recu?paiement_id=${p.id}&print=1`}
+                            href={`/api/eleve/public/${p.id}/recu?print=1`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1 text-indigo-500 hover:underline font-medium"

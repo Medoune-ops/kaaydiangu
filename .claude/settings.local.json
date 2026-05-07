@@ -39,7 +39,11 @@
       "mcp__claude_ai_Vercel__get_deployment_build_logs",
       "Bash(npx husky *)",
       "Bash(grep -E \"\\\\.\\(ts|tsx|js|jsx\\)$\")",
-      "Bash(mkdir -p \"c:\\\\Users\\\\Medoune\\\\Desktop\\\\mes dossiers\\\\kaaydiangu\\\\app\\\\api\\\\eleve\\\\public\\\\[paiement_id]\" 2>&1; echo \"done\")"
+      "Bash(mkdir -p \"c:\\\\Users\\\\Medoune\\\\Desktop\\\\mes dossiers\\\\kaaydiangu\\\\app\\\\api\\\\eleve\\\\public\\\\[paiement_id]\" 2>&1; echo \"done\")",
+      "Bash(Remove-Item \"c:\\\\Users\\\\Medoune\\\\Desktop\\\\mes dossiers\\\\kaaydiangu\\\\.next\\\\lock\" -Force -ErrorAction SilentlyContinue)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Bash(grep -E \"\\\\.\\(ts|js|json|md|config\\)$\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\Medoune\\Desktop\\kaaydiangu\\.next",
