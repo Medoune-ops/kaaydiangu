@@ -35,7 +35,8 @@ export function Navbar() {
   useEffect(() => { setOpen(false); }, [pathname]);
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/deconnecte" });
+    await signOut({ redirect: false });
+    window.location.href = "/deconnecte";
   };
 
   return (
