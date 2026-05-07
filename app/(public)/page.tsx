@@ -283,7 +283,7 @@ export default function HomePage() {
                     src="/images/ecole-facade.jpeg"
                     alt="Façade de l'école IREF"
                     width={380}
-                    height={480}
+                    height={320}
                     className="object-cover"
                     priority
                   />
