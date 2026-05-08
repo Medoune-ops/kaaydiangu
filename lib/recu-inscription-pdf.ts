@@ -196,19 +196,19 @@ export function genererRecuInscriptionPDF(data: RecuInscriptionData): ArrayBuffe
   };
 
   // Colonne gauche : élève
-  let fy = infoY + 12;
+  let fy = infoY + 10;
   field(c1, fy, "Nom complet", `${data.eleve.prenom} ${data.eleve.nom}`);
-  fy += 11;
+  fy += 9;
   field(c1, fy, "Matricule", data.eleve.matricule);
-  fy += 11;
+  fy += 9;
   field(c1, fy, "Classe", data.eleve.classe);
 
   // Colonne droite : détails inscription
-  fy = infoY + 12;
+  fy = infoY + 10;
   field(c2, fy, "Année scolaire", data.ecole.annee_scolaire);
-  fy += 11;
+  fy += 9;
   field(c2, fy, "Type de frais", "Inscription");
-  fy += 11;
+  fy += 9;
   field(c2, fy, "Mode de paiement", "Espèces");
 
   // ─── BLOC MONTANT ──────────────────────────────────────────────────────────
