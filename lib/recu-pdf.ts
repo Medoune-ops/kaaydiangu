@@ -105,11 +105,18 @@ export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
     } catch { /* continue without logo */ }
   }
 
-  // School name
+  // School name — auto-shrink if too wide
   setTxt(doc, WHITE);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.text(data.ecole.nom.toUpperCase(), nameX, 16, { align: "center" });
+  const schoolNom = data.ecole.nom.toUpperCase();
+  const schoolMaxW = pw - nameX - M + (pw / 2 - nameX); // effective centered width
+  let schoolFs = 14;
+  doc.setFontSize(schoolFs);
+  while (doc.getTextWidth(schoolNom) > schoolMaxW && schoolFs > 8) {
+    schoolFs -= 0.5;
+    doc.setFontSize(schoolFs);
+  }
+  doc.text(schoolNom, nameX, 16, { align: "center" });
 
   // Contact info
   setTxt(doc, SLATE400);
@@ -185,7 +192,7 @@ export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
   doc.text("BÉNÉFICIAIRE", c1 + colW / 2, infoY + 5.8, { align: "center" });
   doc.text("DÉTAILS", c2 + colW / 2, infoY + 5.8, { align: "center" });
 
-  // Field helper
+  // Field helper — auto-shrinks font to prevent overflow
   const field = (x: number, y: number, label: string, value: string) => {
     setTxt(doc, SLATE400);
     doc.setFont("helvetica", "normal");
@@ -193,8 +200,13 @@ export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
     doc.text(label.toUpperCase(), x + 3, y);
     setTxt(doc, SLATE900);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8.2);
     const maxW = colW - 6;
+    let fs = 8.2;
+    doc.setFontSize(fs);
+    while (doc.getTextWidth(value) > maxW && fs > 6) {
+      fs -= 0.3;
+      doc.setFontSize(fs);
+    }
     const lines = doc.splitTextToSize(value, maxW);
     doc.text(lines[0] as string, x + 3, y + 4.5);
   };

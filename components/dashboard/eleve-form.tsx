@@ -98,8 +98,20 @@ export function EleveForm({ classes, fraisInscriptionDefaut = 0 }: EleveFormProp
     }
   }
 
-  const generateRecuPDF = useCallback(() => {
+  const buildRecuData = useCallback(async () => {
     if (!result || !result.ecole) return null;
+
+    let logoBase64: string | null = null;
+    if (result.ecole.logo) {
+      try {
+        const resp = await fetch(result.ecole.logo);
+        const buf = await resp.arrayBuffer();
+        const b64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
+        const mime = resp.headers.get("content-type") || "image/png";
+        logoBase64 = `data:${mime};base64,${b64}`;
+      } catch { /* logo optionnel */ }
+    }
+
     return genererRecuInscriptionPDF({
       ecole: {
         nom: result.ecole.nom,
@@ -121,11 +133,12 @@ export function EleveForm({ classes, fraisInscriptionDefaut = 0 }: EleveFormProp
         mot_de_passe: result.mot_de_passe_provisoire,
       },
       montant_inscription: result.montant_inscription,
+      logoBase64,
     });
   }, [result]);
 
-  const handleDownloadRecu = useCallback(() => {
-    const pdfBuffer = generateRecuPDF();
+  const handleDownloadRecu = useCallback(async () => {
+    const pdfBuffer = await buildRecuData();
     if (!pdfBuffer) return;
     const blob = new Blob([pdfBuffer], { type: "application/pdf" });
     const url = URL.createObjectURL(blob);
@@ -134,10 +147,10 @@ export function EleveForm({ classes, fraisInscriptionDefaut = 0 }: EleveFormProp
     a.download = `recu-inscription-${result?.matricule}.pdf`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [generateRecuPDF, result?.matricule]);
+  }, [buildRecuData, result?.matricule]);
 
-  const handlePrintRecu = useCallback(() => {
-    const pdfBuffer = generateRecuPDF();
+  const handlePrintRecu = useCallback(async () => {
+    const pdfBuffer = await buildRecuData();
     if (!pdfBuffer) return;
     const blob = new Blob([pdfBuffer], { type: "application/pdf" });
     const url = URL.createObjectURL(blob);
@@ -148,7 +161,7 @@ export function EleveForm({ classes, fraisInscriptionDefaut = 0 }: EleveFormProp
         URL.revokeObjectURL(url);
       };
     }
-  }, [generateRecuPDF]);
+  }, [buildRecuData]);
 
   if (result) {
     return (
