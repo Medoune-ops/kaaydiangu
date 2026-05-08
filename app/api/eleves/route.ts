@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
-    if (!session || !["SUPER_ADMIN", "CENSEUR"].includes(session.user.role)) {
+    if (!session || !["SUPER_ADMIN", "CENSEUR", "COMPTABLE"].includes(session.user.role)) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
     }
 
