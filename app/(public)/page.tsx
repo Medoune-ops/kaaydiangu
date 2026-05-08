@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Image from "next/image";
 import { ScrollAnimateProvider } from "@/components/public/scroll-animate";
@@ -27,15 +26,7 @@ const testimonials = [
 /* ─────────────────── PAGE ─────────────────── */
 
 export default function HomePage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-
-  /* Auth redirect */
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.push("/dashboard");
-    }
-  }, [status, router, session]);
+  const { status } = useSession();
 
   /* Parallax scroll — met à jour --scroll-y pour les classes parallax-* */
   useEffect(() => {
@@ -44,14 +35,6 @@ export default function HomePage() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen bg-[#020c1b] flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-cyan-500/30 border-t-cyan-400 animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <ScrollAnimateProvider>
@@ -145,17 +128,15 @@ export default function HomePage() {
                 >
                   Nous contacter
                 </Link>
-                {status !== "authenticated" && (
-                  <Link
-                    href="/login"
-                    className="btn-primary h-[52px] px-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold text-[16px] hover:from-cyan-300 hover:to-teal-300 shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50"
-                  >
-                    Accéder à mon espace
-                    <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </Link>
-                )}
+                <Link
+                  href={status === "authenticated" ? "/dashboard" : "/login"}
+                  className="btn-primary h-[52px] px-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-400 to-teal-400 text-[#020c1b] font-bold text-[16px] hover:from-cyan-300 hover:to-teal-300 shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50"
+                >
+                  {status === "authenticated" ? "Mon espace" : "Accéder à mon espace"}
+                  <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
               </div>
 
               {/* Trust badges */}
