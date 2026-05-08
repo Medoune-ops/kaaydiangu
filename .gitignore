@@ -49,3 +49,6 @@ yarn-error.log*
 next-env.d.ts
 
 /app/generated/prisma
+
+# Tests de charge — résultats générés (rapports HTML, JSON)
+/tests/load/results/
