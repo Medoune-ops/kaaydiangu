@@ -1,0 +1,324 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Artillery — Test de charge HTTP — Kaaydiangu / Mon École
+#
+# Installation : npm install -g artillery
+# Usage :
+#   artillery run tests/load/artillery-config.yml                       # test complet
+#   artillery run --environment staging tests/load/artillery-config.yml # env staging
+#   artillery run --output tests/load/results/artillery-report.json tests/load/artillery-config.yml
+#   artillery report tests/load/results/artillery-report.json           # HTML
+# ─────────────────────────────────────────────────────────────────────────────
+
+config:
+  # URL de base — surcharger avec --target ou variable d'env TARGET_URL
+  target: "http://localhost:3000"
+
+  # Variables globales accessibles dans les scénarios via {{ nomVariable }}
+  variables:
+    email_comptable: "comptable@monecole.sn"
+    password: "password123"
+    email_censeur: "censeur@monecole.sn"
+    email_admin: "admin@monecole.sn"
+
+  # Configuration HTTP
+  http:
+    timeout: 10          # secondes
+    maxSockets: 50       # connexions simultanées max
+    # Suivre les redirects (important pour NextAuth)
+    followRedirects: true
+
+  # Plugins activés
+  plugins:
+    expect: {}           # assertions de réponse
+    metrics-by-endpoint: {}  # métriques par endpoint
+
+  # Phases de charge (défaut = load test)
+  phases:
+    # Phase 1 — Smoke test : 1 utilisateur, 30 secondes
+    - name: "smoke"
+      duration: 30
+      arrivalRate: 1
+
+    # Phase 2 — Montée en charge : 0 → 20 req/s en 2 minutes
+    - name: "ramp_up"
+      duration: 120
+      arrivalRate: 1
+      rampTo: 20
+
+    # Phase 3 — Charge soutenue : 20 req/s pendant 5 minutes
+    - name: "sustained_load"
+      duration: 300
+      arrivalRate: 20
+
+    # Phase 4 — Descente : 20 → 0 req/s en 1 minute
+    - name: "ramp_down"
+      duration: 60
+      arrivalRate: 20
+      rampTo: 0
+
+  # Seuils d'acceptation (test échoue si dépassés)
+  ensure:
+    thresholds:
+      - "http.response_time.p95": 500   # p95 < 500 ms
+      - "http.response_time.p99": 1000  # p99 < 1 s
+    conditions:
+      - expression: "http.codes.2xx > 0"
+        description: "Au moins une réponse 2xx attendue"
+
+  # Environnements alternatifs
+  environments:
+    staging:
+      target: "https://kaaydiangu-staging.vercel.app"
+      phases:
+        - name: "smoke"
+          duration: 60
+          arrivalRate: 2
+
+    production:
+      target: "https://kaaydiangu.vercel.app"
+      phases:
+        - name: "smoke"
+          duration: 30
+          arrivalRate: 1
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Scénarios de test
+# ─────────────────────────────────────────────────────────────────────────────
+
+scenarios:
+  # ── Scénario 1 : Navigation publique (70 % du trafic) ─────────────────────
+  - name: "Navigation publique"
+    weight: 70
+    flow:
+      # Page d'accueil
+      - get:
+          url: "/"
+          expect:
+            - statusCode: 200
+          capture:
+            - header: "content-type"
+              as: "contentType"
+
+      - think: 1
+
+      # Liste publique des élèves en retard de paiement
+      - get:
+          url: "/api/impayes"
+          expect:
+            - statusCode: 200
+            - contentType: json
+          capture:
+            - json: "$.active"
+              as: "impayesActive"
+
+      - think: 2
+
+      # Page de login
+      - get:
+          url: "/login"
+          expect:
+            - statusCode: 200
+
+      - think: 1
+
+  # ── Scénario 2 : Workflow Comptable (20 % du trafic) ──────────────────────
+  - name: "Workflow Comptable"
+    weight: 20
+    flow:
+      # Récupérer le token CSRF (NextAuth)
+      - get:
+          url: "/api/auth/csrf"
+          capture:
+            - json: "$.csrfToken"
+              as: "csrfToken"
+          expect:
+            - statusCode: 200
+
+      # Login comptable
+      - post:
+          url: "/api/auth/callback/credentials"
+          json:
+            csrfToken: "{{ csrfToken }}"
+            email: "{{ email_comptable }}"
+            password: "{{ password }}"
+            redirect: "false"
+            callbackUrl: "http://localhost:3000/dashboard"
+            json: "true"
+          capture:
+            - header: "set-cookie"
+              as: "sessionCookie"
+          expect:
+            - statusCode:
+                - 200
+                - 302
+
+      - think: 1
+
+      # Statistiques comptabilité
+      - get:
+          url: "/api/comptabilite/stats"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          expect:
+            - statusCode:
+                - 200
+                - 403
+            - contentType: json
+
+      - think: 1
+
+      # Liste des dépenses du mois courant
+      - get:
+          url: "/api/depenses?page=1&limit=20"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          expect:
+            - statusCode:
+                - 200
+                - 403
+
+      - think: 1
+
+      # Impayés comptable
+      - get:
+          url: "/api/impayes/comptable"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          expect:
+            - statusCode:
+                - 200
+                - 403
+
+      - think: 1
+
+      # Liste des élèves (pagination)
+      - get:
+          url: "/api/eleves?page=1&limit=20"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          expect:
+            - statusCode:
+                - 200
+                - 403
+
+      - think: 1
+
+      # Recherche de paiements
+      - get:
+          url: "/api/paiements/recherche?q=diallo"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          expect:
+            - statusCode:
+                - 200
+                - 403
+
+      - think: 2
+
+      # Notifications
+      - get:
+          url: "/api/notifications"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          expect:
+            - statusCode: 200
+            - contentType: json
+
+      - think: 1
+
+  # ── Scénario 3 : Workflow Censeur (10 % du trafic) ────────────────────────
+  - name: "Workflow Censeur"
+    weight: 10
+    flow:
+      # CSRF
+      - get:
+          url: "/api/auth/csrf"
+          capture:
+            - json: "$.csrfToken"
+              as: "csrfToken"
+
+      # Login censeur
+      - post:
+          url: "/api/auth/callback/credentials"
+          json:
+            csrfToken: "{{ csrfToken }}"
+            email: "{{ email_censeur }}"
+            password: "{{ password }}"
+            redirect: "false"
+            callbackUrl: "http://localhost:3000/dashboard"
+            json: "true"
+          capture:
+            - header: "set-cookie"
+              as: "sessionCookie"
+
+      - think: 1
+
+      # Classes de l'école
+      - get:
+          url: "/api/classes"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          expect:
+            - statusCode:
+                - 200
+                - 403
+
+      - think: 1
+
+      # Matières du censeur
+      - get:
+          url: "/api/censeur/matieres"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          expect:
+            - statusCode:
+                - 200
+                - 403
+
+      - think: 1
+
+      # Liste des élèves
+      - get:
+          url: "/api/eleves?page=1&limit=20"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          expect:
+            - statusCode:
+                - 200
+                - 403
+
+      - think: 1
+
+      # Absences récentes
+      - get:
+          url: "/api/absences?page=1&limit=20"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          expect:
+            - statusCode:
+                - 200
+                - 403
+
+      - think: 1
+
+      # Emploi du temps
+      - get:
+          url: "/api/emplois-du-temps"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          expect:
+            - statusCode:
+                - 200
+                - 403
+
+      - think: 1
+
+      # Notifications
+      - get:
+          url: "/api/notifications"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          expect:
+            - statusCode: 200
+
+      - think: 2

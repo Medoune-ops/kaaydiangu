@@ -15,6 +15,7 @@ const PAGE_TITLES: Record<string, { title: string; description?: string; icon?: 
   "/dashboard/comptable/depenses":      { title: "Dépenses",              description: "Gestion des dépenses" },
   "/dashboard/censeur":                 { title: "Scolarité",             description: "Vue d'ensemble de la scolarité" },
   "/dashboard/censeur/eleves":          { title: "Gestion des élèves",    description: "Liste et suivi des élèves" },
+  "/dashboard/censeur/eleves/nouveau":  { title: "Nouvel élève",           description: "Inscrire un élève dans l'établissement" },
   "/dashboard/censeur/notes":           { title: "Saisie des notes",      description: "Enregistrer les notes par séquence",   icon: <BookOpen size={18} /> },
   "/dashboard/censeur/bulletins":       { title: "Bulletins",             description: "Génération des bulletins" },
   "/dashboard/censeur/absences":        { title: "Absences",              description: "Suivi des absences" },

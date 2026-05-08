@@ -9,7 +9,14 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "npx tsx prisma/seed.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:load": "node tests/load/autocannon-test.js",
+    "test:load:quick": "node tests/load/autocannon-test.js --quick",
+    "test:load:public": "node tests/load/autocannon-test.js --scenario public",
+    "test:load:k6": "k6 run tests/load/k6-load-test.js",
+    "test:load:k6:smoke": "k6 run --env SCENARIO=smoke tests/load/k6-load-test.js",
+    "test:load:k6:stress": "k6 run --env SCENARIO=stress tests/load/k6-load-test.js",
+    "test:load:artillery": "artillery run tests/load/artillery-config.yml"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
@@ -58,6 +65,7 @@
     "lint-staged": "^16.4.0",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "autocannon": "^7.15.0"
   }
 }

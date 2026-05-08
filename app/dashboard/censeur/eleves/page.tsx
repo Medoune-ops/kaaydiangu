@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { UserPlus } from "lucide-react";
 import { TableauEleves } from "@/components/dashboard/tableau-eleves";
 
 export const dynamic = "force-dynamic";
@@ -22,6 +23,13 @@ export default async function CenseurElevesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm text-neutral-500">{eleves.length} élève(s) inscrit(s)</p>
+        <Link
+          href="/dashboard/censeur/eleves/nouveau"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-xl shadow-sm shadow-indigo-500/20 transition-colors"
+        >
+          <UserPlus size={15} />
+          Nouvel élève
+        </Link>
       </div>
 
       {eleves.length === 0 ? (
