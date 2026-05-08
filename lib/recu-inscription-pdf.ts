@@ -171,8 +171,9 @@ export function genererRecuInscriptionPDF(data: RecuInscriptionData): ArrayBuffe
   doc.text("BÉNÉFICIAIRE", c1 + colW / 2, infoY + 5.8, { align: "center" });
   doc.text("INSCRIPTION", c2 + colW / 2, infoY + 5.8, { align: "center" });
 
-  // Helper champ — auto-shrink pour éviter les dépassements
+  // Helper champ — auto-shrink + 2e ligne si le texte déborde
   const field = (x: number, y: number, label: string, value: string) => {
+    const safeValue = String(value ?? "");
     setTxt(doc, SLATE400);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(6);
@@ -182,12 +183,16 @@ export function genererRecuInscriptionPDF(data: RecuInscriptionData): ArrayBuffe
     const maxW = colW - 6;
     let fs = 8.2;
     doc.setFontSize(fs);
-    while (doc.getTextWidth(value) > maxW && fs > 6) {
+    while (doc.getTextWidth(safeValue) > maxW && fs > 6) {
       fs -= 0.3;
       doc.setFontSize(fs);
     }
-    const lines = doc.splitTextToSize(value, maxW);
-    doc.text(lines[0] as string, x + 3, y + 4.5);
+    const lines = doc.splitTextToSize(safeValue, maxW) as string[];
+    doc.text(lines[0], x + 3, y + 4.5);
+    if (lines.length > 1) {
+      doc.setFontSize(Math.min(fs, 7));
+      doc.text(lines[1], x + 3, y + 8.2);
+    }
   };
 
   // Colonne gauche : élève
@@ -228,7 +233,7 @@ export function genererRecuInscriptionPDF(data: RecuInscriptionData): ArrayBuffe
   setFill(doc, CRED_BG);
   setDraw(doc, CRED_ACCENT);
   doc.setLineWidth(0.4);
-  doc.roundedRect(M, credY, pw - M * 2, 36, 2, 2, "FD");
+  doc.roundedRect(M, credY, pw - M * 2, 40, 2, 2, "FD");
 
   // En-tête identifiants
   setFill(doc, CRED_HDR);
@@ -260,7 +265,7 @@ export function genererRecuInscriptionPDF(data: RecuInscriptionData): ArrayBuffe
   }
   doc.text(data.credentials.email, credVX, cy2);
 
-  // Champ mot de passe
+  // Champ mot de passe — auto-shrink identique au champ email
   cy2 += 8;
   setTxt(doc, SLATE400);
   doc.setFont("helvetica", "normal");
@@ -268,7 +273,12 @@ export function genererRecuInscriptionPDF(data: RecuInscriptionData): ArrayBuffe
   doc.text("MOT DE PASSE :", credLX, cy2);
   setTxt(doc, RED);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
+  let pwdFs = 10;
+  doc.setFontSize(pwdFs);
+  while (doc.getTextWidth(data.credentials.mot_de_passe) > credMaxW && pwdFs > 6) {
+    pwdFs -= 0.3;
+    doc.setFontSize(pwdFs);
+  }
   doc.text(data.credentials.mot_de_passe, credVX, cy2);
 
   // Avertissement mot de passe provisoire
@@ -285,7 +295,7 @@ export function genererRecuInscriptionPDF(data: RecuInscriptionData): ArrayBuffe
   doc.text("Conservez ce document en lieu sûr.", pw / 2, cy2 + 8.5, { align: "center" });
 
   // ─── ZONE BAS (tampon + signature) ────────────────────────────────────────
-  const botY = credY + 36 + 4; // 174
+  const botY = credY + 40; // 174
 
   // Tampon INSCRIT
   const stX = M + 14;
@@ -312,13 +322,13 @@ export function genererRecuInscriptionPDF(data: RecuInscriptionData): ArrayBuffe
   setDraw(doc, SLATE200);
   doc.setLineWidth(0.3);
   doc.setLineDashPattern([1.5, 1], 0);
-  doc.roundedRect(sigX, sigY, 42, 20, 2, 2, "FD");
+  doc.roundedRect(sigX, sigY, 42, 18, 2, 2, "FD");
   doc.setLineDashPattern([], 0);
   setTxt(doc, SLATE400);
   doc.setFont("helvetica", "italic");
   doc.setFontSize(6.5);
-  doc.text("Cachet et signature", sigX + 21, sigY + 11, { align: "center" });
-  doc.text("de l'établissement", sigX + 21, sigY + 16, { align: "center" });
+  doc.text("Cachet et signature", sigX + 21, sigY + 9, { align: "center" });
+  doc.text("de l'établissement", sigX + 21, sigY + 14, { align: "center" });
 
   // ─── FOOTER ────────────────────────────────────────────────────────────────
   const footY = ph - 14;

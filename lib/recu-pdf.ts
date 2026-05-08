@@ -192,8 +192,9 @@ export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
   doc.text("BÉNÉFICIAIRE", c1 + colW / 2, infoY + 5.8, { align: "center" });
   doc.text("DÉTAILS", c2 + colW / 2, infoY + 5.8, { align: "center" });
 
-  // Field helper — auto-shrinks font to prevent overflow
+  // Field helper — auto-shrinks font + wraps on 2nd line if needed
   const field = (x: number, y: number, label: string, value: string) => {
+    const safeValue = String(value ?? "");
     setTxt(doc, SLATE400);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(6);
@@ -203,12 +204,16 @@ export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
     const maxW = colW - 6;
     let fs = 8.2;
     doc.setFontSize(fs);
-    while (doc.getTextWidth(value) > maxW && fs > 6) {
+    while (doc.getTextWidth(safeValue) > maxW && fs > 6) {
       fs -= 0.3;
       doc.setFontSize(fs);
     }
-    const lines = doc.splitTextToSize(value, maxW);
-    doc.text(lines[0] as string, x + 3, y + 4.5);
+    const lines = doc.splitTextToSize(safeValue, maxW) as string[];
+    doc.text(lines[0], x + 3, y + 4.5);
+    if (lines.length > 1) {
+      doc.setFontSize(Math.min(fs, 7));
+      doc.text(lines[1], x + 3, y + 8.2);
+    }
   };
 
   // Left: student
