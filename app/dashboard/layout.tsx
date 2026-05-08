@@ -5,6 +5,7 @@ import { NotificationBell } from "@/components/dashboard/notification-bell";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { MainWrapper } from "@/components/dashboard/main-wrapper";
+import { TabSessionGuard } from "@/components/dashboard/tab-session-guard";
 
 export default async function DashboardLayout({
   children,
@@ -19,6 +20,7 @@ export default async function DashboardLayout({
 
   return (
     <ToastProvider>
+      <TabSessionGuard>
       <div
         className="min-h-screen"
         style={{
@@ -57,6 +59,7 @@ export default async function DashboardLayout({
           </main>
         </MainWrapper>
       </div>
+      </TabSessionGuard>
     </ToastProvider>
   );
 }
