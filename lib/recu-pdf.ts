@@ -174,7 +174,7 @@ export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
   const colW  = (pw - M * 2 - 3) / 2;  // ~62.5 mm each
   const c1    = M;
   const c2    = M + colW + 3;
-  const rowH  = 38;
+  const rowH  = 46;
 
   setFill(doc, SLATE50);
   setDraw(doc, SLATE200);
