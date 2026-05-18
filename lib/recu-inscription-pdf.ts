@@ -31,6 +31,7 @@ function fmt(n: number): string {
 // ─── Palette ───────────────────────────────────────────────────────────────
 type RGB = [number, number, number];
 const SLATE900: RGB = [15, 23, 42];
+const SLATE600: RGB = [71, 85, 105];
 const SLATE400: RGB = [148, 163, 184];
 const SLATE200: RGB = [226, 232, 240];
 const SLATE50: RGB  = [248, 250, 252];
@@ -151,32 +152,26 @@ export function genererRecuInscriptionPDF(data: RecuInscriptionData): ArrayBuffe
   const dateStr = new Date(data.eleve.date_inscription).toLocaleDateString("fr-FR", {
     day: "2-digit", month: "2-digit", year: "numeric",
   });
-  setTxt(doc, [71, 85, 105] as RGB);
+  setTxt(doc, SLATE600);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8.5);
   doc.text(`Date d'inscription : ${dateStr}`, M, banY + 18);
 
   // ─── TWO-COLUMN INFO (y 85–140, rowH=55) ──────────────────────────────────
   //
-  // Layout inside each 55mm-tall box:
+  // Layout inside each 55mm-tall box (fieldStep=13mm):
   //   ├─ infoY+3   : column header pill top
   //   ├─ infoY+12  : column header pill bottom
-  //   ├─ infoY+16  : field 1 label baseline
-  //   ├─ infoY+22  : field 1 value line-1 baseline
-  //   ├─ infoY+27  : field 1 value line-2 baseline  (if fits)
-  //   ├─ infoY+29  : field 2 label baseline
-  //   ├─ infoY+35  : field 2 value line-1 baseline
-  //   ├─ infoY+40  : field 2 value line-2 baseline  (if fits)
-  //   ├─ infoY+42  : field 3 label baseline
-  //   ├─ infoY+48  : field 3 value line-1 baseline   (colBoxBottom = infoY+51)
-  //   └─ infoY+53  : field 3 value line-2 — guard rejects (> colBoxBottom)
+  //   ├─ infoY+16  : field 1 label  | value at +6 → bottom ~+9.5mm
+  //   ├─ infoY+29  : field 2 label  | value at +6 → bottom ~+9.5mm
+  //   ├─ infoY+42  : field 3 label  | value at +6 → bottom ~+9.5mm
+  //   (line-2 suppressed — step 13mm too tight: visual bottom y+14.5 > next label y+13)
   //
   const infoY  = 85;
   const colW   = (pw - M * 2 - 6) / 2; // 87 mm each column
   const c1     = M;
   const c2     = M + colW + 6;
   const rowH   = 55;
-  const colBoxBottom = infoY + rowH - 4; // infoY+51
 
   setFill(doc, SLATE50);
   setDraw(doc, SLATE200);
@@ -193,6 +188,8 @@ export function genererRecuInscriptionPDF(data: RecuInscriptionData): ArrayBuffe
   doc.text("BÉNÉFICIAIRE", c1 + colW / 2, infoY + 8.8, { align: "center" });
   doc.text("INSCRIPTION",  c2 + colW / 2, infoY + 8.8, { align: "center" });
 
+  // line-2 intentionally suppressed: 13mm field step leaves only 2mm between
+  // the value text bottom (~y+9.5) and the next label (y+13) — not enough for a second line
   const field = (x: number, y: number, label: string, value: string) => {
     const safe = String(value ?? "");
     setTxt(doc, SLATE400);
@@ -206,10 +203,6 @@ export function genererRecuInscriptionPDF(data: RecuInscriptionData): ArrayBuffe
     shrinkToFit(doc, safe, maxW, 10, 7);
     const lines = doc.splitTextToSize(safe, maxW) as string[];
     doc.text(lines[0], x + 4, y + 6);
-    if (lines.length > 1 && y + 11 <= colBoxBottom) {
-      doc.setFontSize(8.5);
-      doc.text(lines[1], x + 4, y + 11);
-    }
   };
 
   // Left — student
