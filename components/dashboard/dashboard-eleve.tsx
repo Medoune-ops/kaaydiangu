@@ -338,35 +338,61 @@ export function DashboardEleve() {
             <div className="w-1.5 h-5 rounded-full bg-gradient-to-b from-emerald-500 to-teal-500" />
             <h3 className="text-[0.875rem] font-bold text-slate-800 tracking-tight">Ma situation financière</h3>
           </div>
-          <Wallet size={14} className="text-slate-300" />
+          <div className="flex items-center gap-3">
+            <span className="text-[0.72rem] font-semibold text-slate-400">
+              {paiementsPayes}/{data.paiements.length} payés
+            </span>
+            <Wallet size={14} className="text-slate-300" />
+          </div>
         </div>
-        <div className="p-5">
+
+        {/* Progress bar */}
+        {data.paiements.length > 0 && (
+          <div className="px-6 pt-4 pb-1">
+            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div
+                className="h-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-700"
+                style={{ width: `${Math.round((paiementsPayes / data.paiements.length) * 100)}%` }}
+              />
+            </div>
+            <p className="text-[0.68rem] text-slate-400 mt-1 text-right font-medium">
+              {Math.round((paiementsPayes / data.paiements.length) * 100)}% réglé
+            </p>
+          </div>
+        )}
+
+        <div className="p-5 pt-3">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
             {data.paiements.map((p) => (
               <div
                 key={p.id}
-                className={`rounded-xl border p-3.5 text-center transition-all duration-200 hover:-translate-y-0.5 ${
+                className={`relative rounded-xl border p-3.5 text-center transition-all duration-200 hover:-translate-y-0.5 ${
                   p.statut === "PAYE"
-                    ? "border-emerald-200 bg-emerald-50/50"
-                    : "border-red-200 bg-red-50/30"
+                    ? "border-emerald-200/80 bg-gradient-to-b from-emerald-50 to-emerald-50/30 shadow-[0_2px_8px_rgba(16,185,129,0.08)]"
+                    : "border-red-200/60 bg-gradient-to-b from-red-50/70 to-red-50/20"
                 }`}
               >
+                {/* Status dot */}
+                <div className={`absolute top-2 right-2 w-1.5 h-1.5 rounded-full ${
+                  p.statut === "PAYE" ? "bg-emerald-400" : "bg-red-400"
+                }`} />
+
                 <p className="text-xs font-bold text-slate-700">{MOIS_COMPLETS[p.mois]}</p>
                 <p className="text-[10px] text-slate-400">{p.annee}</p>
                 <div className="mt-2">
                   {p.statut === "PAYE" ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700">
-                      <CheckCircle2 size={10} /> Payé
+                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-emerald-100 text-emerald-700">
+                      <CheckCircle2 size={9} /> Payé
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-100 text-red-700">
-                      <XCircle size={10} /> Non payé
+                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-red-100 text-red-700">
+                      <XCircle size={9} /> Impayé
                     </span>
                   )}
                 </div>
                 {p.statut === "PAYE" && (
                   <div className="mt-2 space-y-1">
-                    <p className="text-xs font-bold text-emerald-700">
+                    <p className="text-[11px] font-black text-emerald-700 tabular-nums">
                       {p.montant.toLocaleString("fr-FR")} F
                     </p>
                     {p.recu_numero && (
@@ -374,9 +400,9 @@ export function DashboardEleve() {
                         href={`/api/paiements/recu?paiement_id=${p.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[10px] text-indigo-500 hover:text-indigo-700 font-semibold"
+                        className="inline-flex items-center gap-1 text-[9px] text-indigo-500 hover:text-indigo-700 font-bold transition-colors"
                       >
-                        <FileDown size={10} /> Reçu
+                        <FileDown size={9} /> Reçu PDF
                       </a>
                     )}
                   </div>

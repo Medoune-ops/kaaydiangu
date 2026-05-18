@@ -229,7 +229,7 @@ export async function genererRecuPDF(data: RecuData): Promise<Buffer> {
     shrinkToFit(doc, safe, maxW, 10, 7);
     const lines = doc.splitTextToSize(safe, maxW) as string[];
     doc.text(lines[0], x + 4, y + 6);
-    if (lines.length > 1 && y + 11 <= colBoxBottom) {
+    if (lines.length > 1 && y + 11 < colBoxBottom) {
       doc.setFontSize(8.5);
       doc.text(lines[1], x + 4, y + 11);
     }
