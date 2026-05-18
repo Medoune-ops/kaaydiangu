@@ -99,12 +99,12 @@ export default function AProposPage() {
       {/* ══════════════════════════════════════════════════════ */}
       {/*  HISTOIRE — Section claire avec timeline              */}
       {/* ══════════════════════════════════════════════════════ */}
-      <section className="bg-white relative overflow-hidden clip-angle-top section-lazy">
+      <section className="bg-[#f1f3f9] relative overflow-hidden clip-angle-top section-lazy">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-cyan-400/[0.04] blur-[140px] rounded-full pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 pt-28 pb-20">
           <div className="text-center mb-16 scroll-animate">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200/80 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-cyan-200/80 shadow-sm mb-6">
               <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
               <span className="text-sm font-semibold text-cyan-700 tracking-wide">Depuis 2009</span>
             </div>
@@ -139,12 +139,14 @@ export default function AProposPage() {
             </div>
 
             {/* Timeline */}
-            <div className="relative pl-8 border-l-2 border-neutral-100 space-y-10">
+            <div className="relative pl-8 border-l-2 border-neutral-200 space-y-8">
               {milestones.map((m, i) => (
                 <div key={m.year} className={`relative scroll-animate scroll-animate-delay-${i + 1}`}>
-                  <div className="absolute -left-[2.35rem] top-1 w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400 to-teal-400 shadow-lg shadow-cyan-500/30 border-2 border-white" />
-                  <div className="text-xs font-bold text-cyan-600 mb-1">{m.year}</div>
-                  <p className="text-neutral-600 text-[15px] leading-relaxed">{m.label}</p>
+                  <div className="absolute -left-[2.35rem] top-1 w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400 to-teal-400 shadow-lg shadow-cyan-500/30 border-2 border-[#f1f3f9]" />
+                  <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-[0_1px_4px_rgba(15,23,42,0.05),0_4px_16px_rgba(15,23,42,0.03)] p-5">
+                    <div className="text-xs font-bold text-cyan-600 mb-1">{m.year}</div>
+                    <p className="text-neutral-600 text-[15px] leading-relaxed">{m.label}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -198,12 +200,12 @@ export default function AProposPage() {
       {/* ══════════════════════════════════════════════════════ */}
       {/*  ÉQUIPE — Section claire                              */}
       {/* ══════════════════════════════════════════════════════ */}
-      <section className="bg-white relative overflow-hidden clip-angle-top section-lazy">
+      <section className="bg-[#f1f3f9] relative overflow-hidden clip-angle-top section-lazy">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-400/[0.04] blur-[120px] rounded-full pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 pt-28 pb-20">
           <div className="text-center mb-16 scroll-animate">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200/80 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-cyan-200/80 shadow-sm mb-6">
               <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
               <span className="text-sm font-semibold text-cyan-700 tracking-wide">Leadership</span>
             </div>
