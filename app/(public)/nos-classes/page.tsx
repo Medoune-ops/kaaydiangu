@@ -63,7 +63,7 @@ export default async function NosClassesPage() {
       {/* ══════════════════════════════════════════════════════ */}
       {/*  LISTE DES CLASSES — Section claire                   */}
       {/* ══════════════════════════════════════════════════════ */}
-      <section className="bg-white relative overflow-hidden clip-angle-top section-lazy">
+      <section className="bg-[#f1f3f9] relative overflow-hidden clip-angle-top section-lazy">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-cyan-400/[0.04] blur-[150px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-teal-400/[0.03] blur-[120px] rounded-full pointer-events-none" />
 
@@ -81,7 +81,7 @@ export default async function NosClassesPage() {
           ) : (
             <>
               <div className="text-center mb-12 scroll-animate">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200/80 mb-4">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-cyan-200/80 shadow-sm mb-4">
                   <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
                   <span className="text-sm font-semibold text-cyan-700 tracking-wide">Année scolaire 2024-2025</span>
                 </div>
