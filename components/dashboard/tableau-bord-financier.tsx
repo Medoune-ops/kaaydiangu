@@ -146,8 +146,9 @@ export function TableauBordFinancier() {
         {kpis.map((kpi) => (
           <div
             key={kpi.label}
-            className={`bg-white rounded-2xl p-5 border border-slate-100/80 border-l-4 ${kpi.border}
-              shadow-[0_1px_4px_rgba(15,23,42,0.06),0_4px_16px_rgba(15,23,42,0.04)]`}
+            className={`relative bg-white rounded-2xl p-5 border border-slate-100/80 border-l-4 ${kpi.border}
+              shadow-[0_1px_4px_rgba(15,23,42,0.06),0_4px_16px_rgba(15,23,42,0.04)]
+              hover:shadow-[0_4px_20px_rgba(15,23,42,0.10)] hover:-translate-y-0.5 transition-all duration-200`}
           >
             <div className="flex items-start justify-between mb-3 gap-2">
               <p className="text-[0.8125rem] font-semibold text-slate-500">{kpi.label}</p>
@@ -198,40 +199,44 @@ export function TableauBordFinancier() {
           </div>
           <div className="flex items-center gap-4 text-[0.72rem] font-medium">
             <span className="flex items-center gap-1.5 text-slate-500">
-              <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block" /> Recettes
+              <span className="w-3 h-3 rounded bg-gradient-to-t from-emerald-600 to-emerald-400 inline-block shadow-sm" /> Recettes
             </span>
             <span className="flex items-center gap-1.5 text-slate-500">
-              <span className="w-2.5 h-2.5 rounded-sm bg-red-400 inline-block" /> Dépenses
+              <span className="w-3 h-3 rounded bg-gradient-to-t from-red-500 to-red-300 inline-block shadow-sm" /> Dépenses
             </span>
           </div>
         </div>
         <div className="px-6 py-5 overflow-x-auto">
-          <div className="flex items-end gap-2 min-w-[700px]" style={{ height: 220 }}>
+          <div className="flex items-end gap-3 min-w-[600px]" style={{ height: 230 }}>
             {data.historique.map((h) => {
-              const rH = maxBar > 0 ? (h.recettes / maxBar) * 180 : 0;
-              const dH = maxBar > 0 ? (h.depenses / maxBar) * 180 : 0;
+              const rH = maxBar > 0 ? (h.recettes / maxBar) * 190 : 0;
+              const dH = maxBar > 0 ? (h.depenses / maxBar) * 190 : 0;
 
               return (
                 <div key={h.label} className="flex-1 flex flex-col items-center gap-1">
-                  <div className="flex items-end gap-1" style={{ height: 180 }}>
+                  <div className="flex items-end gap-1.5" style={{ height: 190 }}>
                     <div
-                      className="w-4 bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md transition-all hover:from-emerald-700 hover:to-emerald-500 relative group cursor-pointer"
-                      style={{ height: Math.max(rH, 3) }}
+                      className="flex-1 bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-lg
+                        hover:from-emerald-700 hover:to-emerald-500 hover:shadow-[0_4px_12px_rgba(16,185,129,0.35)]
+                        relative group cursor-pointer transition-all duration-200"
+                      style={{ height: Math.max(rH, 4), minWidth: 12 }}
                     >
-                      <div className="absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-lg z-10">
+                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2.5 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-xl z-10 border border-slate-700/50">
                         {formatFCFA(h.recettes)}
                       </div>
                     </div>
                     <div
-                      className="w-4 bg-gradient-to-t from-red-500 to-red-300 rounded-t-md transition-all hover:from-red-600 hover:to-red-400 relative group cursor-pointer"
-                      style={{ height: Math.max(dH, 3) }}
+                      className="flex-1 bg-gradient-to-t from-red-500 to-rose-300 rounded-t-lg
+                        hover:from-red-600 hover:to-rose-400 hover:shadow-[0_4px_12px_rgba(239,68,68,0.30)]
+                        relative group cursor-pointer transition-all duration-200"
+                      style={{ height: Math.max(dH, 4), minWidth: 12 }}
                     >
-                      <div className="absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-lg z-10">
+                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2.5 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-xl z-10 border border-slate-700/50">
                         {formatFCFA(h.depenses)}
                       </div>
                     </div>
                   </div>
-                  <span className="text-[10px] text-slate-400 font-medium text-center leading-tight mt-1">
+                  <span className="text-[10px] text-slate-400 font-semibold text-center leading-tight mt-1.5">
                     {h.label}
                   </span>
                 </div>
