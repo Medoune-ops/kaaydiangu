@@ -31,7 +31,7 @@ const contactInfo = [
   },
 ];
 
-const inputCls = "w-full h-12 bg-neutral-50 border border-neutral-200 rounded-xl px-4 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all duration-250 text-[15px]";
+const inputCls = "w-full h-12 bg-white border border-neutral-200 rounded-xl px-4 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all duration-250 text-[15px] shadow-sm";
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -78,7 +78,7 @@ export default function ContactPage() {
       {/* ══════════════════════════════════════════════════════ */}
       {/*  INFOS + FORMULAIRE — Section claire                  */}
       {/* ══════════════════════════════════════════════════════ */}
-      <section className="bg-white relative overflow-hidden clip-angle-top section-lazy">
+      <section className="bg-[#f1f3f9] relative overflow-hidden clip-angle-top section-lazy">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-cyan-400/[0.04] blur-[150px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-teal-400/[0.03] blur-[120px] rounded-full pointer-events-none" />
 
@@ -88,7 +88,7 @@ export default function ContactPage() {
             {/* ── Infos contact ── */}
             <div className="space-y-10 scroll-animate">
               <div>
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200/80 mb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-cyan-200/80 shadow-sm mb-6">
                   <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
                   <span className="text-sm font-semibold text-cyan-700 tracking-wide">Coordonnées</span>
                 </div>
@@ -181,7 +181,7 @@ export default function ContactPage() {
                         placeholder="Votre message..."
                         rows={4}
                         required
-                        className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all duration-250 resize-none text-[15px]"
+                        className="w-full bg-white border border-neutral-200 rounded-xl px-4 py-3 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all duration-250 resize-none text-[15px] shadow-sm"
                       />
                     </div>
                     <button type="submit" className="group relative w-full h-12 rounded-xl text-white font-semibold overflow-hidden btn-primary">
