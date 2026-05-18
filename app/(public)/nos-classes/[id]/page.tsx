@@ -91,12 +91,12 @@ export default async function ClasseDetailPage({
       {/* ══════════════════════════════════════════════════════ */}
       {/*  MATIÈRES — Section claire                            */}
       {/* ══════════════════════════════════════════════════════ */}
-      <section className="bg-white relative overflow-hidden clip-angle-top section-lazy">
+      <section className="bg-[#f1f3f9] relative overflow-hidden clip-angle-top section-lazy">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-400/[0.04] blur-[140px] rounded-full pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 pt-28 pb-12">
           <div className="mb-10 scroll-animate">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200/80 mb-5">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-cyan-200/80 shadow-sm mb-5">
               <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
               <span className="text-sm font-semibold text-cyan-700 tracking-wide">Programme</span>
             </div>
@@ -108,18 +108,19 @@ export default async function ClasseDetailPage({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {classe.matieres.map((m, i) => (
-              <div key={m.id} className={`gradient-border p-6 group hover:-translate-y-1 scroll-animate scroll-animate-delay-${(i % 3) + 1}`}>
+              <div key={m.id} className={`relative bg-white rounded-2xl border border-neutral-200/80 shadow-[0_1px_4px_rgba(15,23,42,0.05),0_4px_16px_rgba(15,23,42,0.03)] p-6 group hover:-translate-y-1 transition-all duration-300 overflow-hidden scroll-animate scroll-animate-delay-${(i % 3) + 1}`}>
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-500 to-teal-500" />
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="font-bold text-neutral-900 text-[15px] group-hover:text-cyan-700 transition-colors duration-200">{m.nom}</h3>
                   <span className="shrink-0 text-xs font-bold text-cyan-700 bg-cyan-50 border border-cyan-200 rounded-lg px-2.5 py-1">
                     Coef. {m.coefficient}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-neutral-100">
                   <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500/15 to-teal-500/10 border border-cyan-200/50 flex items-center justify-center shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-cyan-600"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                   </div>
-                  <p className="text-neutral-500 text-[14px]">
+                  <p className="text-neutral-500 text-[13px]">
                     {m.professeur
                       ? `${m.professeur.prenom} ${m.professeur.nom}`
                       : "Professeur non assigné"}
@@ -165,7 +166,7 @@ export default async function ClasseDetailPage({
       {/* ══════════════════════════════════════════════════════ */}
       {/*  RETOUR + CTA — Section claire                        */}
       {/* ══════════════════════════════════════════════════════ */}
-      <section className="bg-white clip-angle-top relative overflow-hidden section-lazy">
+      <section className="bg-[#f1f3f9] clip-angle-top relative overflow-hidden section-lazy">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-28 pb-20 flex flex-col sm:flex-row items-center justify-between gap-6 scroll-animate">
           <Link
             href="/nos-classes"
