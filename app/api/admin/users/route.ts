@@ -36,7 +36,8 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = req.nextUrl;
   const page = searchParams.get("page");
-  const limit = parseInt(searchParams.get("limit") || "20");
+  const rawLimit = parseInt(searchParams.get("limit") || "20");
+  const limit = isNaN(rawLimit) ? 20 : Math.min(rawLimit, 100);
 
   if (page) {
     const pageNum = parseInt(page);

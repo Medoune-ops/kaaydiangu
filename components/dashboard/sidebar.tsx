@@ -25,6 +25,7 @@ import {
   BarChart3,
   PanelLeftClose,
   PanelLeftOpen,
+  FileDown,
 } from "lucide-react";
 
 interface NavItem {
@@ -54,6 +55,7 @@ const NAV_CONFIG: Record<string, { roleLabel: string; groups: NavGroup[] }> = {
           { label: "Équipe", href: "/dashboard/admin/equipe", icon: <Users size={18} /> },
           { label: "Configuration", href: "/dashboard/admin/configuration", icon: <Settings size={18} /> },
           { label: "Journal d'audit", href: "/dashboard/admin/audit", icon: <Shield size={18} /> },
+          { label: "Bilan annuel", href: "/dashboard/admin/bilan-annuel", icon: <FileDown size={18} /> },
         ],
       },
     ],

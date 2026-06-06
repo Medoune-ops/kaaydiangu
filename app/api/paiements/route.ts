@@ -17,12 +17,36 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "eleve_id requis" }, { status: 400 });
     }
 
+    // Un ELEVE ne peut voir que ses propres paiements
+    if (session.user.role === "ELEVE") {
+      const eleve = await prisma.eleve.findFirst({
+        where: { id: eleveId, user_id: session.user.id },
+      });
+      if (!eleve) {
+        return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+      }
+    } else if (!["SUPER_ADMIN", "COMPTABLE"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    } else {
+      // SUPER_ADMIN / COMPTABLE : vérifier que l'élève appartient à leur école
+      const eleve = await prisma.eleve.findFirst({
+        where: { id: eleveId, classe: { ecole_id: session.user.ecoleId } },
+      });
+      if (!eleve) {
+        return NextResponse.json({ error: "Élève introuvable" }, { status: 404 });
+      }
+    }
+
     const where = { eleve_id: eleveId };
     const page = searchParams.get("page");
-    const limit = parseInt(searchParams.get("limit") || "20");
+    const rawLimit = parseInt(searchParams.get("limit") || "20");
+    const limit = isNaN(rawLimit) ? 20 : Math.min(rawLimit, 100);
 
     if (page) {
       const pageNum = parseInt(page);
+      if (isNaN(pageNum) || pageNum < 1) {
+        return NextResponse.json({ error: "page invalide" }, { status: 400 });
+      }
       const skip = (pageNum - 1) * limit;
 
       const [data, total] = await Promise.all([
