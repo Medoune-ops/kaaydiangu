@@ -1,14 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  TrendingUp,
-  TrendingDown,
-  Wallet,
-  Clock,
-  Download,
-  FileText,
-} from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, Clock, Download, FileText, Users, BookOpen } from "lucide-react";
 
 interface HistoriqueItem {
   label: string;
@@ -17,21 +10,36 @@ interface HistoriqueItem {
 }
 
 interface StatsData {
+  // Mois courant
   recettes_mois: number;
   depenses_mois: number;
   solde_net: number;
   taux_recouvrement: number;
   mensualites_total: number;
   mensualites_payees: number;
+  // Annuel
+  total_inscriptions: number;
+  nb_inscriptions_payees: number;
+  total_mensualites_annee: number;
+  nb_mensualites_payees_annee: number;
+  nb_mensualites_total_annee: number;
+  total_depenses_annee: number;
+  solde_annee: number;
+  nb_eleves: number;
   historique: HistoriqueItem[];
 }
 
 function formatFCFA(n: number) {
-  return n.toLocaleString("fr-FR") + " FCFA";
+  return n.toLocaleString("fr-FR") + " F";
 }
 
 const MOIS_SELECT = [
   "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
+];
+
+const MOIS_NOMS = [
+  "", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
   "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
 ];
 
@@ -70,75 +78,106 @@ export function TableauBordFinancier() {
     );
   if (!data) return <p className="text-sm text-red-500">Erreur de chargement.</p>;
 
-  const maxBar = Math.max(
-    ...data.historique.map((h) => Math.max(h.recettes, h.depenses)),
-    1
-  );
+  const maxBar = Math.max(...data.historique.map((h) => Math.max(h.recettes, h.depenses)), 1);
+  const moisNom = MOIS_NOMS[new Date().getMonth() + 1];
 
   return (
     <div className="space-y-6">
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="dash-kpi p-5" style={{ "--kpi-accent": "#22c55e" } as React.CSSProperties}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+
+      {/* ── Section annuelle ── */}
+      <div>
+        <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-3">Année scolaire 2025 – 2026</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+          <div className="dash-kpi p-5" style={{ "--kpi-accent": "#6366f1" } as React.CSSProperties}>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 mb-3">
+              <BookOpen size={19} className="text-white" />
+            </div>
+            <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Inscriptions</p>
+            <p className="dash-kpi-value text-xl mt-1">{formatFCFA(data.total_inscriptions)}</p>
+            <p className="text-xs text-neutral-400 mt-0.5">{data.nb_inscriptions_payees} élèves inscrits</p>
+          </div>
+
+          <div className="dash-kpi p-5" style={{ "--kpi-accent": "#22c55e" } as React.CSSProperties}>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/30 mb-3">
               <TrendingUp size={19} className="text-white" />
             </div>
+            <p className="text-xs text-emerald-600 uppercase tracking-wider font-semibold">Mensualités perçues</p>
+            <p className="dash-kpi-value text-xl mt-1">{formatFCFA(data.total_mensualites_annee)}</p>
+            <p className="text-xs text-neutral-400 mt-0.5">{data.nb_mensualites_payees_annee}/{data.nb_mensualites_total_annee} mois payés</p>
           </div>
-          <p className="text-xs text-emerald-600 uppercase tracking-wider font-semibold">Recettes du mois</p>
-          <p className="dash-kpi-value text-2xl mt-1">{formatFCFA(data.recettes_mois)}</p>
-        </div>
 
-        <div className="dash-kpi p-5" style={{ "--kpi-accent": "#ef4444" } as React.CSSProperties}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-500/30">
+          <div className="dash-kpi p-5" style={{ "--kpi-accent": "#ef4444" } as React.CSSProperties}>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-500/30 mb-3">
               <TrendingDown size={19} className="text-white" />
             </div>
+            <p className="text-xs text-red-600 uppercase tracking-wider font-semibold">Dépenses annuelles</p>
+            <p className="dash-kpi-value text-xl mt-1">{formatFCFA(data.total_depenses_annee)}</p>
           </div>
-          <p className="text-xs text-red-600 uppercase tracking-wider font-semibold">Dépenses du mois</p>
-          <p className="dash-kpi-value text-2xl mt-1">{formatFCFA(data.depenses_mois)}</p>
-        </div>
 
-        <div className="dash-kpi p-5" style={{ "--kpi-accent": data.solde_net >= 0 ? "#22c55e" : "#ef4444" } as React.CSSProperties}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg ${data.solde_net >= 0 ? "from-emerald-400 to-teal-500 shadow-emerald-500/30" : "from-red-500 to-rose-600 shadow-red-500/30"}`}>
+          <div className="dash-kpi p-5" style={{ "--kpi-accent": data.solde_annee >= 0 ? "#22c55e" : "#ef4444" } as React.CSSProperties}>
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg mb-3 ${data.solde_annee >= 0 ? "from-emerald-400 to-teal-500 shadow-emerald-500/30" : "from-red-500 to-rose-600 shadow-red-500/30"}`}>
               <Wallet size={19} className="text-white" />
             </div>
+            <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Solde annuel</p>
+            <p className="dash-kpi-value text-xl mt-1">{data.solde_annee >= 0 ? "+" : ""}{formatFCFA(data.solde_annee)}</p>
+            <p className="text-xs text-neutral-400 mt-0.5">{data.nb_eleves} élèves actifs</p>
           </div>
-          <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Solde net</p>
-          <p className="dash-kpi-value text-2xl mt-1">
-            {data.solde_net >= 0 ? "+" : ""}{formatFCFA(data.solde_net)}
-          </p>
-        </div>
-
-        <div className="dash-kpi p-5" style={{ "--kpi-accent": "#6366f1" } as React.CSSProperties}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-              <Clock size={19} className="text-white" />
-            </div>
-          </div>
-          <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Recouvrement</p>
-          <p className="dash-kpi-value text-2xl mt-1">{data.taux_recouvrement}%</p>
-          <p className="text-xs text-neutral-400 mt-0.5">
-            {data.mensualites_payees}/{data.mensualites_total} mensualités
-          </p>
         </div>
       </div>
 
-      {/* Jauge recouvrement */}
+      {/* ── Section mois courant ── */}
+      <div>
+        <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-3">{moisNom} {new Date().getFullYear()}</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+          <div className="dash-kpi p-5" style={{ "--kpi-accent": "#22c55e" } as React.CSSProperties}>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/30 mb-3">
+              <TrendingUp size={19} className="text-white" />
+            </div>
+            <p className="text-xs text-emerald-600 uppercase tracking-wider font-semibold">Recettes du mois</p>
+            <p className="dash-kpi-value text-xl mt-1">{formatFCFA(data.recettes_mois)}</p>
+          </div>
+
+          <div className="dash-kpi p-5" style={{ "--kpi-accent": "#ef4444" } as React.CSSProperties}>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-500/30 mb-3">
+              <TrendingDown size={19} className="text-white" />
+            </div>
+            <p className="text-xs text-red-600 uppercase tracking-wider font-semibold">Dépenses du mois</p>
+            <p className="dash-kpi-value text-xl mt-1">{formatFCFA(data.depenses_mois)}</p>
+          </div>
+
+          <div className="dash-kpi p-5" style={{ "--kpi-accent": data.solde_net >= 0 ? "#22c55e" : "#ef4444" } as React.CSSProperties}>
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg mb-3 ${data.solde_net >= 0 ? "from-emerald-400 to-teal-500 shadow-emerald-500/30" : "from-red-500 to-rose-600 shadow-red-500/30"}`}>
+              <Wallet size={19} className="text-white" />
+            </div>
+            <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Solde net du mois</p>
+            <p className="dash-kpi-value text-xl mt-1">{data.solde_net >= 0 ? "+" : ""}{formatFCFA(data.solde_net)}</p>
+          </div>
+
+          <div className="dash-kpi p-5" style={{ "--kpi-accent": "#6366f1" } as React.CSSProperties}>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 mb-3">
+              <Clock size={19} className="text-white" />
+            </div>
+            <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold">Recouvrement</p>
+            <p className="dash-kpi-value text-xl mt-1">{data.taux_recouvrement}%</p>
+            <p className="text-xs text-neutral-400 mt-0.5">{data.mensualites_payees}/{data.mensualites_total} mensualités</p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Jauge recouvrement ── */}
       <div className="dash-section">
         <div className="px-6 py-4 border-b border-indigo-50/80 bg-gradient-to-r from-indigo-50/40 to-transparent">
-          <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">Recouvrement du mois</h3>
+          <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">Recouvrement — {moisNom}</h3>
         </div>
         <div className="px-6 py-5">
           <div className="w-full bg-indigo-50/60 rounded-full h-7 overflow-hidden">
             <div
               className={`h-7 rounded-full flex items-center justify-center text-sm font-bold text-white transition-all duration-700 ${
-                data.taux_recouvrement >= 80
-                  ? "bg-gradient-to-r from-emerald-500 to-emerald-400"
-                  : data.taux_recouvrement >= 50
-                  ? "bg-gradient-to-r from-amber-500 to-amber-400"
-                  : "bg-gradient-to-r from-red-500 to-red-400"
+                data.taux_recouvrement >= 80 ? "bg-gradient-to-r from-emerald-500 to-emerald-400"
+                : data.taux_recouvrement >= 50 ? "bg-gradient-to-r from-amber-500 to-amber-400"
+                : "bg-gradient-to-r from-red-500 to-red-400"
               }`}
               style={{ width: `${Math.min(data.taux_recouvrement, 100)}%` }}
             >
@@ -146,59 +185,37 @@ export function TableauBordFinancier() {
             </div>
           </div>
           <div className="flex justify-between text-xs text-neutral-400 mt-1.5 px-0.5">
-            <span>0%</span>
-            <span>50%</span>
-            <span>100%</span>
+            <span>0%</span><span>50%</span><span>100%</span>
           </div>
         </div>
       </div>
 
-      {/* Graphique barres 12 mois */}
+      {/* ── Graphique 12 mois ── */}
       <div className="dash-section">
         <div className="px-6 py-4 border-b border-emerald-50/80 bg-gradient-to-r from-emerald-50/40 to-transparent">
           <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">Recettes vs Dépenses — 12 derniers mois</h3>
         </div>
         <div className="px-6 py-5">
-          <div className="flex items-center gap-6 text-sm mb-5">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-sm bg-emerald-500" />
-              <span className="text-neutral-500 text-xs font-medium">Recettes</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-sm bg-red-400" />
-              <span className="text-neutral-500 text-xs font-medium">Dépenses</span>
-            </div>
+          <div className="flex items-center gap-6 mb-5">
+            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-sm bg-emerald-500" /><span className="text-neutral-500 text-xs font-medium">Recettes</span></div>
+            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-sm bg-red-400" /><span className="text-neutral-500 text-xs font-medium">Dépenses</span></div>
           </div>
-
           <div className="overflow-x-auto">
             <div className="flex items-end gap-2 min-w-[700px]" style={{ height: 220 }}>
               {data.historique.map((h) => {
                 const rH = maxBar > 0 ? (h.recettes / maxBar) * 180 : 0;
                 const dH = maxBar > 0 ? (h.depenses / maxBar) * 180 : 0;
-
                 return (
                   <div key={h.label} className="flex-1 flex flex-col items-center gap-1">
                     <div className="flex items-end gap-0.5" style={{ height: 180 }}>
-                      <div
-                        className="w-4 bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-sm transition-all hover:from-emerald-700 hover:to-emerald-500 relative group cursor-pointer"
-                        style={{ height: Math.max(rH, 2) }}
-                      >
-                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-800 text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-lg">
-                          {formatFCFA(h.recettes)}
-                        </div>
+                      <div className="w-4 bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-sm transition-all hover:from-emerald-700 hover:to-emerald-500 relative group cursor-pointer" style={{ height: Math.max(rH, 2) }}>
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-800 text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-lg">{formatFCFA(h.recettes)}</div>
                       </div>
-                      <div
-                        className="w-4 bg-gradient-to-t from-red-500 to-red-300 rounded-t-sm transition-all hover:from-red-600 hover:to-red-400 relative group cursor-pointer"
-                        style={{ height: Math.max(dH, 2) }}
-                      >
-                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-800 text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-lg">
-                          {formatFCFA(h.depenses)}
-                        </div>
+                      <div className="w-4 bg-gradient-to-t from-red-500 to-red-300 rounded-t-sm transition-all hover:from-red-600 hover:to-red-400 relative group cursor-pointer" style={{ height: Math.max(dH, 2) }}>
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-800 text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none shadow-lg">{formatFCFA(h.depenses)}</div>
                       </div>
                     </div>
-                    <span className="text-[10px] text-neutral-400 font-medium text-center leading-tight mt-1">
-                      {h.label}
-                    </span>
+                    <span className="text-[10px] text-neutral-400 font-medium text-center leading-tight mt-1">{h.label}</span>
                   </div>
                 );
               })}
@@ -207,7 +224,7 @@ export function TableauBordFinancier() {
         </div>
       </div>
 
-      {/* Export */}
+      {/* ── Exports ── */}
       <div className="dash-section">
         <div className="px-6 py-4 border-b border-indigo-50/80 bg-gradient-to-r from-indigo-50/40 to-transparent">
           <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">Exports</h3>
@@ -216,11 +233,7 @@ export function TableauBordFinancier() {
           <div className="flex flex-wrap items-end gap-4">
             <div>
               <label className="block text-xs font-medium text-neutral-500 mb-1.5 uppercase tracking-wider">Période</label>
-              <select
-                value={exportScope}
-                onChange={(e) => setExportScope(e.target.value as "mois" | "annee")}
-                className="h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
-              >
+              <select value={exportScope} onChange={(e) => setExportScope(e.target.value as "mois" | "annee")} className="h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all">
                 <option value="mois">Mois</option>
                 <option value="annee">Année complète</option>
               </select>
@@ -228,39 +241,20 @@ export function TableauBordFinancier() {
             {exportScope === "mois" && (
               <div>
                 <label className="block text-xs font-medium text-neutral-500 mb-1.5 uppercase tracking-wider">Mois</label>
-                <select
-                  value={exportMois}
-                  onChange={(e) => setExportMois(e.target.value)}
-                  className="h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
-                >
-                  {MOIS_SELECT.map((m, i) => (
-                    <option key={i} value={String(i + 1)}>{m}</option>
-                  ))}
+                <select value={exportMois} onChange={(e) => setExportMois(e.target.value)} className="h-9 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all">
+                  {MOIS_SELECT.map((m, i) => (<option key={i} value={String(i + 1)}>{m}</option>))}
                 </select>
               </div>
             )}
             <div>
               <label className="block text-xs font-medium text-neutral-500 mb-1.5 uppercase tracking-wider">Année</label>
-              <input
-                type="number"
-                value={exportAnnee}
-                onChange={(e) => setExportAnnee(e.target.value)}
-                className="h-9 w-24 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
-              />
+              <input type="number" value={exportAnnee} onChange={(e) => setExportAnnee(e.target.value)} className="h-9 w-24 bg-neutral-50 border border-neutral-200 rounded-lg px-3 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all" />
             </div>
-            <button
-              onClick={exportExcel}
-              className="h-9 px-4 text-sm font-medium text-neutral-700 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 hover:border-neutral-300 transition-all inline-flex items-center gap-2"
-            >
-              <Download size={14} />
-              Excel (.xlsx)
+            <button onClick={exportExcel} className="h-9 px-4 text-sm font-medium text-neutral-700 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 hover:border-neutral-300 transition-all inline-flex items-center gap-2">
+              <Download size={14} />Excel (.xlsx)
             </button>
-            <button
-              onClick={exportBilanPDF}
-              className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 transition-all inline-flex items-center gap-2 shadow-sm shadow-indigo-500/20"
-            >
-              <FileText size={14} />
-              Bilan PDF
+            <button onClick={exportBilanPDF} className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-medium hover:bg-indigo-600 transition-all inline-flex items-center gap-2 shadow-sm shadow-indigo-500/20">
+              <FileText size={14} />Bilan PDF
             </button>
           </div>
         </div>
