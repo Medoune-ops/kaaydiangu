@@ -26,6 +26,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   FileDown,
+  FileSignature,
 } from "lucide-react";
 
 interface NavItem {
@@ -56,6 +57,7 @@ const NAV_CONFIG: Record<string, { roleLabel: string; groups: NavGroup[] }> = {
           { label: "Configuration", href: "/dashboard/admin/configuration", icon: <Settings size={18} /> },
           { label: "Journal d'audit", href: "/dashboard/admin/audit", icon: <Shield size={18} /> },
           { label: "Bilan annuel", href: "/dashboard/admin/bilan-annuel", icon: <FileDown size={18} /> },
+          { label: "Documents officiels", href: "/dashboard/admin/documents", icon: <FileSignature size={18} /> },
         ],
       },
     ],
