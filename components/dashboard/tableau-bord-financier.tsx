@@ -11,6 +11,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   BookOpen,
+  Printer,
 } from "lucide-react";
 
 interface HistoriqueItem {
@@ -75,6 +76,13 @@ export function TableauBordFinancier() {
     const params = new URLSearchParams({ annee: exportAnnee });
     if (exportScope === "mois") params.set("mois", exportMois);
     window.open(`/api/comptabilite/bilan-pdf?${params}`, "_blank");
+  }
+
+  function printBilanPDF() {
+    const params = new URLSearchParams({ annee: exportAnnee });
+    if (exportScope === "mois") params.set("mois", exportMois);
+    const win = window.open(`/api/comptabilite/bilan-pdf?${params}`, "_blank");
+    if (win) setTimeout(() => win.print(), 1200);
   }
 
   if (loading)
@@ -311,6 +319,9 @@ export function TableauBordFinancier() {
             </button>
             <button onClick={exportBilanPDF} className="h-9 px-4 bg-indigo-500 text-white text-sm rounded-lg font-semibold hover:bg-indigo-600 transition-all inline-flex items-center gap-2 shadow-sm shadow-indigo-500/20">
               <FileText size={14} />Bilan PDF
+            </button>
+            <button onClick={printBilanPDF} className="h-9 px-4 text-sm font-semibold text-indigo-700 bg-white border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-all inline-flex items-center gap-2">
+              <Printer size={14} />Imprimer PDF
             </button>
           </div>
         </div>

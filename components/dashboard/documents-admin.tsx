@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FileText, UserCheck, Search, Download, Loader2 } from "lucide-react";
+import { FileText, UserCheck, Search, Download, Loader2, Printer } from "lucide-react";
+
+function printPdf(url: string) {
+  const win = window.open(url, "_blank");
+  if (win) setTimeout(() => win.print(), 1200);
+}
 
 interface Eleve {
   id: string;
@@ -39,11 +44,20 @@ function CertificatSection() {
     );
   });
 
+  const [printing, setPrinting] = useState(false);
+
   function generate() {
     if (!selected) return;
     setGenerating(true);
     window.open(`/api/admin/certificat-scolarite?eleve_id=${selected.id}`, "_blank");
     setTimeout(() => setGenerating(false), 1500);
+  }
+
+  function print() {
+    if (!selected) return;
+    setPrinting(true);
+    printPdf(`/api/admin/certificat-scolarite?eleve_id=${selected.id}`);
+    setTimeout(() => setPrinting(false), 1500);
   }
 
   return (
@@ -124,17 +138,30 @@ function CertificatSection() {
         )}
 
         {/* Bouton générer */}
-        <button
-          onClick={generate}
-          disabled={!selected || generating}
-          className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm shadow-indigo-500/20"
-        >
-          {generating ? (
-            <><Loader2 size={16} className="animate-spin" /> Génération...</>
-          ) : (
-            <><Download size={16} /> Générer le certificat PDF</>
-          )}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={generate}
+            disabled={!selected || generating}
+            className="flex-1 h-11 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm shadow-indigo-500/20"
+          >
+            {generating ? (
+              <><Loader2 size={15} className="animate-spin" /> Génération...</>
+            ) : (
+              <><Download size={15} /> Télécharger</>
+            )}
+          </button>
+          <button
+            onClick={print}
+            disabled={!selected || printing}
+            className="flex-1 h-11 bg-white border border-indigo-200 hover:bg-indigo-50 disabled:opacity-50 disabled:cursor-not-allowed text-indigo-700 font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
+          >
+            {printing ? (
+              <><Loader2 size={15} className="animate-spin" /> Impression...</>
+            ) : (
+              <><Printer size={15} /> Imprimer</>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -189,6 +216,23 @@ function AutorisationSection() {
     });
     window.open(`/api/admin/autorisation-absence?${params}`, "_blank");
     setTimeout(() => setGenerating(false), 1500);
+  }
+
+  function buildParams() {
+    return new URLSearchParams({
+      nom: form.nom, matricule: form.matricule, grade: form.grade,
+      fonction: form.fonction, date_debut: form.date_debut, date_fin: form.date_fin,
+      date_restitution: form.date_restitution || form.date_fin, motif: form.motif,
+    });
+  }
+
+  function handlePrint() {
+    if (!form.nom || !form.date_debut || !form.date_fin) {
+      setError("Veuillez remplir le nom, la date de début et la date de fin.");
+      return;
+    }
+    setError("");
+    printPdf(`/api/admin/autorisation-absence?${buildParams()}`);
   }
 
   const jours = nbJours();
@@ -335,17 +379,25 @@ function AutorisationSection() {
           </div>
         )}
 
-        <button
-          onClick={generate}
-          disabled={generating}
-          className="w-full h-11 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm shadow-amber-500/20"
-        >
-          {generating ? (
-            <><Loader2 size={16} className="animate-spin" /> Génération...</>
-          ) : (
-            <><Download size={16} /> Générer la demande PDF</>
-          )}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={generate}
+            disabled={generating}
+            className="flex-1 h-11 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm shadow-amber-500/20"
+          >
+            {generating ? (
+              <><Loader2 size={15} className="animate-spin" /> Génération...</>
+            ) : (
+              <><Download size={15} /> Télécharger</>
+            )}
+          </button>
+          <button
+            onClick={handlePrint}
+            className="flex-1 h-11 bg-white border border-amber-200 hover:bg-amber-50 text-amber-700 font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
+          >
+            <Printer size={15} /> Imprimer
+          </button>
+        </div>
       </div>
     </div>
   );

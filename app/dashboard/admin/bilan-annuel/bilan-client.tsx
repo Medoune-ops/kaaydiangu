@@ -34,6 +34,23 @@ export function BilanAnnuelClient({ classes, ecoleNom, anneeScolaire }: Props) {
   const [selected, setSelected] = useState<ClasseInfo | null>(null);
   const [loadingPdf, setLoadingPdf]   = useState(false);
   const [loadingXlsx, setLoadingXlsx] = useState(false);
+  const [printingPdf, setPrintingPdf] = useState(false);
+
+  async function printPdf() {
+    if (!selected) return;
+    setPrintingPdf(true);
+    try {
+      const res = await fetch(`/api/admin/bilan-annuel/pdf?classeId=${selected.id}`);
+      if (!res.ok) { alert("Erreur lors de la génération"); return; }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const win = window.open(url, "_blank");
+      if (win) setTimeout(() => win.print(), 1200);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    } finally {
+      setPrintingPdf(false);
+    }
+  }
 
   async function download(format: "pdf" | "excel") {
     if (!selected) return;
@@ -188,28 +205,52 @@ export function BilanAnnuelClient({ classes, ecoleNom, anneeScolaire }: Props) {
                   <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />KPIs de classe (taux de réussite...)</li>
                   <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />Zone de signature (censeur, directeur)</li>
                 </ul>
-                <button
-                  onClick={() => download("pdf")}
-                  disabled={loadingPdf}
-                  className="mt-auto w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white text-sm font-medium transition-colors"
-                >
-                  {loadingPdf ? (
-                    <>
-                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                      </svg>
-                      Génération en cours…
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                      </svg>
-                      Télécharger le PDF
-                    </>
-                  )}
-                </button>
+                <div className="mt-auto flex gap-2">
+                  <button
+                    onClick={() => download("pdf")}
+                    disabled={loadingPdf || printingPdf}
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white text-sm font-medium transition-colors"
+                  >
+                    {loadingPdf ? (
+                      <>
+                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        Génération…
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Télécharger
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={printPdf}
+                    disabled={printingPdf || loadingPdf}
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-white border border-red-200 hover:bg-red-50 disabled:opacity-50 text-red-700 text-sm font-medium transition-colors"
+                  >
+                    {printingPdf ? (
+                      <>
+                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        Impression…
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        Imprimer
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
 
               {/* Export Excel */}
