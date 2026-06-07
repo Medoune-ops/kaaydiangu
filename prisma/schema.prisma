@@ -98,6 +98,8 @@ model Classe {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
+  frais_inscription Float    @default(0)
+
   ecole_id String
   ecole    Ecole  @relation(fields: [ecole_id], references: [id])
 
