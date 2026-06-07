@@ -145,9 +145,12 @@ function CertificatSection() {
 function AutorisationSection() {
   const [form, setForm] = useState({
     nom: "",
-    poste: "",
+    matricule: "",
+    grade: "",
+    fonction: "",
     date_debut: "",
     date_fin: "",
+    date_restitution: "",
     motif: "",
   });
   const [generating, setGenerating] = useState(false);
@@ -155,9 +158,17 @@ function AutorisationSection() {
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
+  function nbJours() {
+    if (!form.date_debut || !form.date_fin) return null;
+    const diff = Math.round(
+      (new Date(form.date_fin).getTime() - new Date(form.date_debut).getTime()) / 86400000
+    ) + 1;
+    return diff > 0 ? diff : null;
+  }
+
   function generate() {
-    if (!form.nom || !form.poste || !form.date_debut || !form.date_fin) {
-      setError("Veuillez remplir tous les champs obligatoires.");
+    if (!form.nom || !form.date_debut || !form.date_fin) {
+      setError("Veuillez remplir le nom, la date de début et la date de fin.");
       return;
     }
     if (form.date_fin < form.date_debut) {
@@ -168,14 +179,19 @@ function AutorisationSection() {
     setGenerating(true);
     const params = new URLSearchParams({
       nom: form.nom,
-      poste: form.poste,
+      matricule: form.matricule,
+      grade: form.grade,
+      fonction: form.fonction,
       date_debut: form.date_debut,
       date_fin: form.date_fin,
+      date_restitution: form.date_restitution || form.date_fin,
       motif: form.motif,
     });
     window.open(`/api/admin/autorisation-absence?${params}`, "_blank");
     setTimeout(() => setGenerating(false), 1500);
   }
+
+  const jours = nbJours();
 
   return (
     <div className="bg-white rounded-2xl border border-slate-100/80 shadow-[0_1px_4px_rgba(15,23,42,0.06),0_4px_16px_rgba(15,23,42,0.04)] overflow-hidden">
@@ -185,37 +201,66 @@ function AutorisationSection() {
           <UserCheck size={18} className="text-amber-600" />
         </div>
         <div>
-          <h3 className="text-[0.9rem] font-bold text-slate-800">Autorisation d&apos;absence</h3>
-          <p className="text-[0.72rem] text-slate-400 mt-0.5">Générer une autorisation d&apos;absence pour un membre du personnel</p>
+          <h3 className="text-[0.9rem] font-bold text-slate-800">Demande d&apos;autorisation d&apos;absence</h3>
+          <p className="text-[0.72rem] text-slate-400 mt-0.5">Formulaire officiel — Personnel de l&apos;établissement</p>
         </div>
       </div>
 
       <div className="p-6 space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Nom complet */}
+
+          {/* Prénom et Nom */}
           <div className="sm:col-span-2">
             <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
-              Nom complet <span className="text-red-400">*</span>
+              Prénom et Nom <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
-              placeholder="Prénom Nom du membre du personnel"
+              placeholder="Prénom Nom"
               value={form.nom}
               onChange={(e) => set("nom", e.target.value)}
               className="w-full h-10 px-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all"
             />
           </div>
 
-          {/* Poste */}
-          <div className="sm:col-span-2">
+          {/* Matricule */}
+          <div>
             <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
-              Poste / Fonction <span className="text-red-400">*</span>
+              Matricule
             </label>
             <input
               type="text"
-              placeholder="ex: Professeur de Mathématiques, Surveillant..."
-              value={form.poste}
-              onChange={(e) => set("poste", e.target.value)}
+              placeholder="Matricule agent"
+              value={form.matricule}
+              onChange={(e) => set("matricule", e.target.value)}
+              className="w-full h-10 px-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all"
+            />
+          </div>
+
+          {/* Grade */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+              Grade
+            </label>
+            <input
+              type="text"
+              placeholder="ex: IEPEM, CEAP..."
+              value={form.grade}
+              onChange={(e) => set("grade", e.target.value)}
+              className="w-full h-10 px-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all"
+            />
+          </div>
+
+          {/* Fonction */}
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+              Fonction
+            </label>
+            <input
+              type="text"
+              placeholder="ex: Professeur de Mathématiques, Directeur d'école..."
+              value={form.fonction}
+              onChange={(e) => set("fonction", e.target.value)}
               className="w-full h-10 px-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all"
             />
           </div>
@@ -223,7 +268,7 @@ function AutorisationSection() {
           {/* Date début */}
           <div>
             <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
-              Date de début <span className="text-red-400">*</span>
+              Du <span className="text-red-400">*</span>
             </label>
             <input
               type="date"
@@ -236,7 +281,7 @@ function AutorisationSection() {
           {/* Date fin */}
           <div>
             <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
-              Date de fin <span className="text-red-400">*</span>
+              Au <span className="text-red-400">*</span>
             </label>
             <input
               type="date"
@@ -246,18 +291,41 @@ function AutorisationSection() {
             />
           </div>
 
+          {/* Nb jours calculé automatiquement */}
+          {jours !== null && (
+            <div className="sm:col-span-2 bg-amber-50 border border-amber-100 rounded-xl px-4 py-2.5 flex items-center gap-2">
+              <span className="text-xs text-amber-700 font-medium">
+                Nombre de jours sollicités : <span className="font-black text-amber-800">{jours} jour{jours > 1 ? "s" : ""}</span>
+              </span>
+            </div>
+          )}
+
           {/* Motif */}
           <div className="sm:col-span-2">
             <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
-              Motif <span className="text-slate-300">(optionnel)</span>
+              Motif
             </label>
-            <textarea
-              rows={3}
-              placeholder="Raison de l'absence (maladie, formation, raisons personnelles...)"
+            <input
+              type="text"
+              placeholder="Raison de l'absence"
               value={form.motif}
               onChange={(e) => set("motif", e.target.value)}
-              className="w-full px-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all resize-none"
+              className="w-full h-10 px-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all"
             />
+          </div>
+
+          {/* Date de restitution */}
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+              Date(s) précise(s) de restitution
+            </label>
+            <input
+              type="date"
+              value={form.date_restitution}
+              onChange={(e) => set("date_restitution", e.target.value)}
+              className="w-full h-10 px-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-all"
+            />
+            <p className="text-[0.68rem] text-slate-400 mt-1">Si vide, la date de fin est utilisée.</p>
           </div>
         </div>
 
@@ -275,7 +343,7 @@ function AutorisationSection() {
           {generating ? (
             <><Loader2 size={16} className="animate-spin" /> Génération...</>
           ) : (
-            <><Download size={16} /> Générer l&apos;autorisation PDF</>
+            <><Download size={16} /> Générer la demande PDF</>
           )}
         </button>
       </div>

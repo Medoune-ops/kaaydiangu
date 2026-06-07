@@ -8,10 +8,25 @@ export const dynamic = "force-dynamic";
 const MOIS = ["", "janvier", "février", "mars", "avril", "mai", "juin",
   "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 
-function formatDate(d: string): string {
-  const date = new Date(d);
-  if (isNaN(date.getTime())) return d;
-  return `${date.getDate()} ${MOIS[date.getMonth() + 1]} ${date.getFullYear()}`;
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return `${d.getDate()} ${MOIS[d.getMonth() + 1]} ${d.getFullYear()}`;
+}
+
+function nbJours(debut: string, fin: string): number {
+  const d1 = new Date(debut);
+  const d2 = new Date(fin);
+  if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return 0;
+  return Math.max(1, Math.round((d2.getTime() - d1.getTime()) / 86400000) + 1);
+}
+
+function dotLine(doc: jsPDF, x: number, y: number, width: number) {
+  doc.setDrawColor(30, 30, 30);
+  doc.setLineWidth(0.3);
+  doc.setLineDashPattern([0.5, 1.2], 0);
+  doc.line(x, y, x + width, y);
+  doc.setLineDashPattern([], 0);
 }
 
 export async function GET(req: NextRequest) {
@@ -21,179 +36,185 @@ export async function GET(req: NextRequest) {
   }
 
   const p = req.nextUrl.searchParams;
-  const nom       = p.get("nom")        ?? "";
-  const poste     = p.get("poste")      ?? "";
-  const dateDebut = p.get("date_debut") ?? "";
-  const dateFin   = p.get("date_fin")   ?? "";
-  const motif     = p.get("motif")      ?? "";
+  const nom         = p.get("nom")             ?? "";
+  const matricule   = p.get("matricule")        ?? "";
+  const grade       = p.get("grade")            ?? "";
+  const fonction    = p.get("fonction")         ?? "";
+  const dateDebut   = p.get("date_debut")       ?? "";
+  const dateFin     = p.get("date_fin")         ?? "";
+  const motif       = p.get("motif")            ?? "";
+  const dateRestit  = p.get("date_restitution") ?? dateFin;
 
-  if (!nom || !poste || !dateDebut || !dateFin) {
-    return NextResponse.json({ error: "Paramètres manquants" }, { status: 400 });
+  if (!nom || !dateDebut || !dateFin) {
+    return NextResponse.json({ error: "Paramètres manquants (nom, date_debut, date_fin)" }, { status: 400 });
   }
 
   const ecole = await prisma.ecole.findUnique({ where: { id: session.user.ecoleId } });
-  const directeur = await prisma.user.findFirst({
-    where: { ecole_id: session.user.ecoleId, role: "SUPER_ADMIN" },
-    select: { nom: true, prenom: true },
-  });
-
   const ecoleName = ecole?.nom ?? "École";
-  const dirNom = directeur ? `${directeur.prenom} ${directeur.nom}` : "Le Directeur";
-  const dateAujourd = formatDate(new Date().toISOString().split("T")[0]);
+  const jours = nbJours(dateDebut, dateFin);
 
-  // ── Génération PDF ──
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
   const W = 210;
-  const margin = 20;
+  const margin = 25;
   const center = W / 2;
 
-  // Fond
-  doc.setFillColor(248, 250, 252);
+  // ── Fond blanc pur ──
+  doc.setFillColor(255, 255, 255);
   doc.rect(0, 0, W, 297, "F");
 
-  // Bandeau header
-  doc.setFillColor(15, 52, 96);
-  doc.rect(0, 0, W, 38, "F");
-
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(7.5);
-  doc.setFont("helvetica", "bold");
-  doc.text("RÉPUBLIQUE DU SÉNÉGAL", margin, 10);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(7);
-  doc.text("Ministère de l'Éducation Nationale", margin, 16);
-  doc.text("Un Peuple – Un But – Une Foi", margin, 22);
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.5);
-  doc.text(ecoleName.toUpperCase(), W - margin, 10, { align: "right" });
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(7);
-  if (ecole?.adresse) doc.text(ecole.adresse, W - margin, 16, { align: "right" });
-  if (ecole?.telephone) doc.text(ecole.telephone, W - margin, 22, { align: "right" });
-
-  // Ligne dorée
-  doc.setDrawColor(212, 175, 55);
-  doc.setLineWidth(0.8);
-  doc.line(margin, 38, W - margin, 38);
-
-  // Titre
-  doc.setTextColor(15, 52, 96);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(17);
-  doc.text("AUTORISATION D'ABSENCE", center, 60, { align: "center" });
-
-  doc.setDrawColor(212, 175, 55);
-  doc.setLineWidth(0.5);
-  doc.line(center - 55, 64, center + 55, 64);
-
-  // Corps
-  let y = 85;
-  const lineH = 9;
-
-  doc.setFont("helvetica", "normal");
+  // ── En-tête centré ──
+  let y = 22;
+  doc.setFont("times", "bold");
   doc.setFontSize(11);
-  doc.setTextColor(30, 30, 30);
-
-  doc.text("Je soussigné,", margin, y); y += lineH;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(12);
-  doc.text(dirNom, center, y, { align: "center" }); y += lineH * 0.8;
-  doc.setFont("helvetica", "italic");
+  doc.setTextColor(20, 20, 80);
+  doc.text("MINISTERE DE L'EDUCATION", center, y, { align: "center" });
+  y += 7;
   doc.setFontSize(10);
-  doc.setTextColor(80, 80, 80);
-  doc.text(`Directeur de l'école ${ecoleName}`, center, y, { align: "center" }); y += lineH * 1.5;
+  doc.text("INSPECTION DE L'EDUCATION ET DE LA FORMATION DE SANGALKAM", center, y, { align: "center" });
+  y += 6;
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(11);
-  doc.setTextColor(30, 30, 30);
-  doc.text("Autorise l'absence de :", margin, y); y += lineH;
+  // Ligne pointillée décorative sous le header
+  dotLine(doc, center - 45, y, 90);
+  y += 14;
 
-  // Nom encadré
-  doc.setFillColor(235, 240, 255);
-  doc.setDrawColor(15, 52, 96);
-  doc.setLineWidth(0.4);
-  doc.roundedRect(margin, y - 5, W - 2 * margin, 12, 2, 2, "FD");
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(13);
-  doc.setTextColor(15, 52, 96);
-  doc.text(nom.toUpperCase(), center, y + 3, { align: "center" }); y += lineH * 2;
+  // ── Titre ──
+  doc.setFont("times", "bold");
+  doc.setFontSize(14);
+  doc.setTextColor(10, 10, 10);
+  doc.text("DEMANDE D'AUTORISATION D'ABSENCE", center, y, { align: "center" });
+  y += 18;
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(11);
-  doc.setTextColor(30, 30, 30);
+  // ── Champs formulaire ──
+  const labelFont = "times";
+  const labelSize = 11;
+  const fieldX = margin;
+  const fieldW = W - 2 * margin;
 
-  // Poste
-  doc.text("Poste / Fonction :", margin, y);
-  doc.setFont("helvetica", "bold");
-  doc.text(poste, margin + 42, y); y += lineH;
+  function field(label: string, value: string, yPos: number, lineW?: number): number {
+    doc.setFont(labelFont, "bold");
+    doc.setFontSize(labelSize);
+    doc.setTextColor(10, 10, 10);
+    doc.text(label, fieldX, yPos);
 
-  // Période
-  doc.setFont("helvetica", "normal");
-  doc.text("Période d'absence :", margin, y);
-  doc.setFont("helvetica", "bold");
-  doc.text(`Du ${formatDate(dateDebut)} au ${formatDate(dateFin)}`, margin + 44, y); y += lineH;
+    const labelW = doc.getTextWidth(label);
+    const lx = fieldX + labelW + 2;
+    const lw = lineW ?? (fieldW - labelW - 2);
 
-  // Motif
-  if (motif) {
-    doc.setFont("helvetica", "normal");
-    doc.text("Motif :", margin, y); y += lineH * 0.5;
-    doc.setFillColor(245, 247, 250);
-    doc.setDrawColor(200, 210, 220);
-    doc.setLineWidth(0.3);
-    const motifLines = doc.splitTextToSize(motif, W - 2 * margin - 4);
-    const boxH = Math.max(motifLines.length * 7 + 8, 20);
-    doc.roundedRect(margin, y - 3, W - 2 * margin, boxH, 2, 2, "FD");
-    doc.setFont("helvetica", "italic");
-    doc.setFontSize(10);
-    doc.setTextColor(50, 50, 50);
-    doc.text(motifLines, margin + 4, y + 3);
-    y += boxH + 5;
-    doc.setFontSize(11);
-    doc.setTextColor(30, 30, 30);
-  } else {
-    y += lineH;
+    // Valeur sur la ligne
+    if (value) {
+      doc.setFont(labelFont, "normal");
+      doc.setFontSize(labelSize);
+      doc.text(value, lx + 1, yPos);
+    }
+
+    dotLine(doc, lx, yPos + 1, lw);
+    return yPos + 12;
   }
 
-  y += lineH;
-  doc.setFont("helvetica", "normal");
-  const clause = doc.splitTextToSize(
-    "Cette autorisation est accordée à titre exceptionnel et l'intéressé(e) devra reprendre ses fonctions à la date prévue.",
-    W - 2 * margin
-  );
-  doc.text(clause, margin, y); y += clause.length * 7 + lineH;
+  // Ecole
+  y = field("Ecole ", ecoleName, y);
 
-  // Date et signature
-  doc.text(`Fait à Dakar, le ${dateAujourd}`, W - margin, y, { align: "right" }); y += lineH * 2;
-  doc.setFont("helvetica", "bold");
-  doc.text("Le Directeur", W - margin, y, { align: "right" }); y += lineH * 0.6;
-  doc.setFont("helvetica", "italic");
-  doc.setFontSize(9);
-  doc.setTextColor(80, 80, 80);
-  doc.text(dirNom, W - margin, y, { align: "right" }); y += lineH * 3.5;
+  // Prénom et Nom
+  y = field("Prénom et Nom", nom, y);
 
-  // Ligne de signature
-  doc.setDrawColor(15, 52, 96);
-  doc.setLineWidth(0.3);
-  doc.line(W - margin - 60, y, W - margin, y);
+  // Matricule ... Grade ...
+  doc.setFont(labelFont, "bold");
+  doc.setFontSize(labelSize);
+  doc.setTextColor(10, 10, 10);
+  doc.text("Matricule", fieldX, y);
+  const matLabelW = doc.getTextWidth("Matricule");
+  const matLineW = 55;
+  if (matricule) {
+    doc.setFont(labelFont, "normal");
+    doc.text(matricule, fieldX + matLabelW + 3, y);
+  }
+  dotLine(doc, fieldX + matLabelW + 2, y + 1, matLineW);
 
-  // Footer
-  doc.setFillColor(15, 52, 96);
-  doc.rect(0, 283, W, 14, "F");
-  doc.setTextColor(255, 255, 255);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(7);
-  doc.text(
-    `${ecoleName}${ecole?.adresse ? " · " + ecole.adresse : ""}${ecole?.telephone ? " · " + ecole.telephone : ""}`,
-    center, 291, { align: "center" }
-  );
+  const gradeX = fieldX + matLabelW + matLineW + 10;
+  doc.setFont(labelFont, "bold");
+  doc.text("Grade", gradeX, y);
+  const gradeLabelW = doc.getTextWidth("Grade");
+  if (grade) {
+    doc.setFont(labelFont, "normal");
+    doc.text(grade, gradeX + gradeLabelW + 3, y);
+  }
+  dotLine(doc, gradeX + gradeLabelW + 2, y + 1, fieldW - (gradeX - fieldX) - gradeLabelW - 2);
+  y += 12;
+
+  // Fonction
+  y = field("Fonction", fonction, y);
+  y += 2; // petit espace supplémentaire
+
+  // Nombre de jours sollicités ... Du ... au ...
+  const nbJoursLabel = "Nombre de jours sollicités";
+  doc.setFont(labelFont, "bold");
+  doc.setFontSize(labelSize);
+  doc.text(nbJoursLabel, fieldX, y);
+  const njLabelW = doc.getTextWidth(nbJoursLabel);
+
+  // valeur nb jours
+  const njVal = jours > 0 ? String(jours) : "";
+  const njLineW = 20;
+  if (njVal) { doc.setFont(labelFont, "normal"); doc.text(njVal, fieldX + njLabelW + 3, y); }
+  dotLine(doc, fieldX + njLabelW + 2, y + 1, njLineW);
+
+  // Du
+  let cx = fieldX + njLabelW + njLineW + 6;
+  doc.setFont(labelFont, "bold");
+  doc.text("Du", cx, y);
+  const duW = doc.getTextWidth("Du");
+  cx += duW + 2;
+  const duLineW = 32;
+  if (dateDebut) { doc.setFont(labelFont, "normal"); doc.text(formatDate(dateDebut), cx + 1, y); }
+  dotLine(doc, cx, y + 1, duLineW);
+
+  // au
+  cx += duLineW + 4;
+  doc.setFont(labelFont, "bold");
+  doc.text("au", cx, y);
+  const auW = doc.getTextWidth("au");
+  cx += auW + 2;
+  const auLineW = W - cx - margin;
+  if (dateFin) { doc.setFont(labelFont, "normal"); doc.text(formatDate(dateFin), cx + 1, y); }
+  dotLine(doc, cx, y + 1, auLineW);
+  y += 14;
+
+  // Motif
+  y = field("Motif", motif, y);
+
+  // Date(s) précise(s) de restitution
+  y = field("Date(s) précise(s) de restitution", dateRestit ? formatDate(dateRestit) : "", y);
+
+  // ── Espace avant signatures ──
+  y += 16;
+
+  // ── Trois colonnes de signature ──
+  const col1X = margin;
+  const col2X = center - 20;
+  const col3X = W - margin - 35;
+  const sigLineW = 45;
+
+  doc.setFont(labelFont, "bold");
+  doc.setFontSize(11);
+  doc.setTextColor(10, 10, 10);
+
+  doc.text("L'Intéressé(e)", col1X, y);
+  doc.text("le Directeur", col2X, y);
+  doc.text("l'Inspecteur", col3X, y);
+
+  y += 24;
+
+  // Lignes de signature
+  dotLine(doc, col1X, y, sigLineW);
+  dotLine(doc, col2X, y, sigLineW);
+  dotLine(doc, col3X, y, sigLineW);
 
   const pdfBuffer = Buffer.from(doc.output("arraybuffer"));
   return new NextResponse(pdfBuffer, {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `inline; filename="autorisation-absence-${nom.replace(/\s+/g, "-")}.pdf"`,
+      "Content-Disposition": `inline; filename="demande-absence-${nom.replace(/\s+/g, "-")}.pdf"`,
     },
   });
 }
