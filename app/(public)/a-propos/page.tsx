@@ -34,10 +34,9 @@ const values = [
 ];
 
 const team = [
-  { name: "M. Diallo",   role: "Directeur Général",       initials: "MD", from: "from-cyan-500/25",   to: "to-teal-500/25",   border: "border-cyan-500/20",   ic: "text-cyan-300"   },
-  { name: "Mme Ndiaye",  role: "Censeur",                 initials: "MN", from: "from-teal-500/25",   to: "to-cyan-500/25",   border: "border-teal-500/20",   ic: "text-teal-300"   },
-  { name: "M. Sow",      role: "Responsable Pédagogique", initials: "MS", from: "from-violet-500/25", to: "to-indigo-500/25", border: "border-violet-500/20", ic: "text-violet-300" },
-  { name: "Mme Fall",    role: "Comptable",               initials: "MF", from: "from-indigo-500/25", to: "to-cyan-500/25",   border: "border-indigo-500/20", ic: "text-indigo-300" },
+  { name: "Alassane Seck",  role: "Directeur Général",  initials: "AS", from: "from-cyan-500/25",   to: "to-teal-500/25",   border: "border-cyan-500/20",   ic: "text-cyan-300"   },
+  { name: "Medoune Seck",   role: "Comptable",           initials: "MS", from: "from-indigo-500/25", to: "to-cyan-500/25",   border: "border-indigo-500/20", ic: "text-indigo-300" },
+  { name: "Mariama Ndiaye", role: "Censeur",             initials: "MN", from: "from-teal-500/25",   to: "to-cyan-500/25",   border: "border-teal-500/20",   ic: "text-teal-300"   },
 ];
 
 const milestones = [
@@ -217,7 +216,7 @@ export default function AProposPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto">
             {team.map((member, i) => (
               <TiltCard key={member.name} intensity={8} className={`scroll-animate scroll-animate-delay-${i + 1}`}>
                 <div className={`text-center p-6 glass-card group cursor-default border ${member.border}`}>

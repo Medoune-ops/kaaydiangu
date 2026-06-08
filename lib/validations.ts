@@ -56,7 +56,7 @@ export const eleveSchema = z.object({
   adresse: z.string().optional().nullable(),
   nom_parent: z.string().optional().nullable(),
   telephone_parent: z.string().optional().nullable(),
-  email_parent: z.string().email("Email parent invalide").optional().nullable(),
+  email_parent: z.union([z.string().email("Email parent invalide"), z.literal(""), z.null()]).optional(),
 });
 
 // User/Staff — POST /api/admin/users

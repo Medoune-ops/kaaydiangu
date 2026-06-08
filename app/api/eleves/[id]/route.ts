@@ -11,7 +11,7 @@ const updateEleveSchema = z.object({
   adresse: z.string().nullable().optional(),
   nom_parent: z.string().nullable().optional(),
   telephone_parent: z.string().nullable().optional(),
-  email_parent: z.string().email().nullable().optional(),
+  email_parent: z.union([z.string().email(), z.literal(""), z.null()]).optional(),
   photo: z.string().nullable().optional(),
   actif: z.boolean().optional(),
 });
