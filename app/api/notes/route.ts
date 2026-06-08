@@ -149,6 +149,12 @@ export async function POST(req: NextRequest) {
 
   const dateEval = date ? new Date(date) : new Date();
 
+  // Année active de l'école — pour rattacher les notes à la bonne année scolaire.
+  const anneeActive = await prisma.anneeScolaire.findFirst({
+    where: { ecole_id: session.user.ecoleId, est_active: true },
+    select: { id: true },
+  });
+
   const result = await prisma.$transaction(async (tx) => {
     const created = [];
 
@@ -185,6 +191,7 @@ export async function POST(req: NextRequest) {
             appreciation: n.appreciation || null,
             eleve_id: n.eleve_id,
             matiere_id,
+            annee_scolaire_id: anneeActive?.id ?? null,
           },
         });
         created.push(note);

@@ -26,6 +26,28 @@ model Ecole {
   classes          Classe[]
   depenses         Depense[]
   professeursInfos ProfesseurInfo[]
+  anneesScolaires  AnneeScolaire[]
+}
+
+model AnneeScolaire {
+  id           String   @id @default(cuid())
+  libelle      String // ex: "2024-2025"
+  date_debut   DateTime
+  date_fin     DateTime
+  est_active   Boolean  @default(false)
+  est_cloturee Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  ecole_id String
+  ecole    Ecole  @relation(fields: [ecole_id], references: [id])
+
+  classes   Classe[]
+  paiements Paiement[]
+  notes     Note[]
+  absences  Absence[]
+
+  @@unique([ecole_id, libelle])
 }
 
 enum Role {
@@ -103,6 +125,9 @@ model Classe {
   ecole_id String
   ecole    Ecole  @relation(fields: [ecole_id], references: [id])
 
+  annee_scolaire_id String?
+  anneeScolaire     AnneeScolaire? @relation(fields: [annee_scolaire_id], references: [id])
+
   eleves         Eleve[]
   matieres       Matiere[]
   emploisDuTemps EmploiDuTemps[]
@@ -149,6 +174,9 @@ model Note {
 
   matiere_id String
   matiere    Matiere @relation(fields: [matiere_id], references: [id])
+
+  annee_scolaire_id String?
+  anneeScolaire     AnneeScolaire? @relation(fields: [annee_scolaire_id], references: [id])
 }
 
 model Appreciation {
@@ -177,6 +205,9 @@ model Absence {
 
   matiere_id String
   matiere    Matiere @relation(fields: [matiere_id], references: [id])
+
+  annee_scolaire_id String?
+  anneeScolaire     AnneeScolaire? @relation(fields: [annee_scolaire_id], references: [id])
 }
 
 enum Jour {
@@ -231,6 +262,9 @@ model Paiement {
 
   enregistre_par_id String?
   enregistre_par    User?  @relation(fields: [enregistre_par_id], references: [id])
+
+  annee_scolaire_id String?
+  anneeScolaire     AnneeScolaire? @relation(fields: [annee_scolaire_id], references: [id])
 }
 
 enum CategorieDepense {

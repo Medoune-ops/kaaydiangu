@@ -24,6 +24,7 @@ import {
   Menu,
   BarChart3,
   FileSignature,
+  CalendarDays,
 } from "lucide-react";
 
 /* ─── Types ─── */
@@ -55,6 +56,7 @@ const NAV_CONFIG: Record<string, { roleLabel: string; groups: NavGroup[] }> = {
         title: "Gestion",
         items: [
           { label: "Équipe", href: "/dashboard/admin/equipe", icon: <Users size={18} /> },
+          { label: "Années scolaires", href: "/dashboard/admin/annees-scolaires", icon: <CalendarDays size={18} /> },
           { label: "Configuration", href: "/dashboard/admin/configuration", icon: <Settings size={18} /> },
           { label: "Documents officiels", href: "/dashboard/admin/documents", icon: <FileSignature size={18} /> },
           { label: "Bilan annuel", href: "/dashboard/admin/bilan-annuel", icon: <BarChart3 size={18} /> },

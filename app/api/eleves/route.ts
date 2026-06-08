@@ -98,14 +98,18 @@ export async function POST(req: NextRequest) {
       montant_inscription,
     } = parsed.data;
 
-    // Vérifier que la classe appartient à cette école + récupérer infos école
-    const [classe, ecole] = await Promise.all([
+    // Vérifier que la classe appartient à cette école + récupérer infos école + année active
+    const [classe, ecole, anneeActive] = await Promise.all([
       prisma.classe.findFirst({
         where: { id: classe_id, ecole_id: session.user.ecoleId },
       }),
       prisma.ecole.findUnique({
         where: { id: session.user.ecoleId },
         select: { nom: true, adresse: true, telephone: true, email: true, annee_scolaire: true, logo: true, frais_inscription: true },
+      }),
+      prisma.anneeScolaire.findFirst({
+        where: { ecole_id: session.user.ecoleId, est_active: true },
+        select: { id: true },
       }),
     ]);
     if (!classe) {
@@ -165,7 +169,7 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // 3. Initialiser les 10 mensualités NON_PAYE
+      // 3. Initialiser les 10 mensualités NON_PAYE (rattachées à l'année active)
       await tx.paiement.createMany({
         data: moisList.map((m) => ({
           mois: m.mois,
@@ -173,6 +177,7 @@ export async function POST(req: NextRequest) {
           montant: 0,
           statut: "NON_PAYE" as const,
           eleve_id: eleve.id,
+          annee_scolaire_id: anneeActive?.id ?? null,
         })),
       });
 
