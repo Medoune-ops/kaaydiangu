@@ -65,6 +65,63 @@ export async function GET() {
         ? Math.round((mensualitesPayees / totalMensualites) * 10000) / 100
         : 0;
 
+    // ─── Stats annuelles (année scolaire active : oct année N → juin année N+1) ───
+    const anneeActive = await prisma.anneeScolaire.findFirst({
+      where: { ecole_id: ecoleId, est_active: true },
+      select: { libelle: true, date_debut: true, date_fin: true },
+    });
+
+    // Bornes : date_debut et date_fin de l'année active, sinon 1er jan → 31 déc courant.
+    const debutAnnee = anneeActive?.date_debut ?? new Date(anneeActuelle, 0, 1);
+    const finAnnee = anneeActive?.date_fin
+      ? new Date(new Date(anneeActive.date_fin).getTime() + 24 * 60 * 60 * 1000) // inclure le dernier jour
+      : new Date(anneeActuelle + 1, 0, 1);
+
+    // Pour le recouvrement annuel : on compte les mensualités (mois ≠ 0) de l'année active.
+    // Si l'année active existe, on filtre par annee_scolaire_id ; sinon par plage de dates.
+    const anneeActiveId = anneeActive
+      ? (await prisma.anneeScolaire.findFirst({ where: { ecole_id: ecoleId, est_active: true }, select: { id: true } }))?.id
+      : undefined;
+
+    const [paiementsAnnee, depensesAnnee, totalMensualitesAnnee, mensualitesPayeesAnnee] =
+      await Promise.all([
+        prisma.paiement.findMany({
+          where: {
+            statut: "PAYE",
+            eleve: { classe: { ecole_id: ecoleId } },
+            date_paiement: { gte: debutAnnee, lt: finAnnee },
+          },
+          select: { montant: true },
+        }),
+        prisma.depense.findMany({
+          where: { ecole_id: ecoleId, date: { gte: debutAnnee, lt: finAnnee } },
+          select: { montant: true },
+        }),
+        prisma.paiement.count({
+          where: {
+            eleve: { classe: { ecole_id: ecoleId }, actif: true },
+            mois: { not: 0 },
+            ...(anneeActiveId ? { annee_scolaire_id: anneeActiveId } : {}),
+          },
+        }),
+        prisma.paiement.count({
+          where: {
+            statut: "PAYE",
+            eleve: { classe: { ecole_id: ecoleId }, actif: true },
+            mois: { not: 0 },
+            ...(anneeActiveId ? { annee_scolaire_id: anneeActiveId } : { date_paiement: { gte: debutAnnee, lt: finAnnee } }),
+          },
+        }),
+      ]);
+
+    const recettesAnnee = paiementsAnnee.reduce((s, p) => s + p.montant, 0);
+    const totalDepensesAnnee = depensesAnnee.reduce((s, d) => s + d.montant, 0);
+    const soldeNetAnnee = recettesAnnee - totalDepensesAnnee;
+    const recouvrementAnnee =
+      totalMensualitesAnnee > 0
+        ? Math.round((mensualitesPayeesAnnee / totalMensualitesAnnee) * 10000) / 100
+        : 0;
+
     // ─── Historique 12 mois (recettes + dépenses) ───
     const historique: {
       mois: number;
@@ -122,6 +179,14 @@ export async function GET() {
       taux_recouvrement: tauxRecouvrement,
       mensualites_total: totalMensualites,
       mensualites_payees: mensualitesPayees,
+      // Stats annuelles
+      annee_scolaire_libelle: anneeActive?.libelle ?? String(anneeActuelle),
+      recettes_annee: recettesAnnee,
+      depenses_annee: totalDepensesAnnee,
+      solde_net_annee: soldeNetAnnee,
+      recouvrement_annee: recouvrementAnnee,
+      mensualites_total_annee: totalMensualitesAnnee,
+      mensualites_payees_annee: mensualitesPayeesAnnee,
       historique,
     });
   } catch (error) {

@@ -8,6 +8,7 @@ import {
   Clock,
   Download,
   FileText,
+  CalendarDays,
 } from "lucide-react";
 
 interface HistoriqueItem {
@@ -23,6 +24,13 @@ interface StatsData {
   taux_recouvrement: number;
   mensualites_total: number;
   mensualites_payees: number;
+  annee_scolaire_libelle: string;
+  recettes_annee: number;
+  depenses_annee: number;
+  solde_net_annee: number;
+  recouvrement_annee: number;
+  mensualites_total_annee: number;
+  mensualites_payees_annee: number;
   historique: HistoriqueItem[];
 }
 
@@ -125,10 +133,60 @@ export function TableauBordFinancier() {
         </div>
       </div>
 
+      {/* KPI Annuels */}
+      <div className="dash-section overflow-hidden">
+        <div className="px-6 py-4 border-b border-indigo-50/80 bg-gradient-to-r from-indigo-50/40 to-transparent flex items-center gap-2">
+          <CalendarDays size={15} className="text-indigo-400" />
+          <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">
+            Année scolaire {data.annee_scolaire_libelle}
+          </h3>
+        </div>
+        <div className="p-5 grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="dash-kpi p-4" style={{ "--kpi-accent": "#22c55e" } as React.CSSProperties}>
+            <p className="text-xs text-emerald-600 uppercase tracking-wider font-semibold mb-1">Recettes annuelles</p>
+            <p className="dash-kpi-value text-xl">{formatFCFA(data.recettes_annee)}</p>
+          </div>
+          <div className="dash-kpi p-4" style={{ "--kpi-accent": "#ef4444" } as React.CSSProperties}>
+            <p className="text-xs text-red-600 uppercase tracking-wider font-semibold mb-1">Dépenses annuelles</p>
+            <p className="dash-kpi-value text-xl">{formatFCFA(data.depenses_annee)}</p>
+          </div>
+          <div className="dash-kpi p-4" style={{ "--kpi-accent": data.solde_net_annee >= 0 ? "#22c55e" : "#ef4444" } as React.CSSProperties}>
+            <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold mb-1">Solde net annuel</p>
+            <p className={`dash-kpi-value text-xl ${data.solde_net_annee >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+              {data.solde_net_annee >= 0 ? "+" : ""}{formatFCFA(data.solde_net_annee)}
+            </p>
+          </div>
+          <div className="dash-kpi p-4" style={{ "--kpi-accent": "#6366f1" } as React.CSSProperties}>
+            <p className="text-xs text-indigo-500 uppercase tracking-wider font-semibold mb-1">Recouvrement annuel</p>
+            <p className="dash-kpi-value text-xl">{data.recouvrement_annee}%</p>
+            <p className="text-xs text-neutral-400 mt-0.5">
+              {data.mensualites_payees_annee}/{data.mensualites_total_annee} mensualités
+            </p>
+          </div>
+        </div>
+        {/* Jauge recouvrement annuel */}
+        <div className="px-5 pb-5">
+          <div className="w-full bg-indigo-50/60 rounded-full h-5 overflow-hidden">
+            <div
+              className={`h-5 rounded-full flex items-center justify-center text-xs font-bold text-white transition-all duration-700 ${
+                data.recouvrement_annee >= 80
+                  ? "bg-gradient-to-r from-emerald-500 to-emerald-400"
+                  : data.recouvrement_annee >= 50
+                  ? "bg-gradient-to-r from-amber-500 to-amber-400"
+                  : "bg-gradient-to-r from-red-500 to-red-400"
+              }`}
+              style={{ width: `${Math.min(data.recouvrement_annee, 100)}%` }}
+            >
+              {data.recouvrement_annee > 15 ? `${data.recouvrement_annee}%` : ""}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Jauge recouvrement */}
       <div className="dash-section">
         <div className="px-6 py-4 border-b border-indigo-50/80 bg-gradient-to-r from-indigo-50/40 to-transparent">
-          <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">Recouvrement du mois</h3>
+          <h3 className="text-sm font-semibold text-neutral-800 tracking-tight">Recouvrement du mois en cours</h3>
         </div>
         <div className="px-6 py-5">
           <div className="w-full bg-indigo-50/60 rounded-full h-7 overflow-hidden">
