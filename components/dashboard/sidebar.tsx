@@ -23,6 +23,7 @@ import {
   X,
   Menu,
   BarChart3,
+  FileSignature,
 } from "lucide-react";
 
 /* ─── Types ─── */
@@ -55,6 +56,8 @@ const NAV_CONFIG: Record<string, { roleLabel: string; groups: NavGroup[] }> = {
         items: [
           { label: "Équipe", href: "/dashboard/admin/equipe", icon: <Users size={18} /> },
           { label: "Configuration", href: "/dashboard/admin/configuration", icon: <Settings size={18} /> },
+          { label: "Documents officiels", href: "/dashboard/admin/documents", icon: <FileSignature size={18} /> },
+          { label: "Bilan annuel", href: "/dashboard/admin/bilan-annuel", icon: <BarChart3 size={18} /> },
           { label: "Journal d'audit", href: "/dashboard/admin/audit", icon: <Shield size={18} /> },
         ],
       },
