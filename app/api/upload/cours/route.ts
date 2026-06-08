@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: "Taille maximale : 10 Mo" }, { status: 400 });
+      return NextResponse.json({ error: "Taille maximale : 10 Mo" }, { status: 500 });
     }
 
     const arrayBuffer = await file.arrayBuffer();

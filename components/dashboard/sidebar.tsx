@@ -23,11 +23,9 @@ import {
   X,
   Menu,
   BarChart3,
-  PanelLeftClose,
-  PanelLeftOpen,
-  FileDown,
-  FileSignature,
 } from "lucide-react";
+
+/* ─── Types ─── */
 
 interface NavItem {
   label: string;
@@ -39,6 +37,8 @@ interface NavGroup {
   title: string;
   items: NavItem[];
 }
+
+/* ─── Navigation config per role ─── */
 
 const NAV_CONFIG: Record<string, { roleLabel: string; groups: NavGroup[] }> = {
   SUPER_ADMIN: {
@@ -56,8 +56,6 @@ const NAV_CONFIG: Record<string, { roleLabel: string; groups: NavGroup[] }> = {
           { label: "Équipe", href: "/dashboard/admin/equipe", icon: <Users size={18} /> },
           { label: "Configuration", href: "/dashboard/admin/configuration", icon: <Settings size={18} /> },
           { label: "Journal d'audit", href: "/dashboard/admin/audit", icon: <Shield size={18} /> },
-          { label: "Bilan annuel", href: "/dashboard/admin/bilan-annuel", icon: <FileDown size={18} /> },
-          { label: "Documents officiels", href: "/dashboard/admin/documents", icon: <FileSignature size={18} /> },
         ],
       },
     ],
@@ -141,6 +139,8 @@ const NAV_CONFIG: Record<string, { roleLabel: string; groups: NavGroup[] }> = {
   },
 };
 
+/* ─── Role colors ─── */
+
 const ROLE_COLORS: Record<string, { gradient: string; ring: string; badge: string }> = {
   SUPER_ADMIN: { gradient: "from-indigo-500 to-violet-600", ring: "ring-indigo-400/30", badge: "bg-indigo-500/15 text-indigo-300" },
   COMPTABLE: { gradient: "from-emerald-500 to-teal-600", ring: "ring-emerald-400/30", badge: "bg-emerald-500/15 text-emerald-300" },
@@ -149,22 +149,13 @@ const ROLE_COLORS: Record<string, { gradient: string; ring: string; badge: strin
   ELEVE: { gradient: "from-sky-500 to-cyan-600", ring: "ring-sky-400/30", badge: "bg-sky-500/15 text-sky-300" },
 };
 
+/* ─── Sidebar component ─── */
+
 export function Sidebar({ role, userName }: { role: string; userName: string }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState<boolean>(() =>
-    typeof window !== "undefined" &&
-    localStorage.getItem("sidebar-collapsed") === "true"
-  );
   const config = NAV_CONFIG[role] || NAV_CONFIG.ELEVE;
   const colors = ROLE_COLORS[role] || ROLE_COLORS.ELEVE;
-
-  const toggleCollapse = () => {
-    const next = !collapsed;
-    setCollapsed(next);
-    localStorage.setItem("sidebar-collapsed", String(next));
-    window.dispatchEvent(new CustomEvent("sidebar-toggle"));
-  };
 
   const initials = userName
     .split(" ")
@@ -180,87 +171,53 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
     return pathname.startsWith(href + "/");
   };
 
-  const sidebarContent = (isDesktop = false) => (
-    <div className={`flex flex-col h-full bg-[#0a0f1e] overflow-hidden`}>
+  const sidebarContent = (
+    <div className="flex flex-col h-full bg-[#0a0f1e]">
       {/* Top accent line */}
-      <div className="h-[2px] shrink-0 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500" />
+      <div className="h-[2px] bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500" />
 
-      {/* Logo + collapse toggle */}
-      <div className={`flex items-center pt-5 pb-4 shrink-0 ${collapsed && isDesktop ? "px-3 justify-center" : "px-5 justify-between"}`}>
-        <Link href="/" className="flex items-center gap-3 group min-w-0">
-          <div className="relative shrink-0">
+      {/* Logo */}
+      <div className="px-5 pt-5 pb-4">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="relative">
             <div className="absolute inset-0 bg-indigo-500 rounded-xl blur-lg opacity-25 group-hover:opacity-45 transition-opacity duration-300" />
             <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
               <GraduationCap size={20} className="text-white" />
             </div>
           </div>
-          {(!collapsed || !isDesktop) && (
-            <div className="min-w-0">
-              <span className="text-lg font-bold text-white tracking-tight block leading-none">IREF</span>
-              <span className="text-[11px] text-slate-500 tracking-wide leading-none mt-0.5 block">Gestion scolaire</span>
-            </div>
-          )}
+          <div>
+            <span className="text-lg font-bold text-white tracking-tight block leading-none">IREF</span>
+            <span className="text-[11px] text-slate-500 tracking-wide leading-none mt-0.5 block">Gestion scolaire</span>
+          </div>
         </Link>
-
-        {isDesktop && (
-          <button
-            onClick={toggleCollapse}
-            title={collapsed ? "Développer" : "Réduire"}
-            className={`p-1.5 rounded-md text-slate-600 hover:text-slate-300 hover:bg-white/[0.06] transition-all duration-200 shrink-0 ${collapsed ? "ml-0" : ""}`}
-          >
-            {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
-          </button>
-        )}
       </div>
 
-      {/* Search — hidden when collapsed */}
-      {(!collapsed || !isDesktop) && (
-        <div className="px-4 mb-3 shrink-0">
-          <button
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-500 text-[13px] hover:bg-slate-800/80 hover:border-slate-600/50 transition-all duration-200"
-            onClick={() => {
-              document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }));
-            }}
-          >
-            <Search size={14} />
-            <span className="flex-1 text-left">Rechercher...</span>
-            <kbd className="hidden sm:inline-flex items-center rounded bg-slate-700/60 px-1.5 py-0.5 text-[10px] font-medium text-slate-400 border border-slate-600/40">
-              Ctrl K
-            </kbd>
-          </button>
-        </div>
-      )}
-
-      {/* Icon-only search when collapsed */}
-      {collapsed && isDesktop && (
-        <div className="px-3 mb-3 shrink-0">
-          <button
-            title="Rechercher (Ctrl+K)"
-            className="w-full flex items-center justify-center py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-500 hover:bg-slate-800/80 hover:border-slate-600/50 transition-all duration-200"
-            onClick={() => {
-              document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }));
-            }}
-          >
-            <Search size={15} />
-          </button>
-        </div>
-      )}
+      {/* Search trigger */}
+      <div className="px-4 mb-3">
+        <button
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-500 text-[13px] hover:bg-slate-800/80 hover:border-slate-600/50 transition-all duration-200"
+          onClick={() => {
+            document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }));
+          }}
+        >
+          <Search size={14} />
+          <span className="flex-1 text-left">Rechercher...</span>
+          <kbd className="hidden sm:inline-flex items-center rounded bg-slate-700/60 px-1.5 py-0.5 text-[10px] font-medium text-slate-400 border border-slate-600/40">
+            Ctrl K
+          </kbd>
+        </button>
+      </div>
 
       {/* Separator */}
-      <div className="mx-5 h-px bg-slate-700/40 mb-2 shrink-0" />
+      <div className="mx-5 h-px bg-slate-700/40 mb-2" />
 
-      {/* Navigation */}
-      <nav className={`flex-1 py-1 space-y-5 overflow-y-auto scrollbar-thin ${collapsed && isDesktop ? "px-2" : "px-3"}`} aria-label="Menu principal">
+      {/* Navigation groups */}
+      <nav className="flex-1 px-3 py-1 space-y-5 overflow-y-auto scrollbar-thin" aria-label="Menu principal">
         {config.groups.map((group) => (
           <div key={group.title}>
-            {(!collapsed || !isDesktop) && (
-              <p className="px-3 mb-1.5 text-[10px] font-semibold text-slate-500 uppercase tracking-[0.14em]">
-                {group.title}
-              </p>
-            )}
-            {collapsed && isDesktop && (
-              <div className="mx-auto w-6 h-px bg-slate-700/50 mb-2" />
-            )}
+            <p className="px-3 mb-1.5 text-[10px] font-semibold text-slate-500 uppercase tracking-[0.14em]">
+              {group.title}
+            </p>
             <div className="space-y-0.5">
               {group.items.map((item) => {
                 const active = checkActive(item.href);
@@ -269,32 +226,22 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    title={collapsed && isDesktop ? item.label : undefined}
-                    className={`relative flex items-center gap-3 rounded-lg text-[13.5px] font-medium transition-all duration-200 group/nav ${
-                      collapsed && isDesktop
-                        ? "justify-center py-2.5 px-0"
-                        : "px-3 py-2"
-                    } ${
+                    className={`relative flex items-center gap-3 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-200 group/nav ${
                       active
                         ? "bg-indigo-500/[0.15] text-white shadow-sm"
                         : "text-slate-400 hover:bg-white/[0.05] hover:text-slate-200"
                     }`}
                   >
-                    {active && !collapsed && (
+                    {active && (
                       <>
                         <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-indigo-400 shadow-[0_0_8px_rgba(99,102,241,0.8)]" />
                         <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-indigo-500/[0.12] to-transparent pointer-events-none" />
                       </>
                     )}
-                    {active && collapsed && isDesktop && (
-                      <span className="absolute inset-0 rounded-lg bg-indigo-500/[0.2] pointer-events-none" />
-                    )}
                     <span className={`shrink-0 transition-colors duration-200 ${active ? "text-indigo-400" : "text-slate-600 group-hover/nav:text-slate-300"}`}>
                       {item.icon}
                     </span>
-                    {(!collapsed || !isDesktop) && (
-                      <span className="flex-1 truncate">{item.label}</span>
-                    )}
+                    <span className="flex-1 truncate">{item.label}</span>
                   </Link>
                 );
               })}
@@ -304,40 +251,24 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
       </nav>
 
       {/* User card */}
-      <div className={`py-3 mt-auto border-t border-slate-700/40 shrink-0 ${collapsed && isDesktop ? "px-2" : "px-3"}`}>
-        <div className={`flex items-center gap-3 px-2.5 py-2.5 rounded-lg hover:bg-white/[0.03] transition-colors ${collapsed && isDesktop ? "justify-center px-0" : ""}`}>
-          <div
-            title={collapsed && isDesktop ? userName : undefined}
-            className={`w-9 h-9 rounded-full bg-gradient-to-br ${colors.gradient} flex items-center justify-center text-white text-xs font-bold ring-2 ${colors.ring} shrink-0`}
-          >
+      <div className="px-3 py-3 mt-auto border-t border-slate-700/40">
+        <div className="flex items-center gap-3 px-2.5 py-2.5 rounded-lg hover:bg-white/[0.03] transition-colors">
+          <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${colors.gradient} flex items-center justify-center text-white text-xs font-bold ring-2 ${colors.ring} shrink-0`}>
             {initials}
           </div>
-          {(!collapsed || !isDesktop) && (
-            <>
-              <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-medium text-slate-200 truncate">{userName}</p>
-                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${colors.badge} mt-0.5`}>
-                  {config.roleLabel}
-                </span>
-              </div>
-              <button
-                onClick={async () => { sessionStorage.removeItem("tab-auth"); await signOut({ redirect: false }); window.location.href = "/deconnecte"; }}
-                className="p-1.5 rounded-md text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 shrink-0"
-                title="Déconnexion"
-              >
-                <LogOut size={15} />
-              </button>
-            </>
-          )}
-          {collapsed && isDesktop && (
-            <button
-              onClick={async () => { sessionStorage.removeItem("tab-auth"); await signOut({ redirect: false }); window.location.href = "/deconnecte"; }}
-              className="sr-only"
-              title="Déconnexion"
-            >
-              <LogOut size={15} />
-            </button>
-          )}
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-medium text-slate-200 truncate">{userName}</p>
+            <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${colors.badge} mt-0.5`}>
+              {config.roleLabel}
+            </span>
+          </div>
+          <button
+            onClick={async () => { await signOut({ redirect: false }); window.location.href = "/deconnecte"; }}
+            className="p-1.5 rounded-md text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 shrink-0"
+            title="Déconnexion"
+          >
+            <LogOut size={15} />
+          </button>
         </div>
       </div>
     </div>
@@ -363,12 +294,8 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
       )}
 
       {/* Desktop sidebar */}
-      <aside
-        className={`hidden lg:block fixed top-0 left-0 h-screen z-30 shadow-2xl shadow-black/20 transition-[width] duration-300 ease-in-out overflow-hidden ${
-          collapsed ? "w-16" : "w-[272px]"
-        }`}
-      >
-        {sidebarContent(true)}
+      <aside className="hidden lg:block fixed top-0 left-0 h-screen w-[272px] z-30 shadow-2xl shadow-black/20">
+        {sidebarContent}
       </aside>
 
       {/* Mobile sidebar */}
@@ -384,7 +311,7 @@ export function Sidebar({ role, userName }: { role: string; userName: string }) 
         >
           <X size={18} />
         </button>
-        {sidebarContent(false)}
+        {sidebarContent}
       </aside>
     </>
   );

@@ -15,8 +15,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = req.nextUrl;
     const classeId = searchParams.get("classe_id");
     const page = searchParams.get("page");
-    const rawLimit = parseInt(searchParams.get("limit") || "20");
-    const limit = isNaN(rawLimit) ? 20 : Math.min(rawLimit, 100);
+    const limit = parseInt(searchParams.get("limit") || "20");
 
     const now = new Date();
 
@@ -53,6 +52,7 @@ export async function GET(req: NextRequest) {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mapEleves = (eleves: any[]) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       eleves.map((e: any) => {
         const plusAncien = e.paiements[0];
         let joursRetard = 0;

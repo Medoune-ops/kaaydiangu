@@ -4,8 +4,6 @@ import { Sidebar } from "@/components/dashboard/sidebar";
 import { NotificationBell } from "@/components/dashboard/notification-bell";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
-import { MainWrapper } from "@/components/dashboard/main-wrapper";
-import { TabSessionGuard } from "@/components/dashboard/tab-session-guard";
 
 export default async function DashboardLayout({
   children,
@@ -20,36 +18,29 @@ export default async function DashboardLayout({
 
   return (
     <ToastProvider>
-      <TabSessionGuard>
-      <div
-        className="min-h-screen"
-        style={{
-          backgroundColor: "#f1f3f9",
-          backgroundImage: [
-            "radial-gradient(ellipse 85% 55% at 10% -8%, rgba(99,102,241,0.08) 0%, transparent 55%)",
-            "radial-gradient(ellipse 65% 45% at 90% 108%, rgba(139,92,246,0.06) 0%, transparent 55%)",
-            "radial-gradient(ellipse 50% 35% at 55% 55%, rgba(59,130,246,0.03) 0%, transparent 70%)",
-            "radial-gradient(rgba(99,102,241,0.04) 1px, transparent 1px)",
-          ].join(","),
-          backgroundSize: "100% 100%, 100% 100%, 100% 100%, 26px 26px",
-        }}
-      >
+      <div className="dash-page">
         <Sidebar
           role={session.user.role}
           userName={session.user.name || "Utilisateur"}
         />
 
-        <MainWrapper>
+        <div className="lg:pl-[272px]">
           {/* Top header bar */}
-          <header className="sticky top-0 z-20 bg-white/90 backdrop-blur-2xl border-b border-slate-900/5 shadow-[0_1px_0_rgba(15,23,42,0.06),0_4px_16px_rgba(15,23,42,0.04)]">
+          <header className="sticky top-0 z-20 dash-header">
             <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
+              {/* Left: spacer for mobile hamburger */}
               <div className="lg:hidden w-10" />
+
+              {/* Center/Right area */}
               <div className="flex-1" />
+
+              {/* Right: notifications */}
               <div className="flex items-center gap-2">
                 <NotificationBell />
               </div>
             </div>
-            <div className="h-[2px] bg-gradient-to-r from-indigo-500/60 via-violet-500/70 to-transparent" />
+            {/* Gradient accent line under header */}
+            <div className="h-[2px] bg-gradient-to-r from-indigo-500/30 via-violet-500/40 to-indigo-500/10" />
           </header>
 
           <main className="p-4 sm:p-6 lg:p-8">
@@ -57,9 +48,8 @@ export default async function DashboardLayout({
               {children}
             </DashboardShell>
           </main>
-        </MainWrapper>
+        </div>
       </div>
-      </TabSessionGuard>
     </ToastProvider>
   );
 }

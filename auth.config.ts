@@ -4,10 +4,7 @@ type Role = "SUPER_ADMIN" | "COMPTABLE" | "CENSEUR" | "PROFESSEUR" | "ELEVE";
 
 // Config minimale sans Prisma — utilisée dans le middleware (Edge Runtime)
 export const authConfig: NextAuthConfig = {
-  session: {
-    strategy: "jwt",
-    maxAge: 8 * 60 * 60, // 8 heures max, même si le navigateur reste ouvert
-  },
+  session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
   },
@@ -15,19 +12,6 @@ export const authConfig: NextAuthConfig = {
   // (Vercel, Nginx, etc.) — NextAuth v5 vérifie le header Host pour prévenir les attaques
   // SSRF. Sans cette option, les callbacks OAuth/email cassent en production.
   trustHost: true,
-  // Cookie de session : expire à la fermeture du navigateur (pas de maxAge sur le cookie)
-  cookies: {
-    sessionToken: {
-      name: "next-auth.session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax" as const,
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        // Pas de maxAge → cookie de session, supprimé à la fermeture du navigateur
-      },
-    },
-  },
   providers: [],
   callbacks: {
     async redirect({ url, baseUrl }) {

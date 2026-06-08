@@ -140,24 +140,15 @@ export function DocumentsEleve() {
                       <td className="text-center font-mono text-sm text-slate-500">{p.recu_numero || "—"}</td>
                       <td className="text-center">
                         {p.recu_numero ? (
-                          <div className="inline-flex items-center gap-2">
-                            <a
-                              href={`/api/paiements/recu?paiement_id=${p.id}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 font-semibold"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                              PDF
-                            </a>
-                            <button
-                              onClick={() => { const w = window.open(`/api/paiements/recu?paiement_id=${p.id}`, "_blank"); if (w) setTimeout(() => w.print(), 1200); }}
-                              className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 font-semibold"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                              Imprimer
-                            </button>
-                          </div>
+                          <a
+                            href={`/api/paiements/recu?paiement_id=${p.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700 font-semibold"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            PDF
+                          </a>
                         ) : "—"}
                       </td>
                     </tr>

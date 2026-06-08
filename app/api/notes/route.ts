@@ -20,15 +20,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "classe_id et matiere_id requis" }, { status: 400 });
   }
 
-  // Filtrer par école pour éviter les accès inter-établissements
-  const eleveWhere = {
-    classe_id: classeId,
-    actif: true,
-    classe: { ecole_id: session.user.ecoleId },
-  };
+  const eleveWhere = { classe_id: classeId, actif: true };
   const page = searchParams.get("page");
-  const rawLimit = parseInt(searchParams.get("limit") || "20");
-  const limit = isNaN(rawLimit) ? 20 : Math.min(rawLimit, 100);
+  const limit = parseInt(searchParams.get("limit") || "20");
 
   const fetchEleves = (skip?: number, take?: number) =>
     prisma.eleve.findMany({

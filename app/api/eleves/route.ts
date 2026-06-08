@@ -10,11 +10,6 @@ export async function GET(req: NextRequest) {
     const session = await auth();
     if (!session) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
-    // Un ELEVE ne doit pas pouvoir lister tous les élèves
-    if (!["SUPER_ADMIN", "CENSEUR", "COMPTABLE", "PROFESSEUR"].includes(session.user.role)) {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-    }
-
     const { searchParams } = req.nextUrl;
     const classeId = searchParams.get("classe_id");
 
@@ -24,8 +19,7 @@ export async function GET(req: NextRequest) {
     if (classeId) where.classe_id = classeId;
 
     const page = searchParams.get("page");
-    const rawLimit = parseInt(searchParams.get("limit") || "20");
-    const limit = isNaN(rawLimit) ? 20 : Math.min(rawLimit, 100);
+    const limit = parseInt(searchParams.get("limit") || "20");
 
     if (page) {
       const pageNum = parseInt(page);
@@ -78,7 +72,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
-    if (!session || !["SUPER_ADMIN", "CENSEUR", "COMPTABLE"].includes(session.user.role)) {
+    if (!session || !["SUPER_ADMIN", "CENSEUR"].includes(session.user.role)) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
     }
 

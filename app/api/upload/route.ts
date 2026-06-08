@@ -11,8 +11,8 @@ cloudinary.config({
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
-    if (!session || !["SUPER_ADMIN", "CENSEUR", "COMPTABLE"].includes(session.user.role)) {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
+    if (!session) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
     }
 
     const formData = await req.formData();

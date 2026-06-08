@@ -1,19 +1,26 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { TAB_AUTH_KEY } from "@/components/dashboard/tab-session-guard";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [identifier, setIdentifier] = useState(searchParams.get("m") ?? "");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const m = searchParams.get("m");
+    if (m) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIdentifier(m);
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,7 +37,6 @@ function LoginForm() {
       setError("Identifiant ou mot de passe incorrect");
       setLoading(false);
     } else {
-      sessionStorage.setItem(TAB_AUTH_KEY, "1");
       router.push("/dashboard");
       router.refresh();
     }

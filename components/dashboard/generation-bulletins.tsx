@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Printer } from "lucide-react";
 
 interface Classe {
   id: string;
@@ -22,7 +21,6 @@ export function GenerationBulletins({ classes }: { classes: Classe[] }) {
   const [eleves, setEleves] = useState<Eleve[]>([]);
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState<string | null>(null);
-  const [printing, setPrinting] = useState<string | null>(null);
 
   const loadEleves = useCallback(async () => {
     if (!classeId) { setEleves([]); return; }
@@ -66,21 +64,6 @@ export function GenerationBulletins({ classes }: { classes: Classe[] }) {
     }
   }
 
-  async function printBulletin(eleveId: string) {
-    setPrinting(eleveId);
-    try {
-      const res = await fetch(`/api/bulletins?eleve_id=${eleveId}&sequence=${sequence}`);
-      if (!res.ok) { alert("Erreur lors de la génération"); return; }
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const win = window.open(url, "_blank");
-      if (win) setTimeout(() => win.print(), 1200);
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
-    } finally {
-      setPrinting(null);
-    }
-  }
-
   return (
     <div className="space-y-6">
       {/* Paramètres */}
@@ -109,18 +92,9 @@ export function GenerationBulletins({ classes }: { classes: Classe[] }) {
             </div>
             <div className="flex items-end">
               {eleves.length > 0 && (
-                <div className="flex gap-2">
-                  <button onClick={downloadAll} disabled={!!downloading || !!printing} className="dash-btn-secondary">
-                    Télécharger tous
-                  </button>
-                  <button
-                    onClick={async () => { for (const e of eleves) { await printBulletin(e.id); await new Promise(r => setTimeout(r, 600)); } }}
-                    disabled={!!downloading || !!printing}
-                    className="dash-btn-secondary flex items-center gap-1.5"
-                  >
-                    <Printer size={14} /> Imprimer tous
-                  </button>
-                </div>
+                <button onClick={downloadAll} disabled={!!downloading} className="dash-btn-secondary">
+                  Télécharger tous les bulletins
+                </button>
               )}
             </div>
           </div>
@@ -162,34 +136,18 @@ export function GenerationBulletins({ classes }: { classes: Classe[] }) {
                         <td className="font-mono text-xs text-indigo-500 font-semibold">{eleve.matricule}</td>
                         <td className="font-semibold text-slate-800">{eleve.nom} {eleve.prenom}</td>
                         <td className="text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => downloadBulletin(eleve.id, eleve.matricule)}
-                              disabled={downloading === eleve.id || !!printing}
-                              className="dash-btn-secondary text-xs disabled:opacity-50"
-                            >
-                              {downloading === eleve.id ? (
-                                <span className="inline-flex items-center gap-1.5">
-                                  <div className="w-3 h-3 border-2 border-indigo-200 rounded-full animate-spin border-t-indigo-500" />
-                                  Génération...
-                                </span>
-                              ) : "Télécharger PDF"}
-                            </button>
-                            <button
-                              onClick={() => printBulletin(eleve.id)}
-                              disabled={printing === eleve.id || !!downloading}
-                              className="flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 px-2.5 py-1.5 rounded-lg transition-colors disabled:opacity-50"
-                            >
-                              {printing === eleve.id ? (
-                                <span className="inline-flex items-center gap-1.5">
-                                  <div className="w-3 h-3 border-2 border-slate-200 rounded-full animate-spin border-t-slate-500" />
-                                  Impression...
-                                </span>
-                              ) : (
-                                <><Printer size={13} /> Imprimer</>
-                              )}
-                            </button>
-                          </div>
+                          <button
+                            onClick={() => downloadBulletin(eleve.id, eleve.matricule)}
+                            disabled={downloading === eleve.id}
+                            className="dash-btn-secondary text-xs disabled:opacity-50"
+                          >
+                            {downloading === eleve.id ? (
+                              <span className="inline-flex items-center gap-1.5">
+                                <div className="w-3 h-3 border-2 border-indigo-200 rounded-full animate-spin border-t-indigo-500" />
+                                Génération...
+                              </span>
+                            ) : "Télécharger PDF"}
+                          </button>
                         </td>
                       </tr>
                     ))}

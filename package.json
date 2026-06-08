@@ -9,14 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "npx tsx prisma/seed.ts",
-    "prepare": "husky",
-    "test:load": "node tests/load/autocannon-test.js",
-    "test:load:quick": "node tests/load/autocannon-test.js --quick",
-    "test:load:public": "node tests/load/autocannon-test.js --scenario public",
-    "test:load:k6": "k6 run tests/load/k6-load-test.js",
-    "test:load:k6:smoke": "k6 run --env SCENARIO=smoke tests/load/k6-load-test.js",
-    "test:load:k6:stress": "k6 run --env SCENARIO=stress tests/load/k6-load-test.js",
-    "test:load:artillery": "artillery run tests/load/artillery-config.yml"
+    "prepare": "husky"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
@@ -33,7 +26,6 @@
     "cloudinary": "^2.9.0",
     "clsx": "^2.1.1",
     "dotenv": "^17.3.1",
-    "exceljs": "^4.4.0",
     "jspdf": "^4.2.0",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.577.0",
@@ -60,7 +52,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "autocannon": "^7.15.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "husky": "^9.1.7",

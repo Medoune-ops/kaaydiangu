@@ -19,6 +19,7 @@ export async function GET() {
       filiere: true,
       annee_scolaire: true,
       montant_scolarite: true,
+      frais_inscription: true,
       matieres: {
         select: {
           id: true,
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { nom, niveau, filiere, montant_scolarite } = body;
+    const { nom, niveau, filiere, montant_scolarite, frais_inscription } = body;
 
   if (!nom || !niveau) {
     return NextResponse.json({ error: "Nom et niveau requis" }, { status: 400 });
@@ -71,6 +72,7 @@ export async function POST(req: NextRequest) {
       filiere: filiere || null,
       annee_scolaire: ecole?.annee_scolaire || new Date().getFullYear().toString(),
       montant_scolarite: montant_scolarite || 0,
+      frais_inscription: frais_inscription || 0,
       ecole_id: session.user.ecoleId,
     },
   });
@@ -102,7 +104,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { id, nom, niveau, filiere, montant_scolarite } = body;
+    const { id, nom, niveau, filiere, montant_scolarite, frais_inscription } = body;
 
   if (!id) {
     return NextResponse.json({ error: "id requis" }, { status: 400 });
@@ -121,6 +123,7 @@ export async function PATCH(req: NextRequest) {
   if (niveau !== undefined) update.niveau = niveau;
   if (filiere !== undefined) update.filiere = filiere || null;
   if (montant_scolarite !== undefined) update.montant_scolarite = montant_scolarite;
+  if (frais_inscription !== undefined) update.frais_inscription = frais_inscription;
 
   const classe = await prisma.classe.update({
     where: { id },

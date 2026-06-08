@@ -95,10 +95,9 @@ model Classe {
   filiere           String?
   annee_scolaire    String
   montant_scolarite Float    @default(0)
+  frais_inscription Float    @default(0)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-
-  frais_inscription Float    @default(0)
 
   ecole_id String
   ecole    Ecole  @relation(fields: [ecole_id], references: [id])

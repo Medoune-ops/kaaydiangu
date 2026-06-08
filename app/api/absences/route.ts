@@ -16,12 +16,9 @@ export async function GET(req: NextRequest) {
     const dateFin = searchParams.get("date_fin");
     const matiereId = searchParams.get("matiere_id");
 
-    // Toujours filtrer par l'école de l'utilisateur pour éviter les fuites inter-écoles
-    const where: Record<string, unknown> = {
-      eleve: { classe: { ecole_id: session.user.ecoleId } },
-    };
+    const where: Record<string, unknown> = {};
 
-    if (classeId) where.eleve = { classe_id: classeId, classe: { ecole_id: session.user.ecoleId } };
+    if (classeId) where.eleve = { classe_id: classeId };
     if (eleveId) where.eleve_id = eleveId;
     if (matiereId) where.matiere_id = matiereId;
     if (dateDebut || dateFin) {
@@ -31,8 +28,7 @@ export async function GET(req: NextRequest) {
     }
 
     const page = searchParams.get("page");
-    const rawLimit = parseInt(searchParams.get("limit") || "20");
-    const limit = isNaN(rawLimit) ? 20 : Math.min(rawLimit, 100);
+    const limit = parseInt(searchParams.get("limit") || "20");
 
     const includeOpts = {
       eleve: {
@@ -168,14 +164,6 @@ export async function PATCH(req: NextRequest) {
 
     if (!id) {
       return NextResponse.json({ error: "id requis" }, { status: 400 });
-    }
-
-    // Vérifier que l'absence appartient à l'école de l'utilisateur
-    const absenceExistante = await prisma.absence.findFirst({
-      where: { id, eleve: { classe: { ecole_id: session.user.ecoleId } } },
-    });
-    if (!absenceExistante) {
-      return NextResponse.json({ error: "Absence introuvable" }, { status: 404 });
     }
 
     const absence = await prisma.absence.update({
