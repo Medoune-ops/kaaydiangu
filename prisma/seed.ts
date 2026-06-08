@@ -139,11 +139,11 @@ async function main() {
   console.log("🏫 Création de l'école...");
   const ecole = await prisma.ecole.create({
     data: {
-      nom: "École Kaaydiangu",
-      slogan: "L'excellence au service de la jeunesse sénégalaise",
-      adresse: "Parcelles Assainies Unité 25, Dakar",
-      telephone: "+221 33 867 45 12",
-      email: "contact@kaaydiangu.sn",
+      nom: "I.R.E.F",
+      slogan: "Institution la Référence pour l'Éducation et la Formation",
+      adresse: "Kounoune Cité FIRDAWSI, à proximité de la solution, Sangalkam",
+      telephone: "+221 77 000 00 00",
+      email: "contact@iref.sn",
       annee_scolaire: "2025-2026",
       frais_inscription: 25000,
       impaye_seuil_jours: 30,
@@ -158,13 +158,13 @@ async function main() {
   const mdpHash = await bcrypt.hash("password123", 10);
 
   const admin = await prisma.user.create({
-    data: { nom: "Diop", prenom: "Amadou", email: "admin@kaaydiangu.sn", mot_de_passe: mdpHash, role: "SUPER_ADMIN", ecole_id: ecole.id },
+    data: { nom: "Seck", prenom: "Alassane", email: "admin@iref.sn", mot_de_passe: mdpHash, role: "SUPER_ADMIN", ecole_id: ecole.id },
   });
   await prisma.user.create({
-    data: { nom: "Ndiaye", prenom: "Marième", email: "censeur@kaaydiangu.sn", mot_de_passe: mdpHash, role: "CENSEUR", ecole_id: ecole.id },
+    data: { nom: "Ndiaye", prenom: "Marième", email: "censeur@iref.sn", mot_de_passe: mdpHash, role: "CENSEUR", ecole_id: ecole.id },
   });
   const comptable = await prisma.user.create({
-    data: { nom: "Fall", prenom: "Ibrahima", email: "comptable@kaaydiangu.sn", mot_de_passe: mdpHash, role: "COMPTABLE", ecole_id: ecole.id },
+    data: { nom: "Seck", prenom: "Medoune", email: "comptable@iref.sn", mot_de_passe: mdpHash, role: "COMPTABLE", ecole_id: ecole.id },
   });
 
   // ═══════════════════════════════════════
@@ -445,13 +445,13 @@ async function main() {
   const total = totalEleves.reduce((a, b) => a + b, 0);
   console.log("\n✅ Seed terminé !\n");
   console.log("════════════════════════════════════════");
-  console.log("  🏫 École   : École Kaaydiangu");
+  console.log("  🏫 École   : I.R.E.F — Institution la Référence pour l'Éducation et la Formation");
   console.log("  📚 Classes : 9 (PS → CM2)");
   console.log(`  🎓 Élèves  : ${total} (PS:${elevesPS.length} MS:${elevesMS.length} GS:${elevesGS.length} CI:${elevesCI.length} CP:${elevesCP.length} CE1:${elevesCE1.length} CE2:${elevesCE2.length} CM1:${elevesCM1.length} CM2:${elevesCM2.length})`);
   console.log("════════════════════════════════════════");
-  console.log("  Admin     : admin@kaaydiangu.sn     / password123");
-  console.log("  Comptable : comptable@kaaydiangu.sn / password123");
-  console.log("  Censeur   : censeur@kaaydiangu.sn   / password123");
+  console.log("  Directeur : admin@iref.sn      / password123  (Alassane Seck)");
+  console.log("  Comptable : comptable@iref.sn  / password123  (Medoune Seck)");
+  console.log("  Censeur   : censeur@iref.sn    / password123");
   console.log("════════════════════════════════════════\n");
 }
 
