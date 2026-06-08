@@ -13,6 +13,7 @@ const updateEleveSchema = z.object({
   telephone_parent: z.string().nullable().optional(),
   email_parent: z.string().email().nullable().optional(),
   photo: z.string().nullable().optional(),
+  actif: z.boolean().optional(),
 });
 
 export async function PATCH(
