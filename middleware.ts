@@ -7,18 +7,10 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   const role = req.auth?.user?.role as string | undefined;
 
-  // Rediriger vers le bon dashboard si déjà connecté et sur /login
-  if (pathname === "/login" && req.auth) {
-    const redirectMap: Record<string, string> = {
-      SUPER_ADMIN: "/dashboard/admin",
-      COMPTABLE: "/dashboard/comptable",
-      CENSEUR: "/dashboard/censeur",
-      PROFESSEUR: "/dashboard/professeur",
-      ELEVE: "/dashboard/eleve",
-    };
-    const dest = (role && redirectMap[role]) || "/dashboard";
-    return Response.redirect(new URL(dest, req.url));
-  }
+  // NB : l'auto-redirection /login → dashboard (quand déjà connecté) est gérée
+  // côté client sur la page /login, car elle dépend de sessionStorage (isolé par
+  // onglet) que le middleware Edge ne peut pas lire. Un nouvel onglet avec cookie
+  // valide mais sans clé d'onglet doit pouvoir rester sur /login pour se reconnecter.
 
   // Protection par rôle sur les sous-modules du dashboard
   const roleRoutes: Record<string, string[]> = {

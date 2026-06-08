@@ -4,6 +4,7 @@ import { Sidebar } from "@/components/dashboard/sidebar";
 import { NotificationBell } from "@/components/dashboard/notification-bell";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+import { TabSessionGuard } from "@/components/dashboard/tab-session-guard";
 
 export default async function DashboardLayout({
   children,
@@ -18,6 +19,7 @@ export default async function DashboardLayout({
 
   return (
     <ToastProvider>
+      <TabSessionGuard>
       <div className="dash-page">
         <Sidebar
           role={session.user.role}
@@ -50,6 +52,7 @@ export default async function DashboardLayout({
           </main>
         </div>
       </div>
+      </TabSessionGuard>
     </ToastProvider>
   );
 }

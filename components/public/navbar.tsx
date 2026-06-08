@@ -35,6 +35,7 @@ export function Navbar() {
   useEffect(() => { setOpen(false); }, [pathname]);
 
   const handleSignOut = async () => {
+    sessionStorage.removeItem("tab-auth");
     await signOut({ redirect: false });
     window.location.href = "/deconnecte";
   };

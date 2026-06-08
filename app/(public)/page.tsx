@@ -7,6 +7,7 @@ import Image from "next/image";
 import { ScrollAnimateProvider } from "@/components/public/scroll-animate";
 import { TiltCard } from "@/components/ui/tilt-card";
 import { NotreEquipe } from "@/components/public/notre-equipe";
+import { TAB_AUTH_KEY } from "@/components/dashboard/tab-session-guard";
 
 /* ─────────────────── DATA ─────────────────── */
 
@@ -31,9 +32,11 @@ export default function HomePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  /* Auth redirect */
+  /* Auth redirect — seulement si l'onglet courant est celui de la connexion.
+     Un nouvel onglet (sans la clé sessionStorage) reste sur le site public,
+     même si le cookie de session est encore valide. */
   useEffect(() => {
-    if (status === "authenticated") {
+    if (status === "authenticated" && sessionStorage.getItem(TAB_AUTH_KEY)) {
       router.push("/dashboard");
     }
   }, [status, router, session]);

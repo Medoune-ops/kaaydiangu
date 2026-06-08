@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { TAB_AUTH_KEY } from "@/components/dashboard/tab-session-guard";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { status } = useSession();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -21,6 +23,15 @@ function LoginForm() {
       setIdentifier(m);
     }
   }, [searchParams]);
+
+  // Si l'onglet courant est déjà authentifié (clé sessionStorage présente) et
+  // que la session NextAuth est valide, on renvoie directement au dashboard.
+  // Un nouvel onglet (sans la clé) reste sur le formulaire pour se reconnecter.
+  useEffect(() => {
+    if (status === "authenticated" && sessionStorage.getItem(TAB_AUTH_KEY)) {
+      router.replace("/dashboard");
+    }
+  }, [status, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,6 +48,8 @@ function LoginForm() {
       setError("Identifiant ou mot de passe incorrect");
       setLoading(false);
     } else {
+      // Marque cet onglet comme authentifié (isolé par onglet via sessionStorage)
+      sessionStorage.setItem(TAB_AUTH_KEY, "1");
       router.push("/dashboard");
       router.refresh();
     }
