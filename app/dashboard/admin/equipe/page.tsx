@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { GestionEquipe } from "@/components/dashboard/gestion-equipe";
+import { RegistreProfesseurs } from "@/components/dashboard/registre-professeurs";
 
 export default async function EquipePage() {
   const session = await auth();
@@ -16,6 +17,8 @@ export default async function EquipePage() {
       </div>
 
       <GestionEquipe />
+
+      <RegistreProfesseurs />
     </div>
   );
 }

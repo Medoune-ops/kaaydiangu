@@ -22,9 +22,10 @@ model Ecole {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
-  users    User[]
-  classes  Classe[]
-  depenses Depense[]
+  users            User[]
+  classes          Classe[]
+  depenses         Depense[]
+  professeursInfos ProfesseurInfo[]
 }
 
 enum Role {
@@ -292,4 +293,23 @@ model AuditLog {
 
   auteur_id String
   auteur    User   @relation(fields: [auteur_id], references: [id])
+}
+
+model ProfesseurInfo {
+  id                   String   @id @default(cuid())
+  nom                  String
+  prenom               String
+  fonction             String?
+  age                  Int?
+  diplome_academique   String?
+  diplome_professionnel String?
+  numero_autorisation  String?
+  telephone            String?
+  classe_tenue         String?
+  adresse              String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  ecole_id String
+  ecole    Ecole  @relation(fields: [ecole_id], references: [id])
 }

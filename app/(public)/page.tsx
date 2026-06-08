@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { ScrollAnimateProvider } from "@/components/public/scroll-animate";
 import { TiltCard } from "@/components/ui/tilt-card";
+import { NotreEquipe } from "@/components/public/notre-equipe";
 
 /* ─────────────────── DATA ─────────────────── */
 
@@ -365,6 +366,12 @@ export default function HomePage() {
 
         <div className="gradient-line absolute bottom-0 left-[8%] right-[8%]" />
       </section>
+
+
+      {/* ══════════════════════════════════════════════════════ */}
+      {/*  NOTRE ÉQUIPE — Professeurs (depuis le registre admin) */}
+      {/* ══════════════════════════════════════════════════════ */}
+      <NotreEquipe />
 
 
       {/* ══════════════════════════════════════════════════════ */}
