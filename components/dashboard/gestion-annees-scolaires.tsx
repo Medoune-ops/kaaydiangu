@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/components/ui/toast";
-import { WorkflowPromotion } from "@/components/dashboard/workflow-promotion";
 
 interface AnneeScolaire {
   id: string;
@@ -20,7 +19,6 @@ export function GestionAnneesScolaires() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
-  const [promotionCible, setPromotionCible] = useState<AnneeScolaire | null>(null);
 
   const fetchAnnees = useCallback(() => {
     fetch("/api/admin/annees-scolaires")
@@ -134,15 +132,6 @@ export function GestionAnneesScolaires() {
                       <div className="flex items-center justify-end gap-1">
                         {!a.est_active && (
                           <button
-                            onClick={() => setPromotionCible(a)}
-                            disabled={busy === a.id}
-                            className="px-2.5 py-1 text-xs font-semibold text-violet-600 hover:bg-violet-50 rounded-lg disabled:opacity-50 transition-colors"
-                          >
-                            Passage d&apos;année
-                          </button>
-                        )}
-                        {!a.est_active && (
-                          <button
                             onClick={() => action(a.id, "activer", a.libelle)}
                             disabled={busy === a.id}
                             className="px-2.5 py-1 text-xs font-semibold text-emerald-600 hover:bg-emerald-50 rounded-lg disabled:opacity-50 transition-colors"
@@ -200,14 +189,6 @@ export function GestionAnneesScolaires() {
           onSaved={(msg) => { showMsg("success", msg); fetchAnnees(); setShowModal(false); }}
           onError={(msg) => showMsg("error", msg)}
           estPremiere={annees.length === 0}
-        />
-      )}
-
-      {promotionCible && (
-        <WorkflowPromotion
-          anneeCible={promotionCible}
-          onClose={() => setPromotionCible(null)}
-          onDone={() => { setPromotionCible(null); fetchAnnees(); }}
         />
       )}
     </div>
