@@ -26,6 +26,7 @@ interface ClasseData {
   filiere: string | null;
   annee_scolaire: string;
   montant_scolarite: number;
+  frais_inscription: number;
   matieres: { id: string; nom: string; coefficient: number; professeur_id: string | null }[];
   _count: { eleves: number };
 }
@@ -143,9 +144,7 @@ export function ConfigurationEcole() {
       )}
       {activeSection === "tarifs" && (
         <SectionTarifs
-          ecole={ecole}
           classes={classes}
-          onSaveEcole={updateEcole}
           onRefresh={fetchData}
           showMsg={showMsg}
         />
@@ -502,6 +501,7 @@ function ClasseModal({
     niveau: classe?.niveau || "",
     filiere: classe?.filiere || "",
     montant_scolarite: classe?.montant_scolarite || 0,
+    frais_inscription: classe?.frais_inscription || 0,
   });
   const [saving, setSaving] = useState(false);
 
@@ -580,17 +580,31 @@ function ClasseModal({
               placeholder="Ex: Scientifique, Litteraire..."
             />
           </div>
-          <div>
-            <label className={labelCls}>Scolarite mensuelle (FCFA)</label>
-            <input
-              type="number"
-              min={0}
-              value={form.montant_scolarite}
-              onChange={(e) =>
-                setForm({ ...form, montant_scolarite: parseInt(e.target.value) || 0 })
-              }
-              className={inputCls}
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className={labelCls}>Frais d&apos;inscription (FCFA)</label>
+              <input
+                type="number"
+                min={0}
+                value={form.frais_inscription}
+                onChange={(e) =>
+                  setForm({ ...form, frais_inscription: parseInt(e.target.value) || 0 })
+                }
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>Scolarite mensuelle (FCFA)</label>
+              <input
+                type="number"
+                min={0}
+                value={form.montant_scolarite}
+                onChange={(e) =>
+                  setForm({ ...form, montant_scolarite: parseInt(e.target.value) || 0 })
+                }
+                className={inputCls}
+              />
+            </div>
           </div>
           <p className="text-xs text-neutral-400">
             Annee scolaire : {ecole.annee_scolaire}
@@ -616,42 +630,40 @@ function ClasseModal({
 // ─── SECTION 4 : TARIFS ───
 
 function SectionTarifs({
-  ecole,
   classes,
-  onSaveEcole,
   onRefresh,
   showMsg,
 }: {
-  ecole: EcoleData;
   classes: ClasseData[];
-  onSaveEcole: (data: Record<string, unknown>) => Promise<boolean>;
   onRefresh: () => void;
   showMsg: (type: "success" | "error", text: string) => void;
 }) {
-  const [frais, setFrais] = useState(ecole.frais_inscription);
-  const [tarifs, setTarifs] = useState<Record<string, number>>({});
+  const [mensualites, setMensualites] = useState<Record<string, number>>({});
+  const [inscriptions, setInscriptions] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    const t: Record<string, number> = {};
-    for (const c of classes) t[c.id] = c.montant_scolarite;
+    const m: Record<string, number> = {};
+    const i: Record<string, number> = {};
+    for (const c of classes) {
+      m[c.id] = c.montant_scolarite;
+      i[c.id] = c.frais_inscription;
+    }
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTarifs(t);
+    setMensualites(m); setInscriptions(i);
   }, [classes]);
-
-  const handleSaveFrais = async () => {
-    setSaving(true);
-    await onSaveEcole({ frais_inscription: frais });
-    setSaving(false);
-  };
 
   const handleSaveTarifs = async () => {
     setSaving(true);
-    const promises = Object.entries(tarifs).map(([id, montant]) =>
+    const promises = classes.map((c) =>
       fetch("/api/classes", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, montant_scolarite: montant }),
+        body: JSON.stringify({
+          id: c.id,
+          montant_scolarite: mensualites[c.id] ?? c.montant_scolarite,
+          frais_inscription: inscriptions[c.id] ?? c.frais_inscription,
+        }),
       })
     );
     await Promise.all(promises);
@@ -668,28 +680,21 @@ function SectionTarifs({
 
   return (
     <div className="bg-white border border-neutral-200 rounded-xl p-6 space-y-6">
-      <h3 className="text-lg font-semibold text-neutral-900">Tarifs de scolarite</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-neutral-900">Tarifs par classe</h3>
+        <span className="text-xs text-neutral-400">{classes.length} classe(s)</span>
+      </div>
 
-      {/* Frais d'inscription */}
-      <div className="bg-indigo-50/50 border border-indigo-100 rounded-xl p-4">
-        <label className="block text-sm font-medium text-neutral-900 mb-2">
+      {/* Légende */}
+      <div className="flex items-center gap-6 text-xs font-semibold text-neutral-500 border-b border-neutral-100 pb-3">
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-sm bg-indigo-100 border border-indigo-200" />
           Frais d&apos;inscription (FCFA)
-        </label>
-        <div className="flex items-center gap-3">
-          <input
-            type="number"
-            min={0}
-            value={frais}
-            onChange={(e) => setFrais(parseInt(e.target.value) || 0)}
-            className={`${inputCls} w-40`}
-          />
-          <button onClick={handleSaveFrais} disabled={saving} className={btnPrimary}>
-            Enregistrer
-          </button>
-        </div>
-        <p className="text-xs text-neutral-400 mt-1">
-          Montant unique applique a l&apos;inscription de chaque eleve.
-        </p>
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-sm bg-emerald-100 border border-emerald-200" />
+          Mensualité (FCFA/mois)
+        </span>
       </div>
 
       {/* Tarifs par classe */}
@@ -697,28 +702,56 @@ function SectionTarifs({
         <p className="text-sm text-neutral-400 text-center py-4">Creez des classes pour configurer les tarifs.</p>
       ) : (
         <>
-          <div className="space-y-4">
+          <div className="space-y-5">
             {Array.from(niveaux.entries()).map(([niveau, classesList]) => (
               <div key={niveau}>
-                <h4 className="text-sm font-semibold text-neutral-500 mb-2">{niveau}</h4>
+                <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3">{niveau}</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {classesList.map((c) => (
-                    <div key={c.id} className="border border-neutral-200 rounded-lg p-3">
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-sm font-medium text-neutral-900">{c.nom}</span>
-                        <span className="text-xs text-neutral-400">{c._count.eleves} eleves</span>
+                    <div key={c.id} className="border border-neutral-200 rounded-xl p-4 space-y-3 hover:border-indigo-200 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-bold text-neutral-900">{c.nom}</span>
+                        <span className="text-xs text-neutral-400 bg-neutral-50 px-2 py-0.5 rounded-full border border-neutral-100">
+                          {c._count.eleves} élève(s)
+                        </span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <input
-                          type="number"
-                          min={0}
-                          value={tarifs[c.id] || 0}
-                          onChange={(e) =>
-                            setTarifs({ ...tarifs, [c.id]: parseInt(e.target.value) || 0 })
-                          }
-                          className={`${inputCls} h-8`}
-                        />
-                        <span className="text-xs text-neutral-400 whitespace-nowrap">F/mois</span>
+
+                      {/* Frais d'inscription */}
+                      <div>
+                        <label className="block text-[0.68rem] font-semibold text-indigo-600 uppercase tracking-wide mb-1">
+                          Inscription
+                        </label>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="number"
+                            min={0}
+                            value={inscriptions[c.id] ?? 0}
+                            onChange={(e) =>
+                              setInscriptions({ ...inscriptions, [c.id]: parseInt(e.target.value) || 0 })
+                            }
+                            className="flex-1 h-8 bg-indigo-50 border border-indigo-100 rounded-lg px-2.5 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
+                          />
+                          <span className="text-[0.68rem] text-neutral-400 whitespace-nowrap">FCFA</span>
+                        </div>
+                      </div>
+
+                      {/* Mensualité */}
+                      <div>
+                        <label className="block text-[0.68rem] font-semibold text-emerald-600 uppercase tracking-wide mb-1">
+                          Mensualité
+                        </label>
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="number"
+                            min={0}
+                            value={mensualites[c.id] ?? 0}
+                            onChange={(e) =>
+                              setMensualites({ ...mensualites, [c.id]: parseInt(e.target.value) || 0 })
+                            }
+                            className="flex-1 h-8 bg-emerald-50 border border-emerald-100 rounded-lg px-2.5 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 transition-all"
+                          />
+                          <span className="text-[0.68rem] text-neutral-400 whitespace-nowrap">F/mois</span>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -728,7 +761,7 @@ function SectionTarifs({
           </div>
 
           <button onClick={handleSaveTarifs} disabled={saving} className={btnPrimary}>
-            {saving ? "Enregistrement..." : "Enregistrer les tarifs"}
+            {saving ? "Enregistrement..." : "Enregistrer tous les tarifs"}
           </button>
         </>
       )}
