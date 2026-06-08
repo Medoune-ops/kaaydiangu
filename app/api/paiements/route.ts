@@ -17,7 +17,29 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "eleve_id requis" }, { status: 400 });
     }
 
-    const where = { eleve_id: eleveId };
+    // Filtre optionnel par année scolaire :
+    //   ?annee_scolaire_id=xxx  → paiements de cette année précise
+    //   ?annee_active=1         → paiements de l'année active de l'école
+    // Sans paramètre, comportement inchangé : tous les paiements de l'élève.
+    const anneeScolaireId = searchParams.get("annee_scolaire_id");
+    const anneeActiveOnly = searchParams.get("annee_active") === "1";
+
+    const where: Record<string, unknown> = { eleve_id: eleveId };
+    if (anneeScolaireId) {
+      where.annee_scolaire_id = anneeScolaireId;
+    } else if (anneeActiveOnly) {
+      const eleve = await prisma.eleve.findUnique({
+        where: { id: eleveId },
+        select: { classe: { select: { ecole_id: true } } },
+      });
+      if (eleve) {
+        const active = await prisma.anneeScolaire.findFirst({
+          where: { ecole_id: eleve.classe.ecole_id, est_active: true },
+          select: { id: true },
+        });
+        if (active) where.annee_scolaire_id = active.id;
+      }
+    }
     const page = searchParams.get("page");
     const limit = parseInt(searchParams.get("limit") || "20");
 

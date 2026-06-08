@@ -100,6 +100,12 @@ export async function POST(req: NextRequest) {
 
     const dateAbs = new Date(date);
 
+    // Année active de l'école — pour rattacher les absences à la bonne année.
+    const anneeActive = await prisma.anneeScolaire.findFirst({
+      where: { ecole_id: session.user.ecoleId, est_active: true },
+      select: { id: true },
+    });
+
     const result = await prisma.$transaction(async (tx) => {
       const created = [];
 
@@ -122,6 +128,7 @@ export async function POST(req: NextRequest) {
               motif: a.motif || null,
               eleve_id: a.eleve_id,
               matiere_id,
+              annee_scolaire_id: anneeActive?.id ?? null,
             },
           });
           created.push(absence);
